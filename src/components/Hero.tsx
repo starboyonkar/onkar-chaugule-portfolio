@@ -22,6 +22,13 @@ export const Hero = () => {
     document.getElementById('projects')?.scrollIntoView({ behavior: 'smooth' });
   };
 
+  const handleResumeDownload = () => {
+    const link = document.createElement('a');
+    link.href = '/lovable-uploads/117c0e0f-e3ee-4663-ae57-fed86ea856fa.png';
+    link.download = 'Onkar_Chaugule_Resume.png';
+    link.click();
+  };
+
   const socialLinks = [
     {
       icon: Github,
@@ -81,7 +88,7 @@ export const Hero = () => {
 
       <div className="relative z-10 text-center px-4 max-w-6xl mx-auto">
         <div className="space-y-8 animate-fade-in">
-          {/* Profile Image */}
+          {/* Profile Image with Experience Badge */}
           <div className="relative animate-slide-left" style={{ animationDelay: '0.2s' }}>
             <div className="w-48 h-48 mx-auto relative group">
               <div className="absolute -inset-4 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full blur-lg opacity-30 group-hover:opacity-50 transition duration-300"></div>
@@ -90,16 +97,23 @@ export const Hero = () => {
                 alt="Onkar Chaugule"
                 className="relative w-full h-full object-cover rounded-full border-4 border-blue-500/20 shadow-2xl"
               />
+              {/* Experience Badge */}
+              <div className="absolute -bottom-2 -right-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white px-3 py-1 rounded-full text-sm font-semibold shadow-lg border-2 border-white animate-pulse">
+                1+ Years Experience
+              </div>
             </div>
           </div>
 
-          {/* Name */}
+          {/* Personalized Greeting */}
           <div className="animate-fade-in" style={{ animationDelay: '0.4s' }}>
-            <h1 className="text-5xl md:text-6xl font-bold text-white mb-2">
+            <h1 className="text-4xl md:text-5xl font-light text-gray-300 mb-2">
+              Hello, I'm
+            </h1>
+            <h2 className="text-5xl md:text-6xl font-bold text-white mb-4">
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-purple-400 to-blue-400">
                 Onkar Chaugule
               </span>
-            </h1>
+            </h2>
           </div>
 
           {/* Social Icons */}
@@ -118,7 +132,7 @@ export const Hero = () => {
             ))}
           </div>
 
-          {/* Main headline with glowing border */}
+          {/* Role headline with glowing border */}
           <div className="relative animate-fade-in" style={{ animationDelay: '0.8s' }}>
             <div className="absolute -inset-4 bg-gradient-to-r from-blue-600 via-purple-600 to-blue-600 rounded-2xl blur-lg opacity-30 animate-pulse"></div>
             <div className="relative bg-slate-900/80 backdrop-blur-sm rounded-2xl p-8 border border-blue-500/20">
@@ -147,19 +161,19 @@ export const Hero = () => {
             >
               <span className="relative z-10 flex items-center gap-2">
                 <ExternalLink size={20} />
-                Explore Projects
+                View Projects
               </span>
               <div className="absolute inset-0 bg-gradient-to-r from-purple-600 to-blue-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
             </button>
             
-            <a
-              href="#resume"
+            <button
+              onClick={handleResumeDownload}
               className="group relative px-8 py-4 border-2 border-blue-400 text-blue-400 rounded-lg font-semibold hover:bg-blue-400 hover:text-white transition-all duration-300 transform hover:scale-105 flex items-center gap-2"
             >
               <Download size={20} />
               Download Resume
               <div className="absolute inset-0 bg-blue-400 opacity-0 group-hover:opacity-10 transition-opacity duration-300 rounded-lg"></div>
-            </a>
+            </button>
           </div>
         </div>
 

@@ -155,7 +155,24 @@ export default {
         "float-delay": "float-delay 8s ease-in-out infinite",
         "scroll": "scroll 30s linear infinite"
       },
+      animationPlayState: {
+        'paused': 'paused',
+        'running': 'running',
+      }
     },
   },
-  plugins: [require("tailwindcss-animate")],
+  plugins: [
+    require("tailwindcss-animate"),
+    function({ addUtilities }: { addUtilities: any }) {
+      const newUtilities = {
+        '.animation-play-state-paused': {
+          'animation-play-state': 'paused',
+        },
+        '.animation-play-state-running': {
+          'animation-play-state': 'running',
+        }
+      }
+      addUtilities(newUtilities)
+    }
+  ],
 } satisfies Config;

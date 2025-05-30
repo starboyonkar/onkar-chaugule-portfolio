@@ -9,20 +9,14 @@ export const Skills = () => {
     },
     {
       title: "Languages",
-      skills: ["Python", "C", "Bash", "Java", "Embedded C"],
+      skills: ["Python", "C", "Bash", "Java"],
       color: "from-purple-500 to-pink-500",
       icon: "⚡"
     },
     {
-      title: "Microcontrollers",
-      skills: ["Raspberry Pi 4", "NodeMCU ESP8266", "MSP430", "MSPM0G3507"],
-      color: "from-green-500 to-emerald-500",
-      icon: "🔧"
-    },
-    {
       title: "Development Tools",
       skills: ["Git", "GitHub", "Postman", "VS Code", "Linux", "MySQL"],
-      color: "from-orange-500 to-red-500",
+      color: "from-green-500 to-emerald-500",
       icon: "🛠️"
     },
     {
@@ -39,11 +33,18 @@ export const Skills = () => {
     }
   ];
 
-  // Animated scrolling tech stack
-  const techStack = [
-    "Python", "AWS", "Docker", "Jenkins", "Terraform", "Git", "Linux", "Bash", 
-    "Raspberry Pi", "NodeMCU", "MySQL", "C", "Java", "GitHub Actions", "VS Code", 
-    "Postman", "EC2", "S3", "IAM", "VPC", "RDS"
+  // Tech stack with realistic PNG icons
+  const techStackItems = [
+    { name: "AWS", icon: "/lovable-uploads/036260f5-9bb3-41a7-97e0-b93b6e9bffc8.png" },
+    { name: "Docker", icon: "/lovable-uploads/68259dad-8f38-484a-b7d2-b01660f8fedd.png" },
+    { name: "Kubernetes", icon: "/lovable-uploads/343a56d0-e000-4abc-9096-0110349dc94c.png" },
+    { name: "Jenkins", icon: "/lovable-uploads/360be116-f2c6-41ff-bb9b-7a4c7410fe1b.png" },
+    { name: "Python", icon: "/lovable-uploads/9b39be88-4611-4abc-bfca-12ea1d11a8b0.png" },
+    { name: "GitLab", icon: "/lovable-uploads/7ddce7b7-5a28-43a1-bc8c-8cecb287f87a.png" },
+    { name: "Git", icon: "/lovable-uploads/0d1df141-7d7b-46e7-b90d-e898fdbd87d3.png" },
+    { name: "Linux", icon: "/lovable-uploads/4d8aba1d-f539-4dfb-b468-1b302326a464.png" },
+    { name: "GitHub", icon: "/lovable-uploads/4ccdeafc-ce99-49d4-acbd-4efeb0d93437.png" },
+    { name: "Terraform", icon: "/lovable-uploads/96bd68fd-6b4c-4df1-bd62-5e5a8d5e3d79.png" }
   ];
 
   return (
@@ -71,19 +72,28 @@ export const Skills = () => {
           </h2>
           <div className="w-24 h-1 bg-gradient-to-r from-blue-400 to-purple-400 mx-auto rounded-full"></div>
           <p className="text-gray-400 mt-4 max-w-2xl mx-auto">
-            Expertise across the full DevOps and IoT development lifecycle
+            Expertise across the full DevOps and cloud development lifecycle
           </p>
         </div>
 
-        {/* Animated Scrolling Tech Stack */}
+        {/* Animated Scrolling Tech Stack with Real Icons */}
         <div className="mb-16 overflow-hidden">
-          <div className="flex animate-scroll space-x-4">
-            {[...techStack, ...techStack].map((tech, index) => (
+          <div className="flex animate-scroll space-x-6 hover:animation-play-state-paused">
+            {[...techStackItems, ...techStackItems].map((tech, index) => (
               <div
                 key={index}
-                className="flex-shrink-0 bg-gradient-to-r from-blue-600/20 to-purple-600/20 backdrop-blur-sm px-6 py-3 rounded-full border border-blue-500/30 text-blue-300 font-medium whitespace-nowrap hover:scale-105 hover:bg-blue-600/30 transition-all duration-300 cursor-default"
+                className="flex-shrink-0 group bg-gradient-to-r from-blue-600/20 to-purple-600/20 backdrop-blur-sm px-6 py-4 rounded-xl border border-blue-500/30 hover:scale-105 hover:bg-blue-600/30 transition-all duration-300 cursor-default min-w-[140px]"
               >
-                {tech}
+                <div className="flex flex-col items-center space-y-2">
+                  <img 
+                    src={tech.icon} 
+                    alt={tech.name} 
+                    className="w-8 h-8 object-contain group-hover:scale-110 transition-transform duration-300"
+                  />
+                  <span className="text-blue-300 font-medium text-sm whitespace-nowrap">
+                    {tech.name}
+                  </span>
+                </div>
               </div>
             ))}
           </div>
