@@ -1,7 +1,9 @@
 
+import { User, Target, Briefcase } from 'lucide-react';
+
 export const About = () => {
   return (
-    <section id="about" className="py-20 px-4">
+    <section id="about" className="py-20 px-4 bg-slate-800/20">
       <div className="max-w-6xl mx-auto">
         <div className="text-center mb-16">
           <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
@@ -11,60 +13,54 @@ export const About = () => {
         </div>
 
         <div className="grid lg:grid-cols-2 gap-12 items-center">
-          <div className="space-y-6">
-            <p className="text-lg text-gray-300 leading-relaxed">
-              Self-motivated and tech-savvy engineering graduate skilled in 
-              <span className="text-blue-400 font-semibold"> cloud computing</span>, 
-              <span className="text-blue-400 font-semibold"> automation</span>, and 
-              <span className="text-blue-400 font-semibold"> embedded systems</span>.
-            </p>
-            
-            <p className="text-lg text-gray-300 leading-relaxed">
-              I'm passionate about solving real-world problems with innovative technologies 
-              and delivering scalable solutions across industries. My expertise spans from 
-              DevOps automation to IoT innovations, always focusing on creating efficient 
-              and impactful solutions.
-            </p>
-
-            <div className="grid grid-cols-2 gap-6 pt-6">
-              <div className="text-center p-4 bg-slate-800/50 rounded-lg border border-slate-700">
-                <div className="text-3xl font-bold text-blue-400">9.36</div>
-                <div className="text-sm text-gray-400">CGPA</div>
-              </div>
-              <div className="text-center p-4 bg-slate-800/50 rounded-lg border border-slate-700">
-                <div className="text-3xl font-bold text-blue-400">3+</div>
-                <div className="text-sm text-gray-400">Projects</div>
+          {/* Profile Image - Left slide-in animation */}
+          <div className="relative animate-fade-in" style={{ animationDelay: '0.2s' }}>
+            <div className="relative group">
+              <div className="absolute -inset-4 bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl blur-lg opacity-30 group-hover:opacity-50 transition duration-300"></div>
+              <div className="relative bg-slate-900/80 rounded-2xl p-6 border border-blue-500/20">
+                <img 
+                  src="/lovable-uploads/0b946a78-e569-45ec-864a-288ec0656c4c.png" 
+                  alt="Onkar Chaugule"
+                  className="w-full h-80 object-cover rounded-xl"
+                />
               </div>
             </div>
           </div>
 
-          <div className="relative">
-            <div className="bg-gradient-to-r from-blue-600/20 to-purple-600/20 rounded-2xl p-8 backdrop-blur-sm border border-slate-700">
-              <div className="space-y-4">
-                <div className="flex items-center space-x-3">
-                  <div className="w-3 h-3 bg-blue-400 rounded-full"></div>
-                  <span className="text-gray-300">📧 onkarchougule501@gmail.com</span>
-                </div>
-                <div className="flex items-center space-x-3">
-                  <div className="w-3 h-3 bg-blue-400 rounded-full"></div>
-                  <span className="text-gray-300">📱 +91-9373261147</span>
-                </div>
-                <div className="flex items-center space-x-3">
-                  <div className="w-3 h-3 bg-blue-400 rounded-full"></div>
-                  <span className="text-gray-300">📍 Solapur, Maharashtra, India</span>
-                </div>
-                <div className="flex items-center space-x-3">
-                  <div className="w-3 h-3 bg-blue-400 rounded-full"></div>
-                  <a href="https://linkedin.com/in/onkar-chaugule" className="text-blue-400 hover:text-blue-300 transition-colors">
-                    LinkedIn Profile
-                  </a>
-                </div>
-                <div className="flex items-center space-x-3">
-                  <div className="w-3 h-3 bg-blue-400 rounded-full"></div>
-                  <a href="https://github.com/starboyonkar" className="text-blue-400 hover:text-blue-300 transition-colors">
-                    GitHub Profile
-                  </a>
-                </div>
+          {/* Content - Right fade-in animation */}
+          <div className="space-y-6 animate-fade-in" style={{ animationDelay: '0.4s' }}>
+            <div className="space-y-4">
+              <h3 className="text-2xl font-bold text-white mb-4">
+                Self-motivated and tech-savvy engineering graduate
+              </h3>
+              <p className="text-gray-300 text-lg leading-relaxed">
+                Passionate engineering graduate specialized in <span className="text-blue-400 font-semibold">cloud automation</span>, 
+                <span className="text-purple-400 font-semibold"> DevOps</span>, and <span className="text-blue-400 font-semibold">IoT systems</span>. 
+                Experienced in real-world deployments, containerization, and scalable app architecture.
+              </p>
+              <p className="text-gray-300 text-lg leading-relaxed">
+                Skilled in solving real-world problems with innovative technologies and delivering scalable solutions across industries.
+              </p>
+            </div>
+
+            {/* Key highlights */}
+            <div className="grid md:grid-cols-3 gap-6 mt-8">
+              <div className="bg-slate-900/50 p-4 rounded-lg border border-slate-700 hover:border-blue-500 transition-colors">
+                <User className="text-blue-400 mb-2" size={24} />
+                <h4 className="text-white font-semibold mb-1">Problem Solver</h4>
+                <p className="text-gray-400 text-sm">Innovative approach to complex challenges</p>
+              </div>
+              
+              <div className="bg-slate-900/50 p-4 rounded-lg border border-slate-700 hover:border-purple-500 transition-colors">
+                <Target className="text-purple-400 mb-2" size={24} />
+                <h4 className="text-white font-semibold mb-1">Detail Oriented</h4>
+                <p className="text-gray-400 text-sm">Precision in every project delivery</p>
+              </div>
+              
+              <div className="bg-slate-900/50 p-4 rounded-lg border border-slate-700 hover:border-green-500 transition-colors">
+                <Briefcase className="text-green-400 mb-2" size={24} />
+                <h4 className="text-white font-semibold mb-1">Team Player</h4>
+                <p className="text-gray-400 text-sm">Collaborative and adaptive mindset</p>
               </div>
             </div>
           </div>
