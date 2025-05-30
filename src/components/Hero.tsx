@@ -1,6 +1,6 @@
 
 import { useState, useEffect } from 'react';
-import { ArrowDown } from 'lucide-react';
+import { ArrowDown, Download, ExternalLink } from 'lucide-react';
 
 export const Hero = () => {
   const [currentText, setCurrentText] = useState(0);
@@ -8,7 +8,7 @@ export const Hero = () => {
   const texts = [
     "DevOps Engineer",
     "Cloud Enthusiast", 
-    "IoT Innovator"
+    "IoT Developer"
   ];
 
   useEffect(() => {
@@ -23,53 +23,91 @@ export const Hero = () => {
   };
 
   return (
-    <section id="home" className="min-h-screen flex items-center justify-center relative overflow-hidden">
-      {/* Animated background */}
+    <section id="home" className="min-h-screen flex items-center justify-center relative overflow-hidden bg-gradient-to-br from-slate-900 via-blue-900/20 to-slate-900">
+      {/* Animated background elements */}
       <div className="absolute inset-0">
-        <div className="absolute inset-0 bg-gradient-to-r from-blue-600/20 to-purple-600/20 animate-pulse"></div>
-        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl animate-float"></div>
-        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl animate-float-delay"></div>
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_80%,rgba(59,130,246,0.1),transparent_50%)] animate-pulse"></div>
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_80%_20%,rgba(168,85,247,0.1),transparent_50%)] animate-pulse" style={{ animationDelay: '1s' }}></div>
+        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-blue-500/5 rounded-full blur-3xl animate-float"></div>
+        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-purple-500/5 rounded-full blur-3xl animate-float-delay"></div>
+        
+        {/* Floating particles */}
+        {[...Array(6)].map((_, i) => (
+          <div
+            key={i}
+            className="absolute w-2 h-2 bg-blue-400/30 rounded-full animate-float"
+            style={{
+              left: `${20 + i * 15}%`,
+              top: `${30 + i * 10}%`,
+              animationDelay: `${i * 0.5}s`,
+              animationDuration: `${4 + i}s`
+            }}
+          ></div>
+        ))}
       </div>
 
-      <div className="relative z-10 text-center px-4 max-w-5xl mx-auto">
-        <div className="space-y-6 animate-fade-in">
-          <h1 className="text-5xl md:text-7xl font-bold text-white leading-tight">
-            Hi, I'm <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400">Onkar</span>
-          </h1>
-          
-          <div className="h-16 flex items-center justify-center">
-            <p className="text-2xl md:text-3xl text-gray-300 font-light">
-              <span className="text-blue-400 font-semibold transition-all duration-500">
-                {texts[currentText]}
-              </span>
-            </p>
+      <div className="relative z-10 text-center px-4 max-w-6xl mx-auto">
+        <div className="space-y-8 animate-fade-in">
+          {/* Main headline with glowing border */}
+          <div className="relative">
+            <div className="absolute -inset-4 bg-gradient-to-r from-blue-600 via-purple-600 to-blue-600 rounded-2xl blur-lg opacity-30 animate-pulse"></div>
+            <div className="relative bg-slate-900/80 backdrop-blur-sm rounded-2xl p-8 border border-blue-500/20">
+              <h1 className="text-4xl md:text-7xl font-bold text-white leading-tight mb-4">
+                Hi, I'm{' '}
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-purple-400 to-blue-400 animate-pulse">
+                  Onkar
+                </span>
+              </h1>
+              
+              <div className="h-16 flex items-center justify-center">
+                <p className="text-xl md:text-3xl text-gray-300 font-light">
+                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400 font-semibold transition-all duration-500">
+                    {texts[currentText]}
+                  </span>
+                </p>
+              </div>
+            </div>
           </div>
           
-          <p className="text-xl text-gray-400 max-w-3xl mx-auto leading-relaxed">
-            Passionate about solving real-world problems with innovative technologies 
-            and delivering scalable solutions across industries.
+          <p className="text-xl text-gray-400 max-w-4xl mx-auto leading-relaxed">
+            Passionate engineering graduate specialized in{' '}
+            <span className="text-blue-400 font-semibold">cloud automation</span>,{' '}
+            <span className="text-purple-400 font-semibold">DevOps</span>, and{' '}
+            <span className="text-blue-400 font-semibold">IoT systems</span>. 
+            Experienced in real-world deployments, containerization, and scalable app architecture.
           </p>
 
-          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center pt-8">
+          <div className="flex flex-col sm:flex-row gap-6 justify-center items-center pt-8">
             <button
               onClick={scrollToProjects}
-              className="px-8 py-4 bg-gradient-to-r from-blue-600 to-blue-500 text-white rounded-lg font-semibold hover:from-blue-700 hover:to-blue-600 transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-blue-500/25"
+              className="group relative px-8 py-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg font-semibold overflow-hidden transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-blue-500/25"
             >
-              View My Projects
+              <span className="relative z-10 flex items-center gap-2">
+                <ExternalLink size={20} />
+                Explore Projects
+              </span>
+              <div className="absolute inset-0 bg-gradient-to-r from-purple-600 to-blue-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
             </button>
             
             <a
               href="/resume.pdf"
-              className="px-8 py-4 border-2 border-blue-400 text-blue-400 rounded-lg font-semibold hover:bg-blue-400 hover:text-white transition-all duration-300 transform hover:scale-105"
+              className="group relative px-8 py-4 border-2 border-blue-400 text-blue-400 rounded-lg font-semibold hover:bg-blue-400 hover:text-white transition-all duration-300 transform hover:scale-105 flex items-center gap-2"
             >
+              <Download size={20} />
               Download Resume
+              <div className="absolute inset-0 bg-blue-400 opacity-0 group-hover:opacity-10 transition-opacity duration-300 rounded-lg"></div>
             </a>
           </div>
         </div>
 
-        {/* Scroll indicator */}
+        {/* Animated scroll indicator */}
         <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce">
-          <ArrowDown className="text-gray-400" size={24} />
+          <div className="flex flex-col items-center space-y-2">
+            <div className="w-6 h-10 border-2 border-gray-400 rounded-full flex justify-center">
+              <div className="w-1 h-2 bg-gray-400 rounded-full mt-2 animate-pulse"></div>
+            </div>
+            <ArrowDown className="text-gray-400" size={20} />
+          </div>
         </div>
       </div>
     </section>
