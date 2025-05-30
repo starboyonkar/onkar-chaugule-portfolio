@@ -39,6 +39,13 @@ export const Skills = () => {
     }
   ];
 
+  // Animated scrolling tech stack
+  const techStack = [
+    "Python", "AWS", "Docker", "Jenkins", "Terraform", "Git", "Linux", "Bash", 
+    "Raspberry Pi", "NodeMCU", "MySQL", "C", "Java", "GitHub Actions", "VS Code", 
+    "Postman", "EC2", "S3", "IAM", "VPC", "RDS"
+  ];
+
   return (
     <section id="skills" className="py-20 px-4 bg-slate-800/30 relative overflow-hidden">
       {/* Floating background elements */}
@@ -66,6 +73,20 @@ export const Skills = () => {
           <p className="text-gray-400 mt-4 max-w-2xl mx-auto">
             Expertise across the full DevOps and IoT development lifecycle
           </p>
+        </div>
+
+        {/* Animated Scrolling Tech Stack */}
+        <div className="mb-16 overflow-hidden">
+          <div className="flex animate-scroll space-x-4">
+            {[...techStack, ...techStack].map((tech, index) => (
+              <div
+                key={index}
+                className="flex-shrink-0 bg-gradient-to-r from-blue-600/20 to-purple-600/20 backdrop-blur-sm px-6 py-3 rounded-full border border-blue-500/30 text-blue-300 font-medium whitespace-nowrap hover:scale-105 hover:bg-blue-600/30 transition-all duration-300 cursor-default"
+              >
+                {tech}
+              </div>
+            ))}
+          </div>
         </div>
 
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">

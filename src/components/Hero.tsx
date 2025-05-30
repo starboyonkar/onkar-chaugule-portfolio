@@ -1,6 +1,6 @@
 
 import { useState, useEffect } from 'react';
-import { ArrowDown, Download, ExternalLink } from 'lucide-react';
+import { ArrowDown, Download, ExternalLink, Github, Linkedin, Mail, Instagram, Youtube } from 'lucide-react';
 
 export const Hero = () => {
   const [currentText, setCurrentText] = useState(0);
@@ -21,6 +21,39 @@ export const Hero = () => {
   const scrollToProjects = () => {
     document.getElementById('projects')?.scrollIntoView({ behavior: 'smooth' });
   };
+
+  const socialLinks = [
+    {
+      icon: Github,
+      href: "https://github.com/starboyonkar",
+      label: "GitHub",
+      color: "hover:text-gray-900 hover:bg-white"
+    },
+    {
+      icon: Linkedin,
+      href: "https://linkedin.com/in/onkar-chaugule",
+      label: "LinkedIn",
+      color: "hover:text-blue-600 hover:bg-blue-100"
+    },
+    {
+      icon: Mail,
+      href: "mailto:onkarchougule501@gmail.com",
+      label: "Gmail",
+      color: "hover:text-red-600 hover:bg-red-100"
+    },
+    {
+      icon: Instagram,
+      href: "https://instagram.com/onkar.chougule.73",
+      label: "Instagram",
+      color: "hover:text-pink-600 hover:bg-pink-100"
+    },
+    {
+      icon: Youtube,
+      href: "https://www.youtube.com/channel/UCpzZr2eg1lsB6yALzsBTUlQ",
+      label: "YouTube",
+      color: "hover:text-red-600 hover:bg-red-100"
+    }
+  ];
 
   return (
     <section id="home" className="min-h-screen flex items-center justify-center relative overflow-hidden bg-gradient-to-br from-slate-900 via-blue-900/20 to-slate-900">
@@ -48,17 +81,47 @@ export const Hero = () => {
 
       <div className="relative z-10 text-center px-4 max-w-6xl mx-auto">
         <div className="space-y-8 animate-fade-in">
+          {/* Profile Image */}
+          <div className="relative animate-slide-left" style={{ animationDelay: '0.2s' }}>
+            <div className="w-48 h-48 mx-auto relative group">
+              <div className="absolute -inset-4 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full blur-lg opacity-30 group-hover:opacity-50 transition duration-300"></div>
+              <img 
+                src="/lovable-uploads/0b946a78-e569-45ec-864a-288ec0656c4c.png"
+                alt="Onkar Chaugule"
+                className="relative w-full h-full object-cover rounded-full border-4 border-blue-500/20 shadow-2xl"
+              />
+            </div>
+          </div>
+
+          {/* Name */}
+          <div className="animate-fade-in" style={{ animationDelay: '0.4s' }}>
+            <h1 className="text-5xl md:text-6xl font-bold text-white mb-2">
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-purple-400 to-blue-400">
+                Onkar Chaugule
+              </span>
+            </h1>
+          </div>
+
+          {/* Social Icons */}
+          <div className="flex justify-center space-x-6 animate-fade-in" style={{ animationDelay: '0.6s' }}>
+            {socialLinks.map((social, index) => (
+              <a
+                key={social.label}
+                href={social.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={`group w-12 h-12 rounded-full bg-slate-800/50 backdrop-blur-sm border border-slate-700 flex items-center justify-center transition-all duration-300 transform hover:scale-110 hover:-translate-y-1 ${social.color}`}
+                style={{ animationDelay: `${0.7 + index * 0.1}s` }}
+              >
+                <social.icon size={20} className="transition-colors duration-300" />
+              </a>
+            ))}
+          </div>
+
           {/* Main headline with glowing border */}
-          <div className="relative">
+          <div className="relative animate-fade-in" style={{ animationDelay: '0.8s' }}>
             <div className="absolute -inset-4 bg-gradient-to-r from-blue-600 via-purple-600 to-blue-600 rounded-2xl blur-lg opacity-30 animate-pulse"></div>
             <div className="relative bg-slate-900/80 backdrop-blur-sm rounded-2xl p-8 border border-blue-500/20">
-              <h1 className="text-4xl md:text-7xl font-bold text-white leading-tight mb-4">
-                Hi, I'm{' '}
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-purple-400 to-blue-400 animate-pulse">
-                  Onkar
-                </span>
-              </h1>
-              
               <div className="h-16 flex items-center justify-center">
                 <p className="text-xl md:text-3xl text-gray-300 font-light">
                   <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400 font-semibold transition-all duration-500">
@@ -69,7 +132,7 @@ export const Hero = () => {
             </div>
           </div>
           
-          <p className="text-xl text-gray-400 max-w-4xl mx-auto leading-relaxed">
+          <p className="text-xl text-gray-400 max-w-4xl mx-auto leading-relaxed animate-fade-in" style={{ animationDelay: '1s' }}>
             Passionate engineering graduate specialized in{' '}
             <span className="text-blue-400 font-semibold">cloud automation</span>,{' '}
             <span className="text-purple-400 font-semibold">DevOps</span>, and{' '}
@@ -77,7 +140,7 @@ export const Hero = () => {
             Experienced in real-world deployments, containerization, and scalable app architecture.
           </p>
 
-          <div className="flex flex-col sm:flex-row gap-6 justify-center items-center pt-8">
+          <div className="flex flex-col sm:flex-row gap-6 justify-center items-center pt-8 animate-fade-in" style={{ animationDelay: '1.2s' }}>
             <button
               onClick={scrollToProjects}
               className="group relative px-8 py-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg font-semibold overflow-hidden transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-blue-500/25"
@@ -90,7 +153,7 @@ export const Hero = () => {
             </button>
             
             <a
-              href="/resume.pdf"
+              href="#resume"
               className="group relative px-8 py-4 border-2 border-blue-400 text-blue-400 rounded-lg font-semibold hover:bg-blue-400 hover:text-white transition-all duration-300 transform hover:scale-105 flex items-center gap-2"
             >
               <Download size={20} />

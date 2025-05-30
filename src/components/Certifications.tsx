@@ -119,20 +119,23 @@ export const Certifications = () => {
           {filteredCertifications.map((cert, index) => (
             <div
               key={index}
-              className="group bg-slate-900/50 rounded-xl border border-slate-700 hover:border-slate-600 transition-all duration-300 hover:transform hover:scale-105 overflow-hidden animate-fade-in"
+              className="group bg-slate-900/50 rounded-xl border border-slate-700 hover:border-slate-600 transition-all duration-300 hover:transform hover:scale-105 overflow-hidden animate-zoom-in"
               style={{ animationDelay: `${index * 100}ms` }}
             >
               {/* Certificate Image */}
-              <div className="relative h-48 overflow-hidden">
+              <div className="relative h-64 overflow-hidden cursor-pointer" onClick={() => openModal(cert)}>
                 <img 
                   src={cert.image}
                   alt={cert.title}
-                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                  className="w-full h-full object-contain bg-white p-2 group-hover:scale-110 transition-transform duration-300"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-slate-900/80 to-transparent"></div>
+                <div className="absolute inset-0 bg-gradient-to-t from-slate-900/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                 <button
-                  onClick={() => openModal(cert)}
-                  className="absolute top-4 right-4 w-10 h-10 bg-black/50 backdrop-blur-sm rounded-full flex items-center justify-center text-white hover:bg-black/70 transition-colors"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    openModal(cert);
+                  }}
+                  className="absolute top-4 right-4 w-10 h-10 bg-black/50 backdrop-blur-sm rounded-full flex items-center justify-center text-white hover:bg-black/70 transition-colors opacity-0 group-hover:opacity-100"
                 >
                   <Eye size={16} />
                 </button>
