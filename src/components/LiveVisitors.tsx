@@ -34,7 +34,7 @@ export const LiveVisitors = () => {
   useEffect(() => {
     if (!globeRef.current) return;
 
-    // Create globe instance with new keyword
+    // Create globe instance with enhanced styling
     const globe = new Globe(globeRef.current)
       .globeImageUrl('//unpkg.com/three-globe/example/img/earth-night.jpg')
       .bumpImageUrl('//unpkg.com/three-globe/example/img/earth-topology.png')
@@ -43,19 +43,37 @@ export const LiveVisitors = () => {
       .height(400)
       .enablePointerInteraction(true);
 
-    // Set atmosphere properties
+    // Enhanced atmosphere and material properties
     globe
       .atmosphereColor('#4A90E2')
-      .atmosphereAltitude(0.1);
+      .atmosphereAltitude(0.15)
+      .showGlobe(true)
+      .showAtmosphere(true);
 
     // Store globe instance
     globeInstance.current = globe;
 
-    // Auto-rotate
+    // Enhanced auto-rotate with smoother controls
     if (globe.controls) {
       globe.controls().autoRotate = true;
-      globe.controls().autoRotateSpeed = 0.5;
+      globe.controls().autoRotateSpeed = 0.3;
       globe.controls().enableZoom = true;
+      globe.controls().enablePan = false;
+      globe.controls().minDistance = 200;
+      globe.controls().maxDistance = 800;
+    }
+
+    // Custom lighting
+    const scene = globe.scene();
+    if (scene) {
+      // Add ambient light
+      const ambientLight = new (window as any).THREE.AmbientLight(0x404040, 0.6);
+      scene.add(ambientLight);
+      
+      // Add directional light
+      const directionalLight = new (window as any).THREE.DirectionalLight(0xffffff, 0.8);
+      directionalLight.position.set(5, 3, 5);
+      scene.add(directionalLight);
     }
 
     return () => {
@@ -187,7 +205,7 @@ export const LiveVisitors = () => {
 
   return (
     <section className="py-20 px-4 bg-slate-900/30 backdrop-blur-sm relative overflow-hidden">
-      {/* Background effects */}
+      {/* Enhanced background effects */}
       <div className="absolute inset-0 bg-gradient-to-b from-blue-900/10 to-purple-900/10"></div>
       <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-blue-500/5 rounded-full blur-3xl animate-float"></div>
       <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-purple-500/5 rounded-full blur-3xl animate-float-delay"></div>
@@ -195,7 +213,7 @@ export const LiveVisitors = () => {
       <div className="max-w-6xl mx-auto relative z-10">
         {/* Section Header */}
         <div className="text-center mb-12 animate-fade-in">
-          <h2 className="text-4xl md:text-5xl font-bold mb-4 neon-text font-futuristic bg-gradient-to-r from-cyan-400 via-blue-400 to-purple-400 bg-clip-text text-transparent">
+          <h2 className="text-4xl md:text-5xl font-bold mb-4 neon-text font-futuristic bg-gradient-to-r from-cyan-400 via-blue-400 to-purple-400 bg-clip-text text-transparent glassmorphic-bg p-4 rounded-xl backdrop-blur-md">
             Live Visitors Around the World
           </h2>
           <p className="text-xl text-gray-300 mb-8">
@@ -204,7 +222,7 @@ export const LiveVisitors = () => {
           
           {/* Stats Cards */}
           <div className="grid md:grid-cols-3 gap-6 mb-8">
-            <div className="bg-slate-900/50 backdrop-blur-md p-6 rounded-xl border border-blue-500/20 glassmorphic-bg">
+            <div className="bg-slate-900/50 backdrop-blur-md p-6 rounded-xl border border-blue-500/20 glassmorphic-bg hover:border-blue-400/40 transition-all duration-300">
               <div className="flex items-center justify-center gap-3 mb-2">
                 <Eye className="text-blue-400" size={24} />
                 <span className="text-2xl font-bold text-white font-futuristic">{stats.totalToday}</span>
@@ -212,7 +230,7 @@ export const LiveVisitors = () => {
               <p className="text-gray-400">Visitors Today</p>
             </div>
             
-            <div className="bg-slate-900/50 backdrop-blur-md p-6 rounded-xl border border-green-500/20 glassmorphic-bg">
+            <div className="bg-slate-900/50 backdrop-blur-md p-6 rounded-xl border border-green-500/20 glassmorphic-bg hover:border-green-400/40 transition-all duration-300">
               <div className="flex items-center justify-center gap-3 mb-2">
                 <Users className="text-green-400" size={24} />
                 <span className="text-2xl font-bold text-white font-futuristic">{stats.liveNow}</span>
@@ -220,7 +238,7 @@ export const LiveVisitors = () => {
               <p className="text-gray-400">Live Now</p>
             </div>
             
-            <div className="bg-slate-900/50 backdrop-blur-md p-6 rounded-xl border border-purple-500/20 glassmorphic-bg">
+            <div className="bg-slate-900/50 backdrop-blur-md p-6 rounded-xl border border-purple-500/20 glassmorphic-bg hover:border-purple-400/40 transition-all duration-300">
               <div className="flex items-center justify-center gap-3 mb-2">
                 <GlobeIcon className="text-purple-400" size={24} />
                 <span className="text-2xl font-bold text-white font-futuristic">{stats.countries}</span>
@@ -230,14 +248,21 @@ export const LiveVisitors = () => {
           </div>
         </div>
 
-        {/* Globe Container */}
+        {/* Enhanced Globe Container */}
         <div className="relative">
-          <div className="bg-slate-900/30 backdrop-blur-md rounded-2xl p-6 border border-blue-500/20 overflow-hidden">
+          <div className="bg-slate-900/30 backdrop-blur-md rounded-2xl p-6 border border-blue-500/20 overflow-hidden shadow-2xl">
+            {/* Globe with enhanced container styling */}
             <div 
               ref={globeRef} 
-              className="w-full h-[400px] rounded-xl overflow-hidden"
-              style={{ background: 'radial-gradient(circle, #0f1419 0%, #000 100%)' }}
+              className="w-full h-[400px] rounded-xl overflow-hidden relative"
+              style={{ 
+                background: 'radial-gradient(circle at center, rgba(59, 130, 246, 0.1) 0%, rgba(0, 0, 0, 0.9) 100%)',
+                boxShadow: 'inset 0 0 50px rgba(59, 130, 246, 0.2)'
+              }}
             />
+            
+            {/* Glow overlay */}
+            <div className="absolute inset-6 rounded-xl pointer-events-none bg-gradient-to-t from-blue-500/10 via-transparent to-purple-500/10"></div>
           </div>
           
           {/* Recent Visitor Notification */}
