@@ -4,6 +4,7 @@ import { ArrowDown, Download, ExternalLink, Github, Linkedin, Mail, Instagram, Y
 
 export const Hero = () => {
   const [currentText, setCurrentText] = useState(0);
+  const [isResumeModalOpen, setIsResumeModalOpen] = useState(false);
   
   const texts = [
     "DevOps Engineer",
@@ -20,6 +21,14 @@ export const Hero = () => {
 
   const scrollToProjects = () => {
     document.getElementById('projects')?.scrollIntoView({ behavior: 'smooth' });
+  };
+
+  const openResumeModal = () => {
+    setIsResumeModalOpen(true);
+  };
+
+  const closeResumeModal = () => {
+    setIsResumeModalOpen(false);
   };
 
   const handleResumeDownload = () => {
@@ -93,7 +102,7 @@ export const Hero = () => {
             <div className="w-48 h-48 mx-auto relative group">
               <div className="absolute -inset-4 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full blur-lg opacity-30 group-hover:opacity-50 transition duration-300"></div>
               <img 
-                src="/lovable-uploads/0b946a78-e569-45ec-864a-288ec0656c4c.png"
+                src="/lovable-uploads/d25e290a-ddff-4ce4-b2a3-0f85cb561d65.png"
                 alt="Onkar Chaugule"
                 className="relative w-full h-full object-cover rounded-full border-4 border-blue-500/20 shadow-2xl"
               />
@@ -104,13 +113,13 @@ export const Hero = () => {
             </div>
           </div>
 
-          {/* Personalized Greeting */}
+          {/* Personalized Greeting with Futuristic Typography */}
           <div className="animate-fade-in" style={{ animationDelay: '0.4s' }}>
-            <h1 className="text-4xl md:text-5xl font-light text-gray-300 mb-2">
+            <h1 className="text-4xl md:text-5xl font-light text-gray-300 mb-2 font-mono tracking-wider">
               Hello, I'm
             </h1>
-            <h2 className="text-5xl md:text-6xl font-bold text-white mb-4">
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-purple-400 to-blue-400">
+            <h2 className="text-5xl md:text-6xl font-bold mb-4 font-mono tracking-wide">
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-blue-400 to-purple-400 neon-text">
                 Onkar Chaugule
               </span>
             </h2>
@@ -132,13 +141,13 @@ export const Hero = () => {
             ))}
           </div>
 
-          {/* Role headline with glowing border */}
+          {/* Role headline with glassmorphic background */}
           <div className="relative animate-fade-in" style={{ animationDelay: '0.8s' }}>
             <div className="absolute -inset-4 bg-gradient-to-r from-blue-600 via-purple-600 to-blue-600 rounded-2xl blur-lg opacity-30 animate-pulse"></div>
-            <div className="relative bg-slate-900/80 backdrop-blur-sm rounded-2xl p-8 border border-blue-500/20">
+            <div className="relative glassmorphic rounded-2xl p-8 border border-blue-500/20">
               <div className="h-16 flex items-center justify-center">
-                <p className="text-xl md:text-3xl text-gray-300 font-light">
-                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400 font-semibold transition-all duration-500">
+                <p className="text-xl md:text-3xl text-cyan-100 font-mono tracking-wider">
+                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-purple-400 font-semibold transition-all duration-500 neon-text">
                     {texts[currentText]}
                   </span>
                 </p>
@@ -146,18 +155,18 @@ export const Hero = () => {
             </div>
           </div>
           
-          <p className="text-xl text-gray-400 max-w-4xl mx-auto leading-relaxed animate-fade-in" style={{ animationDelay: '1s' }}>
+          <p className="text-xl text-gray-300 max-w-4xl mx-auto leading-relaxed animate-fade-in font-mono" style={{ animationDelay: '1s' }}>
             Passionate engineering graduate specialized in{' '}
-            <span className="text-blue-400 font-semibold">cloud automation</span>,{' '}
-            <span className="text-purple-400 font-semibold">DevOps</span>, and{' '}
-            <span className="text-blue-400 font-semibold">IoT systems</span>. 
+            <span className="text-cyan-400 font-semibold neon-text">cloud automation</span>,{' '}
+            <span className="text-purple-400 font-semibold neon-text">DevOps</span>, and{' '}
+            <span className="text-blue-400 font-semibold neon-text">IoT systems</span>. 
             Experienced in real-world deployments, containerization, and scalable app architecture.
           </p>
 
           <div className="flex flex-col sm:flex-row gap-6 justify-center items-center pt-8 animate-fade-in" style={{ animationDelay: '1.2s' }}>
             <button
               onClick={scrollToProjects}
-              className="group relative px-8 py-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg font-semibold overflow-hidden transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-blue-500/25"
+              className="group relative px-8 py-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg font-mono font-semibold overflow-hidden transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-blue-500/25"
             >
               <span className="relative z-10 flex items-center gap-2">
                 <ExternalLink size={20} />
@@ -167,12 +176,12 @@ export const Hero = () => {
             </button>
             
             <button
-              onClick={handleResumeDownload}
-              className="group relative px-8 py-4 border-2 border-blue-400 text-blue-400 rounded-lg font-semibold hover:bg-blue-400 hover:text-white transition-all duration-300 transform hover:scale-105 flex items-center gap-2"
+              onClick={openResumeModal}
+              className="group relative px-8 py-4 border-2 border-cyan-400 text-cyan-400 rounded-lg font-mono font-semibold hover:bg-cyan-400 hover:text-black transition-all duration-300 transform hover:scale-105 flex items-center gap-2 glassmorphic"
             >
               <Download size={20} />
               Download Resume
-              <div className="absolute inset-0 bg-blue-400 opacity-0 group-hover:opacity-10 transition-opacity duration-300 rounded-lg"></div>
+              <div className="absolute inset-0 bg-cyan-400 opacity-0 group-hover:opacity-10 transition-opacity duration-300 rounded-lg"></div>
             </button>
           </div>
         </div>
@@ -187,6 +196,52 @@ export const Hero = () => {
           </div>
         </div>
       </div>
+
+      {/* Resume Preview Modal */}
+      {isResumeModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          {/* Backdrop */}
+          <div 
+            className="absolute inset-0 bg-black/80 backdrop-blur-sm"
+            onClick={closeResumeModal}
+          />
+          
+          {/* Modal */}
+          <div className="relative glassmorphic rounded-2xl border border-cyan-500/30 max-w-4xl w-full max-h-[90vh] overflow-hidden animate-scale-in">
+            {/* Header */}
+            <div className="flex justify-between items-center p-6 border-b border-cyan-500/20">
+              <div>
+                <h3 className="text-xl font-semibold text-cyan-100 font-mono">Resume Preview</h3>
+                <p className="text-gray-400 font-mono">Onkar Chaugule - DevOps Engineer</p>
+              </div>
+              <div className="flex items-center gap-3">
+                <button
+                  onClick={handleResumeDownload}
+                  className="px-4 py-2 bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-700 hover:to-blue-700 text-white rounded-lg flex items-center gap-2 transition-colors duration-300 font-mono"
+                >
+                  <Download size={16} />
+                  Download
+                </button>
+                <button
+                  onClick={closeResumeModal}
+                  className="w-10 h-10 rounded-lg bg-slate-800/80 hover:bg-slate-700/80 transition-colors flex items-center justify-center text-gray-400 hover:text-white"
+                >
+                  ×
+                </button>
+              </div>
+            </div>
+            
+            {/* Resume Image */}
+            <div className="p-6 max-h-[calc(90vh-140px)] overflow-y-auto">
+              <img 
+                src="/lovable-uploads/117c0e0f-e3ee-4663-ae57-fed86ea856fa.png"
+                alt="Onkar Chaugule Resume"
+                className="w-full h-auto rounded-lg shadow-2xl"
+              />
+            </div>
+          </div>
+        </div>
+      )}
     </section>
   );
 };
