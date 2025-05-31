@@ -1,33 +1,36 @@
+
 import { User, Target, Briefcase } from 'lucide-react';
+
 export const About = () => {
-  return <section id="about" className="py-20 px-4 bg-slate-800/20">
+  return (
+    <section id="about" className="py-20 px-4 bg-slate-800/20">
       <div className="max-w-6xl mx-auto">
         <div className="text-center mb-16">
-          <h2 className="text-4xl md:text-5xl font-bold mb-2 neon-text font-futuristic bg-gradient-to-r from-cyan-400 via-blue-400 to-purple-400 bg-clip-text text-transparent">
+          <h2 className="text-4xl md:text-5xl font-bold mb-4 neon-text font-futuristic bg-gradient-to-r from-cyan-400 via-blue-400 to-purple-400 bg-clip-text text-transparent glassmorphic-bg p-4 rounded-xl backdrop-blur-md">
             About <span className="text-blue-400">Me</span>
           </h2>
           <div className="w-24 h-1 bg-gradient-to-r from-blue-400 to-purple-400 mx-auto rounded-full"></div>
         </div>
 
         <div className="grid lg:grid-cols-2 gap-12 items-center">
-          {/* Profile Image - Left slide-in animation */}
-          <div className="relative animate-fade-in" style={{
-          animationDelay: '0.2s'
-        }}>
+          {/* Profile Image - Full size display */}
+          <div className="relative animate-fade-in" style={{ animationDelay: '0.2s' }}>
             <div className="relative group">
               <div className="absolute -inset-4 bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl blur-lg opacity-30 group-hover:opacity-50 transition duration-300"></div>
-              <div className="relative bg-slate-900/80 backdrop-blur-md rounded-2xl p-6 border border-blue-500/20">
-                <img alt="Onkar Chaugule Professional Photo" className="w-full h-80 object-cover rounded-xl" src="/lovable-uploads/033cbc55-576d-40f1-a25f-d4c267b999dc.png" />
+              <div className="relative bg-slate-900/80 backdrop-blur-md rounded-2xl p-4 border border-blue-500/20">
+                <img 
+                  alt="Onkar Chaugule Professional Photo" 
+                  className="w-full h-auto object-contain rounded-xl max-h-[600px]" 
+                  src="/lovable-uploads/0115fba9-2f81-4cb9-a5ea-ffd535615a1e.png" 
+                />
               </div>
             </div>
           </div>
 
           {/* Content - Right fade-in animation */}
-          <div className="space-y-6 animate-fade-in" style={{
-          animationDelay: '0.4s'
-        }}>
+          <div className="space-y-6 animate-fade-in" style={{ animationDelay: '0.4s' }}>
             <div className="space-y-4">
-              <h3 className="text-4xl font-bold mb-2 neon-text font-futuristic bg-gradient-to-r from-cyan-300 to-blue-300 bg-clip-text text-transparent">
+              <h3 className="text-4xl font-bold mb-4 neon-text font-futuristic bg-gradient-to-r from-cyan-300 to-blue-300 bg-clip-text text-transparent glassmorphic-bg p-4 rounded-xl backdrop-blur-md">
                 Self-motivated and tech-savvy engineering graduate
               </h3>
               <p className="text-gray-300 text-lg leading-relaxed">
@@ -63,5 +66,6 @@ export const About = () => {
           </div>
         </div>
       </div>
-    </section>;
+    </section>
+  );
 };
