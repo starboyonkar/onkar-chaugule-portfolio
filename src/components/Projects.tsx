@@ -1,3 +1,4 @@
+
 import { Github, ExternalLink, Play } from 'lucide-react';
 
 export const Projects = () => {
@@ -8,9 +9,10 @@ export const Projects = () => {
       tech: ["Python", "PyQt5", "Spotify API", "FFT", "Voice Recognition"],
       github: "https://github.com/starboyonkar",
       demo: "https://youtube.com",
-      image: "🎵",
+      image: "/lovable-uploads/0115fba9-2f81-4cb9-a5ea-ffd535615a1e.png",
       color: "from-blue-500 to-purple-500",
-      featured: true
+      featured: true,
+      isImageUrl: true
     },
     {
       title: "AI-Based Smart Irrigation System",
@@ -20,7 +22,8 @@ export const Projects = () => {
       demo: null,
       image: "🌱",
       color: "from-green-500 to-emerald-500",
-      featured: true
+      featured: true,
+      isImageUrl: false
     },
     {
       title: "Autonomous Underwater Vehicle (AUV)",
@@ -30,7 +33,8 @@ export const Projects = () => {
       demo: null,
       image: "🤖",
       color: "from-cyan-500 to-blue-500",
-      featured: false
+      featured: false,
+      isImageUrl: false
     },
     {
       title: "Cognitive Audio Enhancement System",
@@ -40,7 +44,8 @@ export const Projects = () => {
       demo: null,
       image: "🔊",
       color: "from-purple-500 to-pink-500",
-      featured: false
+      featured: false,
+      isImageUrl: false
     },
     {
       title: "Weather Monitoring Dashboard",
@@ -50,7 +55,8 @@ export const Projects = () => {
       demo: null,
       image: "🌤️",
       color: "from-yellow-500 to-orange-500",
-      featured: false
+      featured: false,
+      isImageUrl: false
     }
   ];
 
@@ -64,8 +70,8 @@ export const Projects = () => {
 
       <div className="max-w-7xl mx-auto relative z-10">
         <div className="text-center mb-16">
-          <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
-            Featured <span className="text-blue-400">Projects</span>
+          <h2 className="text-4xl md:text-5xl font-bold text-white mb-6 font-futuristic">
+            Featured <span className="bg-gradient-to-r from-cyan-400 via-blue-400 to-purple-400 bg-clip-text text-transparent">Projects</span>
           </h2>
           <div className="w-24 h-1 bg-gradient-to-r from-blue-400 to-purple-400 mx-auto rounded-full"></div>
           <p className="text-gray-400 mt-4 max-w-2xl mx-auto">
@@ -78,20 +84,28 @@ export const Projects = () => {
           {projects.filter(p => p.featured).map((project, index) => (
             <div
               key={index}
-              className="group relative bg-slate-900/50 rounded-2xl overflow-hidden border border-slate-700 hover:border-slate-600 transition-all duration-500 hover:transform hover:scale-105"
+              className="group relative bg-slate-900/50 backdrop-blur-md rounded-2xl overflow-hidden border border-slate-700 hover:border-slate-600 transition-all duration-500 hover:transform hover:scale-105"
               style={{ animationDelay: `${index * 200}ms` }}
             >
-              {/* Project header with gradient */}
-              <div className={`h-56 bg-gradient-to-br ${project.color} relative overflow-hidden`}>
+              {/* Project header with gradient or image */}
+              <div className={`h-56 ${!project.isImageUrl ? `bg-gradient-to-br ${project.color}` : 'bg-slate-800'} relative overflow-hidden`}>
                 <div className="absolute inset-0 bg-black/20 group-hover:bg-black/10 transition-all duration-300"></div>
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <div className="text-8xl opacity-80 group-hover:scale-110 transition-transform duration-500">
-                    {project.image}
-                  </div>
+                <div className="absolute inset-0 flex items-center justify-center p-4">
+                  {project.isImageUrl ? (
+                    <img 
+                      src={project.image} 
+                      alt={project.title}
+                      className="w-full h-full object-contain rounded-lg group-hover:scale-105 transition-transform duration-500"
+                    />
+                  ) : (
+                    <div className="text-8xl opacity-80 group-hover:scale-110 transition-transform duration-500">
+                      {project.image}
+                    </div>
+                  )}
                 </div>
                 
-                {/* Floating particles */}
-                {[...Array(5)].map((_, i) => (
+                {/* Floating particles for non-image projects */}
+                {!project.isImageUrl && [...Array(5)].map((_, i) => (
                   <div
                     key={i}
                     className="absolute w-2 h-2 bg-white/20 rounded-full animate-float"
@@ -106,7 +120,7 @@ export const Projects = () => {
               </div>
               
               <div className="p-6">
-                <h3 className="text-xl font-semibold text-white mb-3 group-hover:text-blue-400 transition-colors duration-300">
+                <h3 className="text-xl font-semibold text-white mb-3 group-hover:text-blue-400 transition-colors duration-300 font-futuristic">
                   {project.title}
                 </h3>
                 
@@ -158,7 +172,7 @@ export const Projects = () => {
           {projects.filter(p => !p.featured).map((project, index) => (
             <div
               key={index}
-              className="group bg-slate-900/50 rounded-xl overflow-hidden border border-slate-700 hover:border-slate-600 transition-all duration-300 hover:transform hover:scale-105"
+              className="group bg-slate-900/50 backdrop-blur-md rounded-xl overflow-hidden border border-slate-700 hover:border-slate-600 transition-all duration-300 hover:transform hover:scale-105"
             >
               <div className={`h-32 bg-gradient-to-br ${project.color} flex items-center justify-center relative`}>
                 <div className="text-4xl opacity-80">{project.image}</div>
@@ -166,7 +180,7 @@ export const Projects = () => {
               </div>
               
               <div className="p-4">
-                <h3 className="text-lg font-semibold text-white mb-2 group-hover:text-blue-400 transition-colors">
+                <h3 className="text-lg font-semibold text-white mb-2 group-hover:text-blue-400 transition-colors font-futuristic">
                   {project.title}
                 </h3>
                 

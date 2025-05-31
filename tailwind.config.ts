@@ -19,6 +19,9 @@ export default {
       },
     },
     extend: {
+      fontFamily: {
+        'futuristic': ['Orbitron', 'monospace'],
+      },
       colors: {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
@@ -141,6 +144,14 @@ export default {
           "100%": {
             transform: "translateX(-50%)"
           }
+        },
+        "scroll-fast": {
+          "0%": {
+            transform: "translateX(0%)"
+          },
+          "100%": {
+            transform: "translateX(-50%)"
+          }
         }
       },
       animation: {
@@ -153,7 +164,8 @@ export default {
         "zoom-in": "zoom-in 0.5s ease-out forwards",
         "float": "float 6s ease-in-out infinite",
         "float-delay": "float-delay 8s ease-in-out infinite",
-        "scroll": "scroll 30s linear infinite"
+        "scroll": "scroll 30s linear infinite",
+        "scroll-fast": "scroll-fast 15s linear infinite"
       },
       animationPlayState: {
         'paused': 'paused',

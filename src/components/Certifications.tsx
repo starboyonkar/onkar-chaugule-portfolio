@@ -13,11 +13,11 @@ export const Certifications = () => {
       title: "DevOps Intern Certificate",
       organization: "MyWebRide Technology",
       type: "Internship",
-      date: "Feb 2025 - Apr 2025",
+      date: "Feb 2025 - May 2025",
       category: "DevOps",
       description: "Hands-on experience with CI/CD pipelines, containerization, and cloud deployment strategies.",
       skills: ["Docker", "Jenkins", "AWS", "Git"],
-      image: "/lovable-uploads/fa6f3981-37a8-42a2-a55f-9acdcf5332e0.png",
+      image: "/lovable-uploads/2e93b003-b61b-4c6f-96c0-63ba227135fe.png",
       color: "from-blue-500 to-cyan-500"
     },
     {
@@ -86,8 +86,8 @@ export const Certifications = () => {
     <section id="certifications" className="py-20 px-4 bg-slate-800/20">
       <div className="max-w-6xl mx-auto">
         <div className="text-center mb-16">
-          <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
-            Certifications & <span className="text-blue-400">Experience</span>
+          <h2 className="text-4xl md:text-5xl font-bold text-white mb-6 font-futuristic">
+            Certifications & <span className="bg-gradient-to-r from-cyan-400 via-blue-400 to-purple-400 bg-clip-text text-transparent">Experience</span>
           </h2>
           <div className="w-24 h-1 bg-gradient-to-r from-blue-400 to-purple-400 mx-auto rounded-full"></div>
           <p className="text-gray-400 mt-4 max-w-2xl mx-auto">
@@ -97,12 +97,12 @@ export const Certifications = () => {
 
         {/* Filter Tabs */}
         <div className="flex justify-center mb-12">
-          <div className="bg-slate-900/50 rounded-lg p-1 border border-slate-700">
+          <div className="bg-slate-900/50 backdrop-blur-md rounded-lg p-1 border border-slate-700">
             {categories.map((category) => (
               <button
                 key={category}
                 onClick={() => setActiveFilter(category)}
-                className={`px-6 py-2 rounded-md font-medium transition-all duration-300 ${
+                className={`px-6 py-2 rounded-md font-medium transition-all duration-300 font-futuristic ${
                   activeFilter === category
                     ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-lg'
                     : 'text-gray-400 hover:text-white hover:bg-slate-800'
@@ -119,7 +119,7 @@ export const Certifications = () => {
           {filteredCertifications.map((cert, index) => (
             <div
               key={index}
-              className="group bg-slate-900/50 rounded-xl border border-slate-700 hover:border-slate-600 transition-all duration-300 hover:transform hover:scale-105 overflow-hidden animate-zoom-in"
+              className="group bg-slate-900/50 backdrop-blur-md rounded-xl border border-slate-700 hover:border-slate-600 transition-all duration-300 hover:transform hover:scale-105 overflow-hidden animate-zoom-in"
               style={{ animationDelay: `${index * 100}ms` }}
             >
               {/* Certificate Image */}
@@ -156,7 +156,7 @@ export const Certifications = () => {
                 </div>
 
                 {/* Title and organization */}
-                <h3 className="text-xl font-semibold text-white mb-2 group-hover:text-blue-400 transition-colors">
+                <h3 className="text-xl font-semibold text-white mb-2 group-hover:text-blue-400 transition-colors font-futuristic">
                   {cert.title}
                 </h3>
                 

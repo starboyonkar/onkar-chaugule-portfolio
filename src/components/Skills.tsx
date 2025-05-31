@@ -67,8 +67,8 @@ export const Skills = () => {
 
       <div className="max-w-6xl mx-auto relative z-10">
         <div className="text-center mb-16">
-          <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
-            Tech Stack & <span className="text-blue-400">Skills</span>
+          <h2 className="text-4xl md:text-5xl font-bold text-white mb-6 font-futuristic">
+            Tech Stack & <span className="bg-gradient-to-r from-cyan-400 via-blue-400 to-purple-400 bg-clip-text text-transparent">Skills</span>
           </h2>
           <div className="w-24 h-1 bg-gradient-to-r from-blue-400 to-purple-400 mx-auto rounded-full"></div>
           <p className="text-gray-400 mt-4 max-w-2xl mx-auto">
@@ -76,21 +76,21 @@ export const Skills = () => {
           </p>
         </div>
 
-        {/* Animated Scrolling Tech Stack with Real Icons */}
+        {/* Fast Animated Scrolling Tech Stack with Real Icons */}
         <div className="mb-16 overflow-hidden">
-          <div className="flex animate-scroll space-x-6 hover:animation-play-state-paused">
-            {[...techStackItems, ...techStackItems].map((tech, index) => (
+          <div className="flex animate-scroll-fast space-x-8">
+            {[...techStackItems, ...techStackItems, ...techStackItems].map((tech, index) => (
               <div
                 key={index}
-                className="flex-shrink-0 group bg-gradient-to-r from-blue-600/20 to-purple-600/20 backdrop-blur-sm px-6 py-4 rounded-xl border border-blue-500/30 hover:scale-105 hover:bg-blue-600/30 transition-all duration-300 cursor-default min-w-[140px]"
+                className="flex-shrink-0 group bg-gradient-to-r from-blue-600/20 to-purple-600/20 backdrop-blur-md px-8 py-6 rounded-xl border border-blue-500/30 hover:scale-110 hover:bg-blue-600/30 transition-all duration-300 cursor-default min-w-[160px]"
               >
-                <div className="flex flex-col items-center space-y-2">
+                <div className="flex flex-col items-center space-y-3">
                   <img 
                     src={tech.icon} 
                     alt={tech.name} 
-                    className="w-8 h-8 object-contain group-hover:scale-110 transition-transform duration-300"
+                    className="w-12 h-12 object-contain group-hover:scale-125 transition-transform duration-300"
                   />
-                  <span className="text-blue-300 font-medium text-sm whitespace-nowrap">
+                  <span className="text-cyan-300 font-medium text-base whitespace-nowrap font-futuristic">
                     {tech.name}
                   </span>
                 </div>
@@ -103,7 +103,7 @@ export const Skills = () => {
           {skillCategories.map((category, index) => (
             <div
               key={category.title}
-              className="group relative bg-slate-900/50 p-6 rounded-xl border border-slate-700 hover:border-slate-600 transition-all duration-500 hover:transform hover:scale-105 hover:rotate-1"
+              className="group relative bg-slate-900/50 backdrop-blur-md p-6 rounded-xl border border-slate-700 hover:border-slate-600 transition-all duration-500 hover:transform hover:scale-105 hover:rotate-1"
               style={{ animationDelay: `${index * 100}ms` }}
             >
               {/* 3D effect background */}
@@ -118,7 +118,7 @@ export const Skills = () => {
                   <div className={`w-14 h-14 rounded-lg bg-gradient-to-r ${category.color} flex items-center justify-center text-2xl mr-4 transform group-hover:scale-110 transition-transform duration-300`}>
                     {category.icon}
                   </div>
-                  <h3 className="text-xl font-semibold text-white group-hover:text-blue-400 transition-colors duration-300">
+                  <h3 className="text-xl font-semibold text-white group-hover:text-blue-400 transition-colors duration-300 font-futuristic">
                     {category.title}
                   </h3>
                 </div>
