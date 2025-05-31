@@ -4,7 +4,7 @@ export const Skills = () => {
     {
       title: "DevOps & Cloud",
       skills: ["AWS (EC2, S3, IAM, VPC, RDS)", "Docker", "GitHub Actions", "Jenkins", "Terraform", "CI/CD"],
-      color: "from-cyan-500 to-blue-500",
+      color: "from-blue-500 to-cyan-500",
       icon: "☁️"
     },
     {
@@ -48,13 +48,13 @@ export const Skills = () => {
   ];
 
   return (
-    <section id="skills" className="py-20 px-4 glassmorphic-section relative overflow-hidden">
+    <section id="skills" className="py-20 px-4 bg-slate-800/30 relative overflow-hidden">
       {/* Floating background elements */}
       <div className="absolute inset-0">
         {[...Array(8)].map((_, i) => (
           <div
             key={i}
-            className="absolute w-1 h-1 bg-cyan-400/20 rounded-full animate-float"
+            className="absolute w-1 h-1 bg-blue-400/20 rounded-full animate-float"
             style={{
               left: `${Math.random() * 100}%`,
               top: `${Math.random() * 100}%`,
@@ -67,30 +67,30 @@ export const Skills = () => {
 
       <div className="max-w-6xl mx-auto relative z-10">
         <div className="text-center mb-16">
-          <h2 className="text-4xl md:text-5xl font-bold mb-6 font-mono tracking-wider">
-            Tech Stack & <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-purple-400 neon-text">Skills</span>
+          <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
+            Tech Stack & <span className="text-blue-400">Skills</span>
           </h2>
-          <div className="w-24 h-1 bg-gradient-to-r from-cyan-400 to-purple-400 mx-auto rounded-full"></div>
-          <p className="text-gray-400 mt-4 max-w-2xl mx-auto font-mono">
+          <div className="w-24 h-1 bg-gradient-to-r from-blue-400 to-purple-400 mx-auto rounded-full"></div>
+          <p className="text-gray-400 mt-4 max-w-2xl mx-auto">
             Expertise across the full DevOps and cloud development lifecycle
           </p>
         </div>
 
-        {/* Fast Animated Scrolling Tech Stack with Larger Icons */}
+        {/* Animated Scrolling Tech Stack with Real Icons */}
         <div className="mb-16 overflow-hidden">
-          <div className="flex animate-scroll-fast space-x-8">
-            {[...techStackItems, ...techStackItems, ...techStackItems].map((tech, index) => (
+          <div className="flex animate-scroll space-x-6 hover:animation-play-state-paused">
+            {[...techStackItems, ...techStackItems].map((tech, index) => (
               <div
                 key={index}
-                className="flex-shrink-0 group glassmorphic px-8 py-6 rounded-xl border border-cyan-500/30 hover:scale-105 hover:border-cyan-400 transition-all duration-300 cursor-default min-w-[180px]"
+                className="flex-shrink-0 group bg-gradient-to-r from-blue-600/20 to-purple-600/20 backdrop-blur-sm px-6 py-4 rounded-xl border border-blue-500/30 hover:scale-105 hover:bg-blue-600/30 transition-all duration-300 cursor-default min-w-[140px]"
               >
-                <div className="flex flex-col items-center space-y-3">
+                <div className="flex flex-col items-center space-y-2">
                   <img 
                     src={tech.icon} 
                     alt={tech.name} 
-                    className="w-12 h-12 object-contain group-hover:scale-110 transition-transform duration-300 neon-glow"
+                    className="w-8 h-8 object-contain group-hover:scale-110 transition-transform duration-300"
                   />
-                  <span className="text-cyan-300 font-medium text-base whitespace-nowrap font-mono neon-text">
+                  <span className="text-blue-300 font-medium text-sm whitespace-nowrap">
                     {tech.name}
                   </span>
                 </div>
@@ -103,7 +103,7 @@ export const Skills = () => {
           {skillCategories.map((category, index) => (
             <div
               key={category.title}
-              className="group relative glassmorphic p-6 rounded-xl border border-cyan-500/30 hover:border-cyan-400 transition-all duration-500 hover:transform hover:scale-105"
+              className="group relative bg-slate-900/50 p-6 rounded-xl border border-slate-700 hover:border-slate-600 transition-all duration-500 hover:transform hover:scale-105 hover:rotate-1"
               style={{ animationDelay: `${index * 100}ms` }}
             >
               {/* 3D effect background */}
@@ -118,7 +118,7 @@ export const Skills = () => {
                   <div className={`w-14 h-14 rounded-lg bg-gradient-to-r ${category.color} flex items-center justify-center text-2xl mr-4 transform group-hover:scale-110 transition-transform duration-300`}>
                     {category.icon}
                   </div>
-                  <h3 className="text-xl font-semibold text-cyan-100 group-hover:text-cyan-400 transition-colors duration-300 font-mono">
+                  <h3 className="text-xl font-semibold text-white group-hover:text-blue-400 transition-colors duration-300">
                     {category.title}
                   </h3>
                 </div>
@@ -128,12 +128,12 @@ export const Skills = () => {
                   {category.skills.map((skill, skillIndex) => (
                     <div
                       key={skillIndex}
-                      className="group/skill relative text-gray-300 text-sm glassmorphic px-3 py-2 rounded-lg hover:bg-cyan-900/20 transition-all duration-300 cursor-default transform hover:translate-x-1 font-mono"
+                      className="group/skill relative text-gray-300 text-sm bg-slate-800/50 px-3 py-2 rounded-lg hover:bg-slate-700/50 transition-all duration-300 cursor-default transform hover:translate-x-1"
                       style={{ animationDelay: `${skillIndex * 50}ms` }}
                     >
                       <div className="flex items-center">
                         <div className={`w-2 h-2 rounded-full bg-gradient-to-r ${category.color} mr-3 opacity-70 group-hover/skill:opacity-100 transition-opacity duration-300`}></div>
-                        <span className="group-hover/skill:text-cyan-100 transition-colors duration-300">
+                        <span className="group-hover/skill:text-white transition-colors duration-300">
                           {skill}
                         </span>
                       </div>
@@ -146,7 +146,7 @@ export const Skills = () => {
 
                 {/* Skill count indicator */}
                 <div className="mt-4 text-center">
-                  <span className={`text-xs font-medium px-2 py-1 rounded-full bg-gradient-to-r ${category.color} text-white opacity-80 font-mono`}>
+                  <span className={`text-xs font-medium px-2 py-1 rounded-full bg-gradient-to-r ${category.color} text-white opacity-80`}>
                     {category.skills.length} Skills
                   </span>
                 </div>
