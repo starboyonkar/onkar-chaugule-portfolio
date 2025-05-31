@@ -2,6 +2,7 @@
 import { useState } from 'react';
 import { Github, Linkedin, MapPin, Phone, Mail, Send, CheckCircle, AlertCircle } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import emailjs from '@emailjs/browser';
 
 export const Contact = () => {
   const [formData, setFormData] = useState({
@@ -45,23 +46,41 @@ export const Contact = () => {
 
     setIsSubmitting(true);
     
-    // Simulate form submission
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    
-    // Create mailto link
-    const subject = `Portfolio Contact: ${formData.subject}`;
-    const body = `Name: ${formData.name}\nEmail: ${formData.email}\n\nMessage:\n${formData.message}`;
-    const mailtoLink = `mailto:onkarchougule501@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-    
-    window.open(mailtoLink);
-    
-    toast({
-      title: "Message prepared!",
-      description: "Your email client should open with the message ready to send.",
-    });
-    
-    setFormData({ name: '', email: '', subject: '', message: '' });
-    setIsSubmitting(false);
+    try {
+      // Initialize EmailJS with your public key
+      emailjs.init('vkatfER7ICgFmOHUL');
+      
+      // Send email using EmailJS
+      const templateParams = {
+        from_name: formData.name,
+        from_email: formData.email,
+        subject: formData.subject,
+        message: formData.message,
+        to_name: 'Onkar Chaugule'
+      };
+
+      await emailjs.send(
+        'service_l83wzcn', // Your Service ID
+        'template_64a6xxb', // Your Template ID
+        templateParams
+      );
+
+      toast({
+        title: "Message sent successfully!",
+        description: "Thank you for your message. I'll get back to you soon!",
+      });
+      
+      setFormData({ name: '', email: '', subject: '', message: '' });
+    } catch (error) {
+      console.error('EmailJS error:', error);
+      toast({
+        title: "Failed to send message",
+        description: "Please try again or contact me directly via email.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -78,7 +97,7 @@ export const Contact = () => {
     <section id="contact" className="py-20 px-4">
       <div className="max-w-6xl mx-auto">
         <div className="text-center mb-16">
-          <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
+          <h2 className="text-4xl md:text-5xl font-bold mb-2 neon-text font-futuristic bg-gradient-to-r from-cyan-400 via-blue-400 to-purple-400 bg-clip-text text-transparent">
             Get In <span className="text-blue-400">Touch</span>
           </h2>
           <div className="w-24 h-1 bg-gradient-to-r from-blue-400 to-purple-400 mx-auto rounded-full"></div>
@@ -91,7 +110,7 @@ export const Contact = () => {
           {/* Contact Info */}
           <div className="space-y-8">
             <div>
-              <h3 className="text-2xl font-semibold text-white mb-6">Let's Connect</h3>
+              <h3 className="text-2xl font-bold mb-2 neon-text font-futuristic bg-gradient-to-r from-cyan-300 to-blue-300 bg-clip-text text-transparent">Let's Connect</h3>
               <p className="text-gray-300 text-lg leading-relaxed">
                 I'm always open to discussing new opportunities, innovative projects, 
                 or just having a chat about technology and DevOps!
@@ -156,7 +175,7 @@ export const Contact = () => {
           </div>
 
           {/* Contact Form */}
-          <div className="bg-slate-900/50 p-8 rounded-xl border border-slate-700">
+          <div className="bg-slate-900/50 backdrop-blur-md p-8 rounded-xl border border-slate-700">
             <form onSubmit={handleSubmit} className="space-y-6">
               <div className="grid md:grid-cols-2 gap-4">
                 <div>
