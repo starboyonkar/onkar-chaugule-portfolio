@@ -1,9 +1,6 @@
-
 import { User, Target, Briefcase } from 'lucide-react';
-
 export const About = () => {
-  return (
-    <section id="about" className="py-20 px-4 bg-slate-800/20">
+  return <section id="about" className="py-20 px-4 bg-slate-800/20">
       <div className="max-w-6xl mx-auto">
         <div className="text-center mb-16">
           <h2 className="text-4xl md:text-5xl font-bold mb-4 neon-text font-futuristic bg-gradient-to-r from-cyan-400 via-blue-400 to-purple-400 bg-clip-text text-transparent glassmorphic-bg p-4 rounded-xl backdrop-blur-md">
@@ -14,21 +11,21 @@ export const About = () => {
 
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           {/* Profile Image - Full size display */}
-          <div className="relative animate-fade-in" style={{ animationDelay: '0.2s' }}>
+          <div className="relative animate-fade-in" style={{
+          animationDelay: '0.2s'
+        }}>
             <div className="relative group">
               <div className="absolute -inset-4 bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl blur-lg opacity-30 group-hover:opacity-50 transition duration-300"></div>
               <div className="relative bg-slate-900/80 backdrop-blur-md rounded-2xl p-4 border border-blue-500/20">
-                <img 
-                  alt="Onkar Chaugule Professional Photo" 
-                  className="w-full h-auto object-contain rounded-xl max-h-[600px]" 
-                  src="/lovable-uploads/0115fba9-2f81-4cb9-a5ea-ffd535615a1e.png" 
-                />
+                <img alt="Onkar Chaugule Professional Photo" className="w-full h-auto object-contain rounded-xl max-h-[600px]" src="/lovable-uploads/d576918f-b656-4715-9723-f4c0a1b1930d.png" />
               </div>
             </div>
           </div>
 
           {/* Content - Right fade-in animation */}
-          <div className="space-y-6 animate-fade-in" style={{ animationDelay: '0.4s' }}>
+          <div className="space-y-6 animate-fade-in" style={{
+          animationDelay: '0.4s'
+        }}>
             <div className="space-y-4">
               <h3 className="text-4xl font-bold mb-4 neon-text font-futuristic bg-gradient-to-r from-cyan-300 to-blue-300 bg-clip-text text-transparent glassmorphic-bg p-4 rounded-xl backdrop-blur-md">
                 Self-motivated and tech-savvy engineering graduate
@@ -66,6 +63,5 @@ export const About = () => {
           </div>
         </div>
       </div>
-    </section>
-  );
+    </section>;
 };
