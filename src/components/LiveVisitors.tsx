@@ -1,7 +1,6 @@
 
 import { useEffect, useRef, useState } from 'react';
 import Globe from 'globe.gl';
-import { io, Socket } from 'socket.io-client';
 import { Eye, Users, Globe as GlobeIcon } from 'lucide-react';
 
 interface VisitorData {
@@ -22,7 +21,6 @@ interface VisitorStats {
 export const LiveVisitors = () => {
   const globeRef = useRef<HTMLDivElement>(null);
   const globeInstance = useRef<any>(null);
-  const socketRef = useRef<Socket | null>(null);
   
   const [visitors, setVisitors] = useState<VisitorData[]>([]);
   const [stats, setStats] = useState<VisitorStats>({
@@ -36,8 +34,8 @@ export const LiveVisitors = () => {
   useEffect(() => {
     if (!globeRef.current) return;
 
-    // Create globe instance
-    const globe = Globe()
+    // Create globe instance with new keyword
+    const globe = new Globe(globeRef.current)
       .globeImageUrl('//unpkg.com/three-globe/example/img/earth-night.jpg')
       .bumpImageUrl('//unpkg.com/three-globe/example/img/earth-topology.png')
       .backgroundImageUrl('//unpkg.com/three-globe/example/img/night-sky.png')
@@ -45,27 +43,23 @@ export const LiveVisitors = () => {
       .height(400)
       .enablePointerInteraction(true);
 
-    // Style the globe
-    globe
-      .globeMaterial().opacity(0.9);
-    
+    // Set atmosphere properties
     globe
       .atmosphereColor('#4A90E2')
       .atmosphereAltitude(0.1);
 
-    // Add to DOM
-    globeRef.current.appendChild(globe.domElement());
+    // Store globe instance
     globeInstance.current = globe;
 
     // Auto-rotate
-    globe.controls().autoRotate = true;
-    globe.controls().autoRotateSpeed = 0.5;
-    globe.controls().enableZoom = true;
+    if (globe.controls) {
+      globe.controls().autoRotate = true;
+      globe.controls().autoRotateSpeed = 0.5;
+      globe.controls().enableZoom = true;
+    }
 
     return () => {
-      if (globeRef.current && globe.domElement()) {
-        globeRef.current.removeChild(globe.domElement());
-      }
+      // Cleanup handled by Globe.gl automatically
     };
   }, []);
 
