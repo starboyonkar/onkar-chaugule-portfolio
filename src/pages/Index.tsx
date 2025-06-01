@@ -1,3 +1,4 @@
+
 import { Hero } from '@/components/Hero';
 import { LiveVisitors } from '@/components/LiveVisitors';
 import { About } from '@/components/About';
@@ -9,6 +10,7 @@ import { Contact } from '@/components/Contact';
 import { Footer } from '@/components/Footer';
 import { Navigation } from '@/components/Navigation';
 import { DevConsole } from '@/components/DevConsole';
+import { AIAvatarWrapper } from '@/components/AIAvatarWrapper';
 
 const Index = () => {
   return (
@@ -16,6 +18,7 @@ const Index = () => {
       <Navigation />
       <Hero />
       <LiveVisitors />
+      <AIAvatarWrapper />
       <About />
       <Skills />
       <Projects />
