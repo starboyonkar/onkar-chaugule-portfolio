@@ -1,8 +1,8 @@
 
-import { useRef, useFrame } from '@react-three/fiber';
+import { useFrame } from '@react-three/fiber';
 import { Text3D, Center } from '@react-three/drei';
 import { Mesh, Group } from 'three';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 
 interface AvatarModelProps {
   isSpeaking: boolean;
@@ -160,8 +160,6 @@ export const AvatarModel = ({ isSpeaking, currentText }: AvatarModelProps) => {
                 color="#60a5fa" 
                 transparent 
                 opacity={0.6}
-                emissive="#3b82f6"
-                emissiveIntensity={0.2}
               />
             </mesh>
           ))}
