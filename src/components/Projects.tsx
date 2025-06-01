@@ -1,64 +1,65 @@
 
-import { Github, ExternalLink, Play } from 'lucide-react';
+import { Github, ExternalLink, Play, Youtube, Globe } from 'lucide-react';
+import { useState } from 'react';
 
 export const Projects = () => {
+  const [expandedImage, setExpandedImage] = useState<string | null>(null);
+
   const projects = [
     {
-      title: "TuneGuard – Futuristic Music Player",
-      description: "PyQt5 + Spotify integration with real-time EQ adjustment, voice commands, and FFT waveform visualization.",
-      tech: ["Python", "PyQt5", "Spotify API", "FFT", "Voice Recognition"],
+      title: "Tune Guard – A Cognitive Enhancement of Audio Synthesis using Advanced Equalization",
+      description: "An intelligent audio player that dynamically adjusts EQ using real-time FFT analysis and user profile data. Features smart voice control, safety-based hearing protection, and seamless Spotify integration.",
+      tech: ["React.js", "TypeScript", "Tailwind CSS", "Node.js", "Voice Recognition", "FFT", "Python"],
       github: "https://github.com/starboyonkar",
-      demo: "https://youtube.com",
-      image: "/lovable-uploads/0115fba9-2f81-4cb9-a5ea-ffd535615a1e.png",
+      demo: "https://tune-guard.site",
+      youtube: "https://youtu.be/G1-CyUG_jGg?si=fIL8cJUATHpV7Y7M",
+      image: "/lovable-uploads/b5db91b1-c819-46bc-99a2-0ffc29af6d0f.png",
       color: "from-blue-500 to-purple-500",
       featured: true,
       isImageUrl: true
     },
     {
-      title: "AI-Based Smart Irrigation System",
-      description: "Raspberry Pi controlled automated water scheduling system based on real-time environmental conditions and ML predictions.",
-      tech: ["Raspberry Pi", "Python", "IoT", "Machine Learning", "Sensors"],
+      title: "Design and Virtual Twin of an Autonomous Underwater Vehicle (AUV)",
+      description: "A sea-wheel-shaped autonomous marine robot with 8 thrusters and smart navigation. Built with real-time image processing and robotics logic for underwater operations.",
+      tech: ["Raspberry Pi", "Embedded Python", "Computer Vision", "Real-Time Video", "Sensor Integration", "Robotics"],
       github: "https://github.com/starboyonkar",
       demo: null,
-      image: "🌱",
+      image: "/lovable-uploads/a008fbba-ea96-4b45-9f64-09274f6df6cc.png",
+      color: "from-cyan-500 to-blue-500",
+      featured: true,
+      isImageUrl: true
+    },
+    {
+      title: "Design and Development of AI-Based Smart Irrigation System",
+      description: "A real-time agricultural solution using sensors, weather data, and AI logic to automate water control and optimize resource usage.",
+      tech: ["Raspberry Pi", "IoT", "Embedded Python", "Sensor Integration", "AI Automation"],
+      github: "https://github.com/starboyonkar",
+      demo: null,
+      image: "/lovable-uploads/f4f4df66-462a-48bb-a587-1731b2261cbc.png",
       color: "from-green-500 to-emerald-500",
       featured: true,
-      isImageUrl: false
+      isImageUrl: true
     },
     {
-      title: "Autonomous Underwater Vehicle (AUV)",
-      description: "Advanced underwater robotics system with autonomous navigation and environmental monitoring capabilities.",
-      tech: ["Embedded C", "Sensors", "Navigation", "Robotics"],
+      title: "Virtual Desktop Assistant using Python AI",
+      description: "An intelligent voice-controlled assistant built with Python and React, capable of real-time communication, automation, and interface interaction using AI.",
+      tech: ["Python", "AI Chatbot", "React.js", "TypeScript", "Tailwind CSS", "Node.js", "Voice Recognition", "Real-Time Video Processing"],
       github: "https://github.com/starboyonkar",
       demo: null,
-      image: "🤖",
-      color: "from-cyan-500 to-blue-500",
-      featured: false,
-      isImageUrl: false
-    },
-    {
-      title: "Cognitive Audio Enhancement System",
-      description: "Real-time audio processing with adaptive noise cancellation and intelligent sound enhancement algorithms.",
-      tech: ["Audio Processing", "Machine Learning", "Real-time Systems"],
-      github: "https://github.com/starboyonkar",
-      demo: null,
-      image: "🔊",
+      image: "/lovable-uploads/12305f2c-5525-4031-82ee-380387953a79.png",
       color: "from-purple-500 to-pink-500",
-      featured: false,
-      isImageUrl: false
-    },
-    {
-      title: "Weather Monitoring Dashboard",
-      description: "Real-time weather monitoring system using Grafana & InfluxDB with embedded systems integration.",
-      tech: ["Embedded C", "Grafana", "InfluxDB", "SQL", "IoT"],
-      github: "https://github.com/starboyonkar",
-      demo: null,
-      image: "🌤️",
-      color: "from-yellow-500 to-orange-500",
-      featured: false,
-      isImageUrl: false
+      featured: true,
+      isImageUrl: true
     }
   ];
+
+  const handleImageClick = (imageSrc: string) => {
+    setExpandedImage(imageSrc);
+  };
+
+  const closeExpandedImage = () => {
+    setExpandedImage(null);
+  };
 
   return (
     <section id="projects" className="py-20 px-4 relative overflow-hidden">
@@ -88,14 +89,15 @@ export const Projects = () => {
               style={{ animationDelay: `${index * 200}ms` }}
             >
               {/* Project header with gradient or image */}
-              <div className={`h-56 ${!project.isImageUrl ? `bg-gradient-to-br ${project.color}` : 'bg-slate-800'} relative overflow-hidden`}>
+              <div className={`h-64 ${!project.isImageUrl ? `bg-gradient-to-br ${project.color}` : 'bg-slate-800'} relative overflow-hidden cursor-pointer`}
+                   onClick={() => project.isImageUrl && handleImageClick(project.image)}>
                 <div className="absolute inset-0 bg-black/20 group-hover:bg-black/10 transition-all duration-300"></div>
                 <div className="absolute inset-0 flex items-center justify-center p-4">
                   {project.isImageUrl ? (
                     <img 
                       src={project.image} 
                       alt={project.title}
-                      className="w-full h-full object-contain rounded-lg group-hover:scale-105 transition-transform duration-500"
+                      className="w-full h-full object-cover rounded-lg group-hover:scale-105 transition-transform duration-500"
                     />
                   ) : (
                     <div className="text-8xl opacity-80 group-hover:scale-110 transition-transform duration-500">
@@ -139,7 +141,7 @@ export const Projects = () => {
                   ))}
                 </div>
                 
-                <div className="flex gap-3">
+                <div className="flex gap-3 flex-wrap">
                   <a
                     href={project.github}
                     target="_blank"
@@ -150,80 +152,27 @@ export const Projects = () => {
                     Code
                   </a>
                   
-                  {project.demo && (
+                  {project.youtube && (
+                    <a
+                      href={project.youtube}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-2 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-all duration-300 text-sm group/btn"
+                    >
+                      <Youtube size={16} className="group-hover/btn:scale-110 transition-transform duration-300" />
+                      Demo
+                    </a>
+                  )}
+
+                  {project.demo && !project.youtube && (
                     <a
                       href={project.demo}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all duration-300 text-sm group/btn"
                     >
-                      <Play size={16} className="group-hover/btn:translate-x-0.5 transition-transform duration-300" />
-                      Demo
-                    </a>
-                  )}
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-
-        {/* Other Projects */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {projects.filter(p => !p.featured).map((project, index) => (
-            <div
-              key={index}
-              className="group bg-slate-900/50 backdrop-blur-md rounded-xl overflow-hidden border border-slate-700 hover:border-slate-600 transition-all duration-300 hover:transform hover:scale-105"
-            >
-              <div className={`h-32 bg-gradient-to-br ${project.color} flex items-center justify-center relative`}>
-                <div className="text-4xl opacity-80">{project.image}</div>
-                <div className="absolute inset-0 bg-black/20 group-hover:bg-black/10 transition-all duration-300"></div>
-              </div>
-              
-              <div className="p-4">
-                <h3 className="text-lg font-semibold text-white mb-2 group-hover:text-blue-400 transition-colors font-futuristic">
-                  {project.title}
-                </h3>
-                
-                <p className="text-gray-300 text-xs mb-3 leading-relaxed">
-                  {project.description}
-                </p>
-                
-                <div className="flex flex-wrap gap-1 mb-4">
-                  {project.tech.slice(0, 3).map((tech, techIndex) => (
-                    <span
-                      key={techIndex}
-                      className="px-2 py-1 bg-slate-800 text-blue-400 text-xs rounded-full border border-slate-700"
-                    >
-                      {tech}
-                    </span>
-                  ))}
-                  {project.tech.length > 3 && (
-                    <span className="px-2 py-1 bg-slate-700 text-gray-400 text-xs rounded-full">
-                      +{project.tech.length - 3}
-                    </span>
-                  )}
-                </div>
-                
-                <div className="flex gap-2">
-                  <a
-                    href={project.github}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center gap-1 px-3 py-1 bg-slate-800 text-gray-300 rounded text-xs hover:bg-slate-700 hover:text-white transition-all duration-200"
-                  >
-                    <Github size={12} />
-                    Code
-                  </a>
-                  
-                  {project.demo && (
-                    <a
-                      href={project.demo}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex items-center gap-1 px-3 py-1 bg-blue-600 text-white rounded text-xs hover:bg-blue-700 transition-all duration-200"
-                    >
-                      <ExternalLink size={12} />
-                      Demo
+                      <Globe size={16} className="group-hover/btn:rotate-12 transition-transform duration-300" />
+                      Live Site
                     </a>
                   )}
                 </div>
@@ -232,6 +181,27 @@ export const Projects = () => {
           ))}
         </div>
       </div>
+
+      {/* Expanded Image Modal */}
+      {expandedImage && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm"
+             onClick={closeExpandedImage}>
+          <div className="relative max-w-5xl w-full max-h-[90vh] overflow-hidden">
+            <button
+              onClick={closeExpandedImage}
+              className="absolute top-4 right-4 z-10 w-10 h-10 rounded-full bg-slate-800/80 hover:bg-slate-700 transition-colors flex items-center justify-center text-white"
+            >
+              ✕
+            </button>
+            <img
+              src={expandedImage}
+              alt="Expanded project image"
+              className="w-full h-auto rounded-lg shadow-2xl"
+              onClick={(e) => e.stopPropagation()}
+            />
+          </div>
+        </div>
+      )}
     </section>
   );
 };
