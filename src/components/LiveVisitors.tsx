@@ -63,19 +63,6 @@ export const LiveVisitors = () => {
       globe.controls().maxDistance = 800;
     }
 
-    // Custom lighting
-    const scene = globe.scene();
-    if (scene) {
-      // Add ambient light
-      const ambientLight = new (window as any).THREE.AmbientLight(0x404040, 0.6);
-      scene.add(ambientLight);
-      
-      // Add directional light
-      const directionalLight = new (window as any).THREE.DirectionalLight(0xffffff, 0.8);
-      directionalLight.position.set(5, 3, 5);
-      scene.add(directionalLight);
-    }
-
     return () => {
       // Cleanup handled by Globe.gl automatically
     };
