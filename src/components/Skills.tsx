@@ -33,18 +33,18 @@ export const Skills = () => {
     }
   ];
 
-  // Tech stack with realistic PNG icons
+  // Tech stack with realistic PNG icons and documentation links
   const techStackItems = [
-    { name: "AWS", icon: "/lovable-uploads/036260f5-9bb3-41a7-97e0-b93b6e9bffc8.png" },
-    { name: "Docker", icon: "/lovable-uploads/68259dad-8f38-484a-b7d2-b01660f8fedd.png" },
-    { name: "Kubernetes", icon: "/lovable-uploads/343a56d0-e000-4abc-9096-0110349dc94c.png" },
-    { name: "Jenkins", icon: "/lovable-uploads/360be116-f2c6-41ff-bb9b-7a4c7410fe1b.png" },
-    { name: "Python", icon: "/lovable-uploads/9b39be88-4611-4abc-bfca-12ea1d11a8b0.png" },
-    { name: "GitLab", icon: "/lovable-uploads/7ddce7b7-5a28-43a1-bc8c-8cecb287f87a.png" },
-    { name: "Git", icon: "/lovable-uploads/0d1df141-7d7b-46e7-b90d-e898fdbd87d3.png" },
-    { name: "Linux", icon: "/lovable-uploads/4d8aba1d-f539-4dfb-b468-1b302326a464.png" },
-    { name: "GitHub", icon: "/lovable-uploads/4ccdeafc-ce99-49d4-acbd-4efeb0d93437.png" },
-    { name: "Terraform", icon: "/lovable-uploads/96bd68fd-6b4c-4df1-bd62-5e5a8d5e3d79.png" }
+    { name: "AWS", icon: "/lovable-uploads/036260f5-9bb3-41a7-97e0-b93b6e9bffc8.png", url: "https://docs.aws.amazon.com/" },
+    { name: "Docker", icon: "/lovable-uploads/68259dad-8f38-484a-b7d2-b01660f8fedd.png", url: "https://docs.docker.com/" },
+    { name: "Kubernetes", icon: "/lovable-uploads/343a56d0-e000-4abc-9096-0110349dc94c.png", url: "https://kubernetes.io/docs/" },
+    { name: "Jenkins", icon: "/lovable-uploads/360be116-f2c6-41ff-bb9b-7a4c7410fe1b.png", url: "https://www.jenkins.io/doc/" },
+    { name: "Python", icon: "/lovable-uploads/9b39be88-4611-4abc-bfca-12ea1d11a8b0.png", url: "https://docs.python.org/" },
+    { name: "GitLab", icon: "/lovable-uploads/7ddce7b7-5a28-43a1-bc8c-8cecb287f87a.png", url: "https://docs.gitlab.com/" },
+    { name: "Git", icon: "/lovable-uploads/0d1df141-7d7b-46e7-b90d-e898fdbd87d3.png", url: "https://git-scm.com/doc" },
+    { name: "Linux", icon: "/lovable-uploads/4d8aba1d-f539-4dfb-b468-1b302326a464.png", url: "https://www.kernel.org/doc/" },
+    { name: "GitHub", icon: "/lovable-uploads/4ccdeafc-ce99-49d4-acbd-4efeb0d93437.png", url: "https://docs.github.com/" },
+    { name: "Terraform", icon: "/lovable-uploads/96bd68fd-6b4c-4df1-bd62-5e5a8d5e3d79.png", url: "https://developer.hashicorp.com/terraform/docs" }
   ];
 
   return (
@@ -76,25 +76,29 @@ export const Skills = () => {
           </p>
         </div>
 
-        {/* Fast Animated Scrolling Tech Stack with Real Icons */}
+        {/* Fast Animated Scrolling Tech Stack with Real Icons and Documentation Links */}
         <div className="mb-16 overflow-hidden">
-          <div className="flex animate-scroll-fast space-x-8">
+          <div className="flex animate-scroll-super-fast space-x-8">
             {[...techStackItems, ...techStackItems, ...techStackItems].map((tech, index) => (
-              <div
+              <a
                 key={index}
-                className="flex-shrink-0 group bg-gradient-to-r from-blue-600/20 to-purple-600/20 backdrop-blur-md px-8 py-6 rounded-xl border border-blue-500/30 hover:scale-110 hover:bg-blue-600/30 transition-all duration-300 cursor-default min-w-[160px]"
+                href={tech.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex-shrink-0 group bg-gradient-to-r from-blue-600/20 to-purple-600/20 backdrop-blur-md px-8 py-6 rounded-xl border border-blue-500/30 hover:scale-110 hover:bg-blue-600/30 transition-all duration-300 cursor-pointer min-w-[160px] hover:border-blue-400/60"
+                title={`View ${tech.name} documentation`}
               >
                 <div className="flex flex-col items-center space-y-3">
                   <img 
                     src={tech.icon} 
-                    alt={tech.name} 
+                    alt={`${tech.name} documentation`} 
                     className="w-12 h-12 object-contain group-hover:scale-125 transition-transform duration-300"
                   />
-                  <span className="text-cyan-300 font-medium text-base whitespace-nowrap font-futuristic">
+                  <span className="text-cyan-300 font-medium text-base whitespace-nowrap font-futuristic group-hover:text-cyan-200 transition-colors duration-300">
                     {tech.name}
                   </span>
                 </div>
-              </div>
+              </a>
             ))}
           </div>
         </div>

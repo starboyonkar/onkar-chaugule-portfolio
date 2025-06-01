@@ -16,7 +16,8 @@ export const Projects = () => {
       image: "/lovable-uploads/b5db91b1-c819-46bc-99a2-0ffc29af6d0f.png",
       color: "from-blue-500 to-purple-500",
       featured: true,
-      isImageUrl: true
+      isImageUrl: true,
+      hasLiveDemo: true
     },
     {
       title: "Design and Virtual Twin of an Autonomous Underwater Vehicle (AUV)",
@@ -88,19 +89,19 @@ export const Projects = () => {
               className="group relative bg-slate-900/50 backdrop-blur-md rounded-2xl overflow-hidden border border-slate-700 hover:border-slate-600 transition-all duration-500 hover:transform hover:scale-105"
               style={{ animationDelay: `${index * 200}ms` }}
             >
-              {/* Project header with gradient or image */}
-              <div className={`h-64 ${!project.isImageUrl ? `bg-gradient-to-br ${project.color}` : 'bg-slate-800'} relative overflow-hidden cursor-pointer`}
+              {/* Project header with full-size image */}
+              <div className="h-80 bg-slate-800 relative overflow-hidden cursor-pointer"
                    onClick={() => project.isImageUrl && handleImageClick(project.image)}>
                 <div className="absolute inset-0 bg-black/20 group-hover:bg-black/10 transition-all duration-300"></div>
-                <div className="absolute inset-0 flex items-center justify-center p-4">
+                <div className="absolute inset-0 p-4">
                   {project.isImageUrl ? (
                     <img 
                       src={project.image} 
                       alt={project.title}
-                      className="w-full h-full object-cover rounded-lg group-hover:scale-105 transition-transform duration-500"
+                      className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-500"
                     />
                   ) : (
-                    <div className="text-8xl opacity-80 group-hover:scale-110 transition-transform duration-500">
+                    <div className="text-8xl opacity-80 group-hover:scale-110 transition-transform duration-500 flex items-center justify-center h-full">
                       {project.image}
                     </div>
                   )}
@@ -164,7 +165,19 @@ export const Projects = () => {
                     </a>
                   )}
 
-                  {project.demo && !project.youtube && (
+                  {project.hasLiveDemo && project.demo && (
+                    <a
+                      href={project.demo}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all duration-300 text-sm group/btn"
+                    >
+                      <ExternalLink size={16} className="group-hover/btn:rotate-12 transition-transform duration-300" />
+                      Live Site
+                    </a>
+                  )}
+
+                  {project.demo && !project.youtube && !project.hasLiveDemo && (
                     <a
                       href={project.demo}
                       target="_blank"
@@ -184,12 +197,12 @@ export const Projects = () => {
 
       {/* Expanded Image Modal */}
       {expandedImage && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm"
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/90 backdrop-blur-sm"
              onClick={closeExpandedImage}>
-          <div className="relative max-w-5xl w-full max-h-[90vh] overflow-hidden">
+          <div className="relative max-w-7xl w-full max-h-[95vh] overflow-hidden">
             <button
               onClick={closeExpandedImage}
-              className="absolute top-4 right-4 z-10 w-10 h-10 rounded-full bg-slate-800/80 hover:bg-slate-700 transition-colors flex items-center justify-center text-white"
+              className="absolute top-4 right-4 z-10 w-12 h-12 rounded-full bg-slate-800/80 hover:bg-slate-700 transition-colors flex items-center justify-center text-white text-xl font-bold"
             >
               ✕
             </button>

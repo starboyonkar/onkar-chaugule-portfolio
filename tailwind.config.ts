@@ -152,6 +152,14 @@ export default {
           "100%": {
             transform: "translateX(-50%)"
           }
+        },
+        "scroll-super-fast": {
+          "0%": {
+            transform: "translateX(0%)"
+          },
+          "100%": {
+            transform: "translateX(-50%)"
+          }
         }
       },
       animation: {
@@ -165,7 +173,8 @@ export default {
         "float": "float 6s ease-in-out infinite",
         "float-delay": "float-delay 8s ease-in-out infinite",
         "scroll": "scroll 30s linear infinite",
-        "scroll-fast": "scroll-fast 15s linear infinite"
+        "scroll-fast": "scroll-fast 15s linear infinite",
+        "scroll-super-fast": "scroll-super-fast 8s linear infinite"
       },
       animationPlayState: {
         'paused': 'paused',
