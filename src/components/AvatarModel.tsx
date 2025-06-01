@@ -1,6 +1,5 @@
 
 import { useFrame } from '@react-three/fiber';
-import { Text3D, Center } from '@react-three/drei';
 import { Mesh, Group } from 'three';
 import { useState, useEffect, useRef } from 'react';
 
@@ -126,20 +125,21 @@ export const AvatarModel = ({ isSpeaking, currentText }: AvatarModelProps) => {
         <meshStandardMaterial color="#ffdbac" />
       </mesh>
 
-      {/* Speech indicator */}
+      {/* Speech indicator - using simple geometry instead of Text3D */}
       {isSpeaking && (
         <group position={[0, 2.8, 0]}>
-          <Center>
-            <Text3D
-              font="/fonts/helvetiker_regular.typeface.json"
-              size={0.1}
-              height={0.02}
-              curveSegments={12}
-            >
-              Speaking...
-              <meshStandardMaterial color="#4ade80" />
-            </Text3D>
-          </Center>
+          <mesh>
+            <sphereGeometry args={[0.3, 16, 16]} />
+            <meshStandardMaterial color="#4ade80" transparent opacity={0.7} />
+          </mesh>
+          <mesh position={[0, 0.1, 0]}>
+            <sphereGeometry args={[0.2, 16, 16]} />
+            <meshStandardMaterial color="#4ade80" transparent opacity={0.5} />
+          </mesh>
+          <mesh position={[0, 0.15, 0]}>
+            <sphereGeometry args={[0.1, 16, 16]} />
+            <meshStandardMaterial color="#4ade80" transparent opacity={0.3} />
+          </mesh>
         </group>
       )}
 
