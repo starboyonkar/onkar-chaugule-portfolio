@@ -44,6 +44,16 @@
     --sidebar-accent-foreground: 240 5.9% 10%;
     --sidebar-border: 220 13% 91%;
     --sidebar-ring: 217.2 91.2% 59.8%;
+
+    /* Theme Variables */
+    --theme-primary: #3B82F6;
+    --theme-secondary: #1E40AF;
+    --theme-accent: #06B6D4;
+    --theme-text: #FFFFFF;
+    --theme-text-secondary: #94A3B8;
+    --theme-border: rgba(59, 130, 246, 0.2);
+    --theme-surface: rgba(59, 130, 246, 0.1);
+    --theme-glow: rgba(59, 130, 246, 0.3);
   }
 
   .dark {
@@ -92,6 +102,8 @@
 
   body {
     @apply bg-background text-foreground;
+    background: var(--theme-primary, linear-gradient(135deg, #0F172A 0%, #1E293B 50%, #0F172A 100%));
+    transition: background 0.5s ease;
   }
 }
 
@@ -99,30 +111,63 @@
   .font-futuristic {
     font-family: 'Orbitron', monospace;
     font-weight: 700;
-    text-shadow: 0 0 10px rgba(59, 130, 246, 0.3);
+    text-shadow: 0 0 10px var(--theme-glow);
   }
   
   .neon-text {
     text-shadow: 
       0 0 5px rgba(255, 255, 255, 0.8),
-      0 0 10px rgba(59, 130, 246, 0.6),
-      0 0 15px rgba(59, 130, 246, 0.4),
-      0 0 20px rgba(59, 130, 246, 0.3),
-      0 0 35px rgba(59, 130, 246, 0.2);
-    color: #ffffff;
+      0 0 10px var(--theme-glow),
+      0 0 15px var(--theme-glow),
+      0 0 20px var(--theme-glow),
+      0 0 35px var(--theme-glow);
+    color: var(--theme-text);
   }
   
   .glassmorphic-bg {
-    background: rgba(59, 130, 246, 0.15);
+    background: var(--theme-surface);
     backdrop-filter: blur(16px);
-    border: 1px solid rgba(255, 255, 255, 0.15);
+    border: 1px solid var(--theme-border);
     box-shadow: 
       0 8px 32px 0 rgba(31, 38, 135, 0.37),
       inset 0 1px 0 rgba(255, 255, 255, 0.1);
   }
 
   .globe-container {
-    background: radial-gradient(circle at center, rgba(59, 130, 246, 0.1) 0%, rgba(0, 0, 0, 0.8) 100%);
+    background: radial-gradient(circle at center, var(--theme-surface) 0%, rgba(0, 0, 0, 0.8) 100%);
+  }
+
+  /* Theme-aware colors */
+  .theme-primary {
+    color: var(--theme-primary);
+  }
+  
+  .theme-secondary {
+    color: var(--theme-secondary);
+  }
+  
+  .theme-accent {
+    color: var(--theme-accent);
+  }
+  
+  .theme-bg-primary {
+    background-color: var(--theme-primary);
+  }
+  
+  .theme-bg-secondary {
+    background-color: var(--theme-secondary);
+  }
+  
+  .theme-bg-surface {
+    background: var(--theme-surface);
+  }
+  
+  .theme-border {
+    border-color: var(--theme-border);
+  }
+  
+  .theme-gradient {
+    background: linear-gradient(45deg, var(--theme-primary), var(--theme-accent));
   }
 
   /* Custom scrollbar for console */

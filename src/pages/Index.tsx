@@ -11,11 +11,21 @@ import { Contact } from '@/components/Contact';
 import { Footer } from '@/components/Footer';
 import { Navigation } from '@/components/Navigation';
 import { DevConsole } from '@/components/DevConsole';
+import { ThemeSelector } from '@/components/ThemeSelector';
+import { useTheme } from '@/contexts/ThemeContext';
 
 const Index = () => {
+  const { currentTheme } = useTheme();
+  
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900">
+    <div 
+      className="min-h-screen transition-all duration-500"
+      style={{ 
+        background: currentTheme.colors.background 
+      }}
+    >
       <Navigation />
+      <ThemeSelector />
       <Hero />
       <LiveVisitors />
       <About />
