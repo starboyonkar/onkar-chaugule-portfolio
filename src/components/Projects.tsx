@@ -20,6 +20,17 @@ export const Projects = () => {
       hasLiveDemo: true
     },
     {
+      title: "E-Commerce Website: CRM and Billing Web Application",
+      description: "A fully functional, containerized CRM and billing solution for product and service management. Designed with seamless CI/CD integration and deployed on AWS for production-ready scalability.",
+      tech: ["React.js", "TypeScript", "Tailwind CSS", "Node.js", "Jenkins CI/CD Pipeline", "Docker", "GitHub", "AWS EC2 Deployment"],
+      github: "https://github.com/starboyonkar",
+      demo: null,
+      image: "/lovable-uploads/b6caca73-004c-4fc3-b541-ed24a5e963b1.png",
+      color: "from-orange-500 to-red-500",
+      featured: true,
+      isImageUrl: true
+    },
+    {
       title: "Design and Virtual Twin of an Autonomous Underwater Vehicle (AUV)",
       description: "A sea-wheel-shaped autonomous marine robot with 8 thrusters and smart navigation. Built with real-time image processing and robotics logic for underwater operations.",
       tech: ["Raspberry Pi", "Embedded Python", "Computer Vision", "Real-Time Video", "Sensor Integration", "Robotics"],

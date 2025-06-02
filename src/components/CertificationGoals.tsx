@@ -95,13 +95,13 @@ export const CertificationGoals = () => {
               <div className={`absolute -inset-0.5 bg-gradient-to-r ${cert.color} rounded-xl blur opacity-0 group-hover:opacity-20 transition-opacity duration-500`}></div>
               
               <div className="relative">
-                {/* Certification Badge */}
+                {/* Certification Badge - Fully Clickable */}
                 <div className="flex flex-col items-center">
                   <a
                     href={cert.link}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="block mb-4 group-hover:scale-110 transition-transform duration-300"
+                    className="block mb-4 group-hover:scale-110 transition-transform duration-300 cursor-pointer"
                     title={`Study guide for ${cert.name}`}
                   >
                     <img
@@ -112,7 +112,7 @@ export const CertificationGoals = () => {
                   </a>
                   
                   {/* Certification Name */}
-                  <h3 className="text-center text-white font-semibold text-sm leading-tight group-hover:text-blue-400 transition-colors duration-300 font-futuristic">
+                  <h3 className="text-center text-white font-semibold text-sm leading-tight group-hover:text-blue-400 transition-colors duration-300 font-futuristic mb-3">
                     {cert.name}
                   </h3>
                   
@@ -121,7 +121,7 @@ export const CertificationGoals = () => {
                     href={cert.link}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className={`mt-3 inline-flex items-center text-xs px-3 py-1 bg-gradient-to-r ${cert.color} text-white rounded-full hover:shadow-lg transition-all duration-300 group-hover:scale-105`}
+                    className={`inline-flex items-center text-xs px-3 py-1 bg-gradient-to-r ${cert.color} text-white rounded-full hover:shadow-lg transition-all duration-300 group-hover:scale-105`}
                   >
                     📚 Study Guide
                   </a>
