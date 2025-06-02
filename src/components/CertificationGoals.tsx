@@ -1,4 +1,5 @@
 
+
 export const CertificationGoals = () => {
   const certifications = [
     {
@@ -10,7 +11,7 @@ export const CertificationGoals = () => {
     {
       name: "Microsoft Certified: Azure Fundamentals (AZ-900)",
       image: "/lovable-uploads/78683fd7-adad-4268-83c8-77a04bc39f24.png",
-      link: "https://docs.microsoft.com/en-us/certifications/azure-fundamentals/",
+      link: "https://learn.microsoft.com/en-us/certifications/azure-fundamentals/",
       color: "from-blue-500 to-indigo-500"
     },
     {
@@ -28,19 +29,19 @@ export const CertificationGoals = () => {
     {
       name: "HashiCorp Certified: Terraform Associate",
       image: "/lovable-uploads/be80a4b8-2317-4cbb-8ca4-30b533ef7194.png",
-      link: "https://www.hashicorp.com/certification/terraform-associate",
+      link: "https://developer.hashicorp.com/certification/terraform-associate",
       color: "from-purple-500 to-indigo-500"
     },
     {
       name: "Google Professional DevOps Engineer",
       image: "/lovable-uploads/b5440e2d-e2d8-4a97-932b-a842d99a0986.png",
-      link: "https://cloud.google.com/certification/cloud-devops-engineer",
+      link: "https://cloud.google.com/certification/devops-engineer",
       color: "from-red-500 to-yellow-500"
     },
     {
       name: "Microsoft Certified: DevOps Engineer Expert (AZ-400)",
       image: "/lovable-uploads/660e323a-6149-47aa-ad59-72d7b0e8d397.png",
-      link: "https://docs.microsoft.com/en-us/certifications/devops-engineer/",
+      link: "https://learn.microsoft.com/en-us/certifications/devops-engineer/",
       color: "from-blue-600 to-indigo-600"
     },
     {
@@ -96,36 +97,31 @@ export const CertificationGoals = () => {
               
               <div className="relative">
                 {/* Certification Badge - Fully Clickable */}
-                <div className="flex flex-col items-center">
-                  <a
-                    href={cert.link}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="block mb-4 group-hover:scale-110 transition-transform duration-300 cursor-pointer"
-                    title={`Study guide for ${cert.name}`}
-                  >
+                <a
+                  href={cert.link}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="block w-full cursor-pointer group-hover:scale-110 transition-transform duration-300"
+                  title={`View official certification page for ${cert.name}`}
+                >
+                  <div className="flex flex-col items-center">
                     <img
                       src={cert.image}
                       alt={cert.name}
-                      className="w-32 h-32 object-contain rounded-lg shadow-lg group-hover:shadow-xl transition-shadow duration-300"
+                      className="w-32 h-32 object-contain rounded-lg shadow-lg group-hover:shadow-xl transition-shadow duration-300 mb-4"
                     />
-                  </a>
-                  
-                  {/* Certification Name */}
-                  <h3 className="text-center text-white font-semibold text-sm leading-tight group-hover:text-blue-400 transition-colors duration-300 font-futuristic mb-3">
-                    {cert.name}
-                  </h3>
-                  
-                  {/* Study Guide Link */}
-                  <a
-                    href={cert.link}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className={`inline-flex items-center text-xs px-3 py-1 bg-gradient-to-r ${cert.color} text-white rounded-full hover:shadow-lg transition-all duration-300 group-hover:scale-105`}
-                  >
-                    📚 Study Guide
-                  </a>
-                </div>
+                    
+                    {/* Certification Name */}
+                    <h3 className="text-center text-white font-semibold text-sm leading-tight group-hover:text-blue-400 transition-colors duration-300 font-futuristic mb-3">
+                      {cert.name}
+                    </h3>
+                    
+                    {/* Study Guide Button */}
+                    <div className={`inline-flex items-center text-xs px-3 py-1 bg-gradient-to-r ${cert.color} text-white rounded-full hover:shadow-lg transition-all duration-300 group-hover:scale-105`}>
+                      📚 Study Guide
+                    </div>
+                  </div>
+                </a>
                 
                 {/* Hover effect overlay */}
                 <div className={`absolute inset-0 bg-gradient-to-r ${cert.color} opacity-0 group-hover:opacity-5 rounded-xl transition-opacity duration-300`}></div>
@@ -145,3 +141,4 @@ export const CertificationGoals = () => {
     </section>
   );
 };
+
