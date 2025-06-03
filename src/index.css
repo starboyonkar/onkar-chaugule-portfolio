@@ -104,6 +104,7 @@
     @apply bg-background text-foreground;
     background: var(--theme-primary, linear-gradient(135deg, #0F172A 0%, #1E293B 50%, #0F172A 100%));
     transition: background 0.5s ease;
+    color: var(--theme-text);
   }
 }
 
@@ -170,6 +171,15 @@
     background: linear-gradient(45deg, var(--theme-primary), var(--theme-accent));
   }
 
+  /* White theme specific text color adjustments */
+  .text-theme-adaptive {
+    color: var(--theme-text);
+  }
+
+  .text-theme-secondary-adaptive {
+    color: var(--theme-text-secondary);
+  }
+
   /* Custom scrollbar for console */
   .scrollbar-thin {
     scrollbar-width: thin;
@@ -211,5 +221,22 @@
     60% { transform: translate(2px, 2px); }
     80% { transform: translate(2px, -2px); }
     100% { transform: translate(0); }
+  }
+
+  /* Performance optimizations */
+  .will-change-transform {
+    will-change: transform;
+  }
+  
+  .will-change-auto {
+    will-change: auto;
+  }
+  
+  .backface-hidden {
+    backface-visibility: hidden;
+  }
+  
+  .transform-gpu {
+    transform: translateZ(0);
   }
 }

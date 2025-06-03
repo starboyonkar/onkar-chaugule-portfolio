@@ -1,4 +1,3 @@
-
 import { Github, ExternalLink, Play, Youtube, Globe } from 'lucide-react';
 import { useState } from 'react';
 
@@ -24,11 +23,12 @@ export const Projects = () => {
       description: "A fully functional, containerized CRM and billing solution for product and service management. Designed with seamless CI/CD integration and deployed on AWS for production-ready scalability.",
       tech: ["React.js", "TypeScript", "Tailwind CSS", "Node.js", "Jenkins CI/CD Pipeline", "Docker", "GitHub", "AWS EC2 Deployment"],
       github: "https://github.com/starboyonkar",
-      demo: null,
+      demo: "https://borewell-crm-billing.netlify.app/",
       image: "/lovable-uploads/b6caca73-004c-4fc3-b541-ed24a5e963b1.png",
       color: "from-orange-500 to-red-500",
       featured: true,
-      isImageUrl: true
+      isImageUrl: true,
+      hasLiveDemo: true
     },
     {
       title: "Design and Virtual Twin of an Autonomous Underwater Vehicle (AUV)",
@@ -181,7 +181,7 @@ export const Projects = () => {
                       href={project.demo}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all duration-300 text-sm group/btn"
+                      className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 hover:scale-105 transition-all duration-300 text-sm group/btn"
                     >
                       <ExternalLink size={16} className="group-hover/btn:rotate-12 transition-transform duration-300" />
                       Live Site

@@ -98,6 +98,22 @@ export const themes: Theme[] = [
       gradient: 'linear-gradient(45deg, #EC4899, #F472B6)',
       glow: 'rgba(236, 72, 153, 0.3)'
     }
+  },
+  {
+    id: 'clean-white',
+    name: 'Clean White',
+    colors: {
+      primary: '#4A90E2',
+      secondary: '#1E88E5',
+      accent: '#2196F3',
+      background: '#FFFFFF',
+      surface: 'rgba(74, 144, 226, 0.08)',
+      text: '#000000',
+      textSecondary: '#4A90E2',
+      border: 'rgba(74, 144, 226, 0.2)',
+      gradient: 'linear-gradient(45deg, #4A90E2, #2196F3)',
+      glow: 'rgba(74, 144, 226, 0.3)'
+    }
   }
 ];
 
