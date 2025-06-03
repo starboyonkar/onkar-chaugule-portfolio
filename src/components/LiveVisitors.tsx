@@ -34,15 +34,16 @@ export const LiveVisitors = () => {
   const [isHovering, setIsHovering] = useState(false);
   const [globeSize, setGlobeSize] = useState({ width: 800, height: 500 });
 
-  // Check WebGL support with enhanced detection
+  // Check WebGL support with proper type casting
   const checkWebGLSupport = () => {
     try {
       const canvas = document.createElement('canvas');
       const gl = canvas.getContext('webgl2') || canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
       if (!gl) return false;
       
-      // Test basic WebGL functionality
-      const shader = gl.createShader(gl.VERTEX_SHADER);
+      // Properly cast to WebGL context and test basic functionality
+      const webglContext = gl as WebGLRenderingContext | WebGL2RenderingContext;
+      const shader = webglContext.createShader(webglContext.VERTEX_SHADER);
       return !!shader;
     } catch (e) {
       return false;
