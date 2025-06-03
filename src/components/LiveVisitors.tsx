@@ -1,4 +1,3 @@
-
 import { useEffect, useRef, useState } from 'react';
 import Globe from 'globe.gl';
 import { Eye, Users, Globe as GlobeIcon, AlertCircle } from 'lucide-react';
@@ -21,6 +20,7 @@ interface VisitorStats {
 export const LiveVisitors = () => {
   const globeRef = useRef<HTMLDivElement>(null);
   const globeInstance = useRef<any>(null);
+  const animationFrameRef = useRef<number>();
   
   const [visitors, setVisitors] = useState<VisitorData[]>([]);
   const [stats, setStats] = useState<VisitorStats>({
@@ -32,19 +32,45 @@ export const LiveVisitors = () => {
   const [webglSupported, setWebglSupported] = useState(true);
   const [isLoading, setIsLoading] = useState(true);
   const [isHovering, setIsHovering] = useState(false);
+  const [globeSize, setGlobeSize] = useState({ width: 800, height: 500 });
 
-  // Check WebGL support
+  // Check WebGL support with enhanced detection
   const checkWebGLSupport = () => {
     try {
       const canvas = document.createElement('canvas');
-      const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
-      return !!gl;
+      const gl = canvas.getContext('webgl2') || canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+      if (!gl) return false;
+      
+      // Test basic WebGL functionality
+      const shader = gl.createShader(gl.VERTEX_SHADER);
+      return !!shader;
     } catch (e) {
       return false;
     }
   };
 
-  // Initialize enhanced globe with custom styling
+  // Responsive size calculation
+  const calculateGlobeSize = () => {
+    if (!globeRef.current) return { width: 800, height: 500 };
+    
+    const container = globeRef.current.parentElement;
+    if (!container) return { width: 800, height: 500 };
+    
+    const containerWidth = container.offsetWidth;
+    const isMobile = window.innerWidth <= 768;
+    const isTablet = window.innerWidth <= 1024;
+    
+    let width = containerWidth;
+    let height = isMobile ? 400 : isTablet ? 450 : 500;
+    
+    // Ensure minimum and maximum sizes
+    width = Math.max(300, Math.min(width, 1200));
+    height = Math.max(300, Math.min(height, 600));
+    
+    return { width, height };
+  };
+
+  // Initialize optimized globe
   useEffect(() => {
     if (!globeRef.current) return;
 
@@ -56,25 +82,26 @@ export const LiveVisitors = () => {
     }
 
     try {
-      // Create globe with enhanced custom styling
+      const size = calculateGlobeSize();
+      setGlobeSize(size);
+
+      // Create globe with optimized settings
       const globe = new Globe(globeRef.current)
-        // High-resolution textures
         .globeImageUrl('//unpkg.com/three-globe/example/img/earth-blue-marble.jpg')
         .bumpImageUrl('//unpkg.com/three-globe/example/img/earth-topology.png')
         .backgroundImageUrl('//unpkg.com/three-globe/example/img/night-sky.png')
-        // Enhanced dimensions and interaction
-        .width(globeRef.current.offsetWidth)
-        .height(500)
+        .width(size.width)
+        .height(size.height)
         .enablePointerInteraction(true);
 
-      // Enhanced atmosphere and material properties
+      // Optimized atmosphere settings
       globe
         .atmosphereColor('#4A90E2')
-        .atmosphereAltitude(0.25)
+        .atmosphereAltitude(0.2)
         .showGlobe(true)
         .showAtmosphere(true);
 
-      // Custom material properties for realistic appearance
+      // Performance optimizations
       const globeMaterial = globe.globeMaterial();
       if (globeMaterial) {
         globeMaterial.shininess = 0.8;
@@ -82,66 +109,73 @@ export const LiveVisitors = () => {
         globeMaterial.opacity = 0.95;
       }
 
+      // Optimized controls
+      if (globe.controls) {
+        globe.controls().autoRotate = true;
+        globe.controls().autoRotateSpeed = 0.3; // Reduced for smoother performance
+        globe.controls().enableZoom = true;
+        globe.controls().enablePan = false;
+        globe.controls().minDistance = 200;
+        globe.controls().maxDistance = 800;
+        globe.controls().enableDamping = true;
+        globe.controls().dampingFactor = 0.05;
+      }
+
       // Store globe instance
       globeInstance.current = globe;
 
-      // Enhanced auto-rotate with hover pause functionality
-      if (globe.controls) {
-        globe.controls().autoRotate = true;
-        globe.controls().autoRotateSpeed = 0.5;
-        globe.controls().enableZoom = true;
-        globe.controls().enablePan = false;
-        globe.controls().minDistance = 250;
-        globe.controls().maxDistance = 1000;
-        globe.controls().enableDamping = true;
-        globe.controls().dampingFactor = 0.1;
-      }
-
-      // Mouse interaction handlers for auto-rotation pause
-      globeRef.current.addEventListener('mouseenter', () => {
+      // Optimized interaction handlers
+      const handleMouseEnter = () => {
         setIsHovering(true);
         if (globe.controls) {
           globe.controls().autoRotate = false;
         }
-      });
+      };
 
-      globeRef.current.addEventListener('mouseleave', () => {
+      const handleMouseLeave = () => {
         setIsHovering(false);
         if (globe.controls) {
           globe.controls().autoRotate = true;
         }
-      });
+      };
 
-      // Touch handlers for mobile
-      globeRef.current.addEventListener('touchstart', () => {
+      const handleTouchStart = () => {
         if (globe.controls) {
           globe.controls().autoRotate = false;
         }
-      });
+      };
 
-      globeRef.current.addEventListener('touchend', () => {
+      const handleTouchEnd = () => {
         setTimeout(() => {
           if (globe.controls && !isHovering) {
             globe.controls().autoRotate = true;
           }
-        }, 2000);
-      });
+        }, 1500);
+      };
+
+      globeRef.current.addEventListener('mouseenter', handleMouseEnter);
+      globeRef.current.addEventListener('mouseleave', handleMouseLeave);
+      globeRef.current.addEventListener('touchstart', handleTouchStart, { passive: true });
+      globeRef.current.addEventListener('touchend', handleTouchEnd, { passive: true });
 
       setIsLoading(false);
+
+      return () => {
+        if (globeRef.current) {
+          globeRef.current.removeEventListener('mouseenter', handleMouseEnter);
+          globeRef.current.removeEventListener('mouseleave', handleMouseLeave);
+          globeRef.current.removeEventListener('touchstart', handleTouchStart);
+          globeRef.current.removeEventListener('touchend', handleTouchEnd);
+        }
+        if (animationFrameRef.current) {
+          cancelAnimationFrame(animationFrameRef.current);
+        }
+      };
     } catch (error) {
       console.log('Globe initialization failed, using fallback:', error);
       setWebglSupported(false);
       setIsLoading(false);
     }
-
-    return () => {
-      if (globeRef.current) {
-        globeRef.current.removeEventListener('mouseenter', () => {});
-        globeRef.current.removeEventListener('mouseleave', () => {});
-        globeRef.current.removeEventListener('touchstart', () => {});
-        globeRef.current.removeEventListener('touchend', () => {});
-      }
-    };
   }, [isHovering]);
 
   // Setup real-time visitor tracking with enhanced demo data
@@ -246,20 +280,23 @@ export const LiveVisitors = () => {
     };
   };
 
-  // Enhanced globe points with improved visual effects
+  // Enhanced globe points with performance optimization
   const updateGlobePoints = (newVisitors: VisitorData[]) => {
     if (!globeInstance.current || !webglSupported) return;
 
     try {
       const allVisitors = [...visitors, ...newVisitors];
       
-      // Enhanced points with neon glow effect
-      const points = allVisitors.map(visitor => ({
+      // Limit points for performance
+      const maxPoints = 50;
+      const limitedVisitors = allVisitors.slice(-maxPoints);
+      
+      const points = limitedVisitors.map(visitor => ({
         lat: visitor.lat,
         lng: visitor.lng,
-        size: Math.random() * 0.8 + 0.4,
-        color: '#00FFFF', // Cyan for neon effect
-        altitude: 0.15
+        size: Math.random() * 0.6 + 0.3,
+        color: '#00FFFF',
+        altitude: 0.1
       }));
 
       globeInstance.current
@@ -267,29 +304,28 @@ export const LiveVisitors = () => {
         .pointAltitude('altitude')
         .pointColor('color')
         .pointRadius('size')
-        .pointResolution(32)
-        .pointLabel(d => `<div style="background: rgba(0,0,0,0.8); padding: 8px; border-radius: 4px; color: #00FFFF; border: 1px solid #00FFFF;">
-          📍 ${allVisitors[points.indexOf(d)]?.city}, ${allVisitors[points.indexOf(d)]?.country}<br/>
-          🕒 ${new Date(allVisitors[points.indexOf(d)]?.timestamp).toLocaleTimeString()}
+        .pointResolution(16) // Reduced for better performance
+        .pointLabel(d => `<div style="background: rgba(0,0,0,0.9); padding: 6px; border-radius: 4px; color: #00FFFF; border: 1px solid #00FFFF; font-size: 12px;">
+          📍 ${limitedVisitors[points.indexOf(d)]?.city}, ${limitedVisitors[points.indexOf(d)]?.country}<br/>
+          🕒 ${new Date(limitedVisitors[points.indexOf(d)]?.timestamp).toLocaleTimeString()}
         </div>`);
 
-      // Enhanced rings with neon pulse effect
+      // Optimized rings
       globeInstance.current
-        .ringsData(newVisitors.map(visitor => ({
+        .ringsData(newVisitors.slice(-5).map(visitor => ({
           lat: visitor.lat,
           lng: visitor.lng
         })))
         .ringColor(() => '#4A90E2')
-        .ringMaxRadius(3)
-        .ringPropagationSpeed(1.5)
-        .ringRepeatPeriod(1500)
-        .ringAltitude(0.02);
+        .ringMaxRadius(2)
+        .ringPropagationSpeed(1.2)
+        .ringRepeatPeriod(1200)
+        .ringAltitude(0.01);
 
-      // Show recent visitor notification
       if (newVisitors.length > 0) {
         const latest = newVisitors[newVisitors.length - 1];
         setRecentVisitor(latest);
-        setTimeout(() => setRecentVisitor(null), 5000);
+        setTimeout(() => setRecentVisitor(null), 4000);
       }
     } catch (error) {
       console.log('Error updating globe points:', error);
@@ -306,47 +342,61 @@ export const LiveVisitors = () => {
     });
   };
 
-  // Handle window resize
+  // Optimized resize handler
   useEffect(() => {
     const handleResize = () => {
       if (globeInstance.current && globeRef.current && webglSupported) {
-        globeInstance.current.width(globeRef.current.offsetWidth);
+        const newSize = calculateGlobeSize();
+        setGlobeSize(newSize);
+        globeInstance.current.width(newSize.width).height(newSize.height);
       }
     };
 
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
+    const debouncedResize = debounce(handleResize, 250);
+    window.addEventListener('resize', debouncedResize);
+    return () => window.removeEventListener('resize', debouncedResize);
   }, [webglSupported]);
+
+  // Debounce helper
+  const debounce = (func: Function, wait: number) => {
+    let timeout: NodeJS.Timeout;
+    return function executedFunction(...args: any[]) {
+      const later = () => {
+        clearTimeout(timeout);
+        func(...args);
+      };
+      clearTimeout(timeout);
+      timeout = setTimeout(later, wait);
+    };
+  };
 
   // Enhanced fallback visualization
   const FallbackVisualization = () => (
-    <div className="w-full h-[500px] bg-gradient-to-br from-blue-900/20 to-purple-900/20 rounded-xl flex flex-col items-center justify-center border border-blue-500/20 relative overflow-hidden">
-      {/* Animated background */}
+    <div className="w-full h-[400px] md:h-[500px] bg-gradient-to-br from-blue-900/20 to-purple-900/20 rounded-xl flex flex-col items-center justify-center border border-blue-500/20 relative overflow-hidden">
       <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/10 via-blue-500/10 to-purple-500/10 animate-pulse"></div>
       
-      <div className="text-center space-y-6 relative z-10">
+      <div className="text-center space-y-6 relative z-10 px-4">
         <div className="relative">
-          <AlertCircle className="mx-auto text-cyan-400 animate-pulse" size={64} />
+          <AlertCircle className="mx-auto text-cyan-400 animate-pulse" size={48} />
           <div className="absolute inset-0 rounded-full bg-cyan-400/20 animate-ping"></div>
         </div>
         
-        <h3 className="text-2xl font-bold text-white font-futuristic neon-text">
+        <h3 className="text-xl md:text-2xl font-bold text-white font-futuristic neon-text">
           Global Visitor Network
         </h3>
-        <p className="text-gray-300 max-w-md">
-          Interactive 3D globe unavailable. Displaying visitor data in fallback mode.
+        <p className="text-gray-300 text-sm md:text-base max-w-md">
+          Interactive 3D globe unavailable. Displaying visitor data in optimized mode.
         </p>
         
-        {/* Enhanced visitor grid */}
-        <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-4 max-h-64 overflow-y-auto">
-          {visitors.map((visitor, index) => (
+        <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-3 max-h-48 overflow-y-auto">
+          {visitors.slice(-8).map((visitor) => (
             <div 
               key={visitor.id} 
-              className="flex items-center justify-between bg-slate-800/60 backdrop-blur-sm px-4 py-3 rounded-lg text-sm border border-cyan-500/20 hover:border-cyan-400/40 transition-all duration-300"
+              className="flex items-center justify-between bg-slate-800/60 backdrop-blur-sm px-3 py-2 rounded-lg text-xs border border-cyan-500/20 hover:border-cyan-400/40 transition-all duration-300"
             >
-              <div className="flex items-center space-x-3">
+              <div className="flex items-center space-x-2">
                 <div className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></div>
-                <span className="text-cyan-400 font-medium">
+                <span className="text-cyan-400 font-medium truncate">
                   {visitor.city}, {visitor.country}
                 </span>
               </div>
@@ -361,7 +411,7 @@ export const LiveVisitors = () => {
   );
 
   return (
-    <section className="py-20 px-4 bg-slate-900/30 backdrop-blur-sm relative overflow-hidden">
+    <section className="py-12 md:py-20 px-4 bg-slate-900/30 backdrop-blur-sm relative overflow-hidden">
       {/* Enhanced background effects */}
       <div className="absolute inset-0 bg-gradient-to-b from-blue-900/10 to-purple-900/10"></div>
       <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-cyan-500/5 rounded-full blur-3xl animate-pulse"></div>
@@ -405,21 +455,22 @@ export const LiveVisitors = () => {
           </div>
         </div>
 
-        {/* Enhanced globe container */}
+        {/* Optimized globe container */}
         <div className="relative">
-          <div className="bg-slate-900/30 backdrop-blur-md rounded-2xl p-6 border border-cyan-500/20 overflow-hidden shadow-2xl">
+          <div className="bg-slate-900/30 backdrop-blur-md rounded-2xl p-4 md:p-6 border border-cyan-500/20 overflow-hidden shadow-2xl">
             {isLoading ? (
-              <div className="w-full h-[500px] flex items-center justify-center">
+              <div className="w-full h-[400px] md:h-[500px] flex items-center justify-center">
                 <div className="relative">
-                  <div className="animate-spin rounded-full h-20 w-20 border-b-2 border-cyan-400"></div>
-                  <div className="absolute inset-0 animate-ping rounded-full h-20 w-20 border border-cyan-400/30"></div>
+                  <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-cyan-400"></div>
+                  <div className="absolute inset-0 animate-ping rounded-full h-16 w-16 border border-cyan-400/30"></div>
                 </div>
               </div>
             ) : webglSupported ? (
               <div 
                 ref={globeRef} 
-                className="w-full h-[500px] rounded-xl overflow-hidden relative cursor-grab active:cursor-grabbing"
+                className="w-full rounded-xl overflow-hidden relative cursor-grab active:cursor-grabbing"
                 style={{ 
+                  height: `${globeSize.height}px`,
                   background: 'radial-gradient(circle at center, rgba(6, 182, 212, 0.1) 0%, rgba(0, 0, 0, 0.9) 100%)',
                   boxShadow: 'inset 0 0 100px rgba(6, 182, 212, 0.2)'
                 }}
@@ -428,8 +479,7 @@ export const LiveVisitors = () => {
               <FallbackVisualization />
             )}
             
-            {/* Enhanced glow overlay */}
-            <div className="absolute inset-6 rounded-xl pointer-events-none bg-gradient-to-t from-cyan-500/10 via-transparent to-blue-500/10"></div>
+            <div className="absolute inset-4 md:inset-6 rounded-xl pointer-events-none bg-gradient-to-t from-cyan-500/10 via-transparent to-blue-500/10"></div>
           </div>
           
           {/* Enhanced visitor notification */}
