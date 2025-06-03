@@ -1,7 +1,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import Globe from 'globe.gl';
-import { Eye, Users, Globe as GlobeIcon } from 'lucide-react';
+import { Eye, Users, Globe as GlobeIcon, AlertCircle } from 'lucide-react';
 
 interface VisitorData {
   id: string;
@@ -29,38 +29,67 @@ export const LiveVisitors = () => {
     countries: 0
   });
   const [recentVisitor, setRecentVisitor] = useState<VisitorData | null>(null);
+  const [webglSupported, setWebglSupported] = useState(true);
+  const [isLoading, setIsLoading] = useState(true);
 
-  // Initialize globe
+  // Check WebGL support
+  const checkWebGLSupport = () => {
+    try {
+      const canvas = document.createElement('canvas');
+      const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+      return !!gl;
+    } catch (e) {
+      return false;
+    }
+  };
+
+  // Initialize globe with error handling
   useEffect(() => {
     if (!globeRef.current) return;
 
-    // Create globe instance with enhanced styling
-    const globe = new Globe(globeRef.current)
-      .globeImageUrl('//unpkg.com/three-globe/example/img/earth-night.jpg')
-      .bumpImageUrl('//unpkg.com/three-globe/example/img/earth-topology.png')
-      .backgroundImageUrl('//unpkg.com/three-globe/example/img/night-sky.png')
-      .width(globeRef.current.offsetWidth)
-      .height(400)
-      .enablePointerInteraction(true);
+    // Check WebGL support first
+    if (!checkWebGLSupport()) {
+      console.log('WebGL not supported, using fallback visualization');
+      setWebglSupported(false);
+      setIsLoading(false);
+      return;
+    }
 
-    // Enhanced atmosphere and material properties
-    globe
-      .atmosphereColor('#4A90E2')
-      .atmosphereAltitude(0.15)
-      .showGlobe(true)
-      .showAtmosphere(true);
+    try {
+      // Create globe instance with enhanced styling
+      const globe = new Globe(globeRef.current)
+        .globeImageUrl('//unpkg.com/three-globe/example/img/earth-night.jpg')
+        .bumpImageUrl('//unpkg.com/three-globe/example/img/earth-topology.png')
+        .backgroundImageUrl('//unpkg.com/three-globe/example/img/night-sky.png')
+        .width(globeRef.current.offsetWidth)
+        .height(400)
+        .enablePointerInteraction(true);
 
-    // Store globe instance
-    globeInstance.current = globe;
+      // Enhanced atmosphere and material properties
+      globe
+        .atmosphereColor('#4A90E2')
+        .atmosphereAltitude(0.15)
+        .showGlobe(true)
+        .showAtmosphere(true);
 
-    // Enhanced auto-rotate with smoother controls
-    if (globe.controls) {
-      globe.controls().autoRotate = true;
-      globe.controls().autoRotateSpeed = 0.3;
-      globe.controls().enableZoom = true;
-      globe.controls().enablePan = false;
-      globe.controls().minDistance = 200;
-      globe.controls().maxDistance = 800;
+      // Store globe instance
+      globeInstance.current = globe;
+
+      // Enhanced auto-rotate with smoother controls
+      if (globe.controls) {
+        globe.controls().autoRotate = true;
+        globe.controls().autoRotateSpeed = 0.3;
+        globe.controls().enableZoom = true;
+        globe.controls().enablePan = false;
+        globe.controls().minDistance = 200;
+        globe.controls().maxDistance = 800;
+      }
+
+      setIsLoading(false);
+    } catch (error) {
+      console.log('Globe initialization failed, using fallback:', error);
+      setWebglSupported(false);
+      setIsLoading(false);
     }
 
     return () => {
@@ -88,13 +117,17 @@ export const LiveVisitors = () => {
 
           // Add current user to visitors
           setVisitors(prev => [...prev, currentUser]);
-          updateGlobePoints([currentUser]);
+          if (webglSupported) {
+            updateGlobePoints([currentUser]);
+          }
           
           // Simulate new visitor for demo (since we don't have a real backend)
           setTimeout(() => {
             const demoVisitors = generateDemoVisitors();
             setVisitors(prev => [...prev, ...demoVisitors]);
-            updateGlobePoints(demoVisitors);
+            if (webglSupported) {
+              updateGlobePoints(demoVisitors);
+            }
             updateStats(demoVisitors.length + 1);
           }, 2000);
         }
@@ -103,13 +136,15 @@ export const LiveVisitors = () => {
         // Use demo data if API fails
         const demoData = generateDemoVisitors();
         setVisitors(demoData);
-        updateGlobePoints(demoData);
+        if (webglSupported) {
+          updateGlobePoints(demoData);
+        }
         updateStats(demoData.length);
       }
     };
 
     trackCurrentUser();
-  }, []);
+  }, [webglSupported]);
 
   // Generate demo visitors for demonstration
   const generateDemoVisitors = (): VisitorData[] => {
@@ -133,38 +168,42 @@ export const LiveVisitors = () => {
 
   // Update globe with visitor points
   const updateGlobePoints = (newVisitors: VisitorData[]) => {
-    if (!globeInstance.current) return;
+    if (!globeInstance.current || !webglSupported) return;
 
-    const points = newVisitors.map(visitor => ({
-      lat: visitor.lat,
-      lng: visitor.lng,
-      size: Math.random() * 0.5 + 0.3,
-      color: '#4A90E2'
-    }));
-
-    globeInstance.current
-      .pointsData(points)
-      .pointAltitude(0.1)
-      .pointColor('color')
-      .pointRadius('size')
-      .pointResolution(32);
-
-    // Add rings for animation effect
-    globeInstance.current
-      .ringsData(newVisitors.map(visitor => ({
+    try {
+      const points = newVisitors.map(visitor => ({
         lat: visitor.lat,
-        lng: visitor.lng
-      })))
-      .ringColor(() => '#4A90E2')
-      .ringMaxRadius(2)
-      .ringPropagationSpeed(2)
-      .ringRepeatPeriod(1000);
+        lng: visitor.lng,
+        size: Math.random() * 0.5 + 0.3,
+        color: '#4A90E2'
+      }));
 
-    // Show recent visitor notification
-    if (newVisitors.length > 0) {
-      const latest = newVisitors[newVisitors.length - 1];
-      setRecentVisitor(latest);
-      setTimeout(() => setRecentVisitor(null), 4000);
+      globeInstance.current
+        .pointsData(points)
+        .pointAltitude(0.1)
+        .pointColor('color')
+        .pointRadius('size')
+        .pointResolution(32);
+
+      // Add rings for animation effect
+      globeInstance.current
+        .ringsData(newVisitors.map(visitor => ({
+          lat: visitor.lat,
+          lng: visitor.lng
+        })))
+        .ringColor(() => '#4A90E2')
+        .ringMaxRadius(2)
+        .ringPropagationSpeed(2)
+        .ringRepeatPeriod(1000);
+
+      // Show recent visitor notification
+      if (newVisitors.length > 0) {
+        const latest = newVisitors[newVisitors.length - 1];
+        setRecentVisitor(latest);
+        setTimeout(() => setRecentVisitor(null), 4000);
+      }
+    } catch (error) {
+      console.log('Error updating globe points:', error);
     }
   };
 
@@ -181,14 +220,42 @@ export const LiveVisitors = () => {
   // Handle window resize
   useEffect(() => {
     const handleResize = () => {
-      if (globeInstance.current && globeRef.current) {
+      if (globeInstance.current && globeRef.current && webglSupported) {
         globeInstance.current.width(globeRef.current.offsetWidth);
       }
     };
 
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
-  }, []);
+  }, [webglSupported]);
+
+  // Fallback visualization component
+  const FallbackVisualization = () => (
+    <div className="w-full h-[400px] bg-gradient-to-br from-blue-900/20 to-purple-900/20 rounded-xl flex flex-col items-center justify-center border border-blue-500/20">
+      <div className="text-center space-y-4">
+        <AlertCircle className="mx-auto text-blue-400" size={48} />
+        <h3 className="text-xl font-semibold text-white">Interactive Globe Unavailable</h3>
+        <p className="text-gray-400 max-w-md">
+          Your browser doesn't support WebGL or it's disabled. Here's a summary of our global visitors:
+        </p>
+        
+        {/* Visitor list */}
+        <div className="mt-6 space-y-2 max-h-48 overflow-y-auto">
+          {visitors.map((visitor, index) => (
+            <div 
+              key={visitor.id} 
+              className="flex items-center justify-between bg-slate-800/50 px-4 py-2 rounded-lg text-sm"
+            >
+              <span className="text-blue-400">📍 {visitor.city}, {visitor.country}</span>
+              <span className="text-gray-500">
+                {new Date(visitor.timestamp).toLocaleTimeString()}
+              </span>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
 
   return (
     <section className="py-20 px-4 bg-slate-900/30 backdrop-blur-sm relative overflow-hidden">
@@ -235,18 +302,25 @@ export const LiveVisitors = () => {
           </div>
         </div>
 
-        {/* Enhanced Globe Container */}
+        {/* Enhanced Globe Container or Fallback */}
         <div className="relative">
           <div className="bg-slate-900/30 backdrop-blur-md rounded-2xl p-6 border border-blue-500/20 overflow-hidden shadow-2xl">
-            {/* Globe with enhanced container styling */}
-            <div 
-              ref={globeRef} 
-              className="w-full h-[400px] rounded-xl overflow-hidden relative"
-              style={{ 
-                background: 'radial-gradient(circle at center, rgba(59, 130, 246, 0.1) 0%, rgba(0, 0, 0, 0.9) 100%)',
-                boxShadow: 'inset 0 0 50px rgba(59, 130, 246, 0.2)'
-              }}
-            />
+            {isLoading ? (
+              <div className="w-full h-[400px] flex items-center justify-center">
+                <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-blue-400"></div>
+              </div>
+            ) : webglSupported ? (
+              <div 
+                ref={globeRef} 
+                className="w-full h-[400px] rounded-xl overflow-hidden relative"
+                style={{ 
+                  background: 'radial-gradient(circle at center, rgba(59, 130, 246, 0.1) 0%, rgba(0, 0, 0, 0.9) 100%)',
+                  boxShadow: 'inset 0 0 50px rgba(59, 130, 246, 0.2)'
+                }}
+              />
+            ) : (
+              <FallbackVisualization />
+            )}
             
             {/* Glow overlay */}
             <div className="absolute inset-6 rounded-xl pointer-events-none bg-gradient-to-t from-blue-500/10 via-transparent to-purple-500/10"></div>
@@ -265,7 +339,10 @@ export const LiveVisitors = () => {
         {/* Instructions */}
         <div className="text-center mt-8 animate-fade-in" style={{ animationDelay: '0.8s' }}>
           <p className="text-gray-400 text-sm">
-            🖱️ Click and drag to rotate • 🔍 Scroll to zoom • ✨ Watch for new visitor pings
+            {webglSupported 
+              ? "🖱️ Click and drag to rotate • 🔍 Scroll to zoom • ✨ Watch for new visitor pings"
+              : "🌍 Global visitor tracking is active • 📊 Statistics update in real-time"
+            }
           </p>
         </div>
       </div>
