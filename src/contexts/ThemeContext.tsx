@@ -168,8 +168,23 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       applyThemeToDOM(currentTheme);
     }
 
-    // Ensure we always start at the top on page load
+    // Ensure we always start at the top on page load and theme change
     window.scrollTo(0, 0);
+    
+    // Additional scroll position enforcement
+    const handleDOMContentLoaded = () => {
+      setTimeout(() => window.scrollTo(0, 0), 0);
+    };
+    
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', handleDOMContentLoaded);
+    } else {
+      handleDOMContentLoaded();
+    }
+
+    return () => {
+      document.removeEventListener('DOMContentLoaded', handleDOMContentLoaded);
+    };
   }, []);
 
   return (
