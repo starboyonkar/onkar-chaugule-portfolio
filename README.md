@@ -1,73 +1,66 @@
-# Welcome to your Lovable project
+# 🌐 Onkar Chaugule – DevOps & Cloud Portfolio
 
-## Project info
+Welcome to my **personal portfolio website** – a live showcase of my professional journey, real-world projects, certifications, and technical skills across the **DevOps**, **Cloud**, **IoT**, and **Software Engineering** domains.
 
-**URL**: https://lovable.dev/projects/eda735cc-8102-4e47-b06c-f4dfbe5f60d1
+🔗 **Live URL:** [https://tune-guard.site](https://tune-guard.site)
 
-## How can I edit this code?
+---
 
-There are several ways of editing your application.
+## 👋 About Me
 
-**Use Lovable**
+Hi, I'm **Onkar Chaugule** – a tech-savvy engineering graduate from Solapur, Maharashtra, India, passionate about building smart, scalable, and cloud-native solutions. I specialize in **DevOps Engineering**, **Cloud Infrastructure (AWS)**, **CI/CD Pipelines**, and **IoT-driven automation**.
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/eda735cc-8102-4e47-b06c-f4dfbe5f60d1) and start prompting.
+---
 
-Changes made via Lovable will be committed automatically to this repo.
+## 🚀 What You’ll Find on This Portfolio
 
-**Use your preferred IDE**
+### 📌 **Featured Projects**
+A curated list of real-world projects, including:
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+- 🎧 **TuneGuard** – Smart audio player with Dyanamic-powered EQ, FFT, and Spotify integration  
+- 🌊 **AUV Virtual Twin** – Underwater robotics with 8-thruster design and real-time control  
+- 💧 **Smart Irrigation** – AI + sensor-based real-time irrigation controller  
+- 🖥️ **Virtual Desktop Assistant** – Python + AI voice assistant  
+- 🛒 **CRM & Billing App** – Full-stack cloud-deployed e-commerce system with CI/CD  
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+### 🧠 **Tech Stack & Skills**
+Modern, production-grade technologies:
+- **Frontend:** React.js, TypeScript, Tailwind CSS  
+- **Backend:** Node.js, Python, Express  
+- **DevOps Tools:** Jenkins, Docker, GitHub Actions, Terraform, AWS EC2, S3, IAM  
+- **Databases:** MongoDB, MySQL, SQLite  
+- **Others:** Bash, Linux, FFT, MQTT, Raspberry Pi, ESP8266  
 
-Follow these steps:
+### 🎓 **Education**
+- 🏫 B.Tech in E&TC – Walchand Institute of Technology (9.36 CGPA)  
+- 📄 HSC: 84% | SSC: 74.40%
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+### 🏅 **DevOps Certification Goals**
+See my DevOps roadmap featuring certification badges with official exam links for:
+- AWS, Azure, GCP, Terraform, Kubernetes, and more.
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+---
 
-# Step 3: Install the necessary dependencies.
-npm i
+## 🌐 Connect with Me
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
-```
+| Platform      | Link                                                                 |
+|---------------|----------------------------------------------------------------------|
+| 🔗 LinkedIn   | [linkedin.com/in/onkar-chaugule](https://www.linkedin.com/in/onkar-chaugule) |
+| 🐱 GitHub     | [github.com/starboyonkar](https://github.com/starboyonkar)           |
+| 📧 Gmail      | [onkarchougule501@gmail.com](mailto:onkarchougule501@gmail.com)      |
+| 📸 Instagram  | [onkar.chougule.73](https://instagram.com/onkar.chougule.73)         |
+| ▶️ YouTube    | [Onkar's Channel](https://www.youtube.com/channel/UCpzZr2eg1lsB6yALzsBTUlQ) |
+| 📱 Phone      | [+91 9373261147](tel:+919373261147)                                   |
 
-**Edit a file directly in GitHub**
+---
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+## 🛠️ Tech Highlights
 
-**Use GitHub Codespaces**
+- 🔄 Real-time **CI/CD Pipelines** with Jenkins + Docker + GitHub
+- ☁️ Deployed on **Amazon EC2** with public IP routing
+- 🎙️ Built-in **voice command system** and ambient audio detection
+- 📊 Includes **FFT waveform analysis**, auto-EQ, and accessibility tools
+- 📦 Fully **containerized architecture** for portable deployment
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+---
 
-## What technologies are used for this project?
-
-This project is built with:
-
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
-
-## How can I deploy this project?
-
-Simply open [Lovable](https://lovable.dev/projects/eda735cc-8102-4e47-b06c-f4dfbe5f60d1) and click on Share -> Publish.
-
-## Can I connect a custom domain to my Lovable project?
-
-Yes, you can!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
