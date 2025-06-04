@@ -43,6 +43,14 @@ const ProgrammerDesktop = () => {
     }
   });
 
+  // Define desk leg positions with proper typing
+  const deskLegPositions: [number, number, number][] = [
+    [-2.5, -1.8, -1.2],
+    [2.5, -1.8, -1.2],
+    [-2.5, -1.8, 1.2],
+    [2.5, -1.8, 1.2]
+  ];
+
   // Enhanced realistic computer setup
   return (
     <group 
@@ -63,7 +71,7 @@ const ProgrammerDesktop = () => {
       </mesh>
       
       {/* Desk legs */}
-      {[[-2.5, -1.8, -1.2], [2.5, -1.8, -1.2], [-2.5, -1.8, 1.2], [2.5, -1.8, 1.2]].map((pos, i) => (
+      {deskLegPositions.map((pos, i) => (
         <mesh key={i} position={pos} castShadow>
           <cylinderGeometry args={[0.08, 0.08, 1.2]} />
           <meshStandardMaterial color="#4a4a4a" metalness={0.3} roughness={0.7} />
@@ -225,7 +233,7 @@ const ProgrammerDesktop = () => {
       <group position={[-1.8, -1, -0.3]} rotation={[0, Math.PI / 5, 0]}>
         <mesh castShadow>
           <boxGeometry args={[1.4, 0.08, 1]} />
-          <meshStandardMaterial color="#silver" metalness={0.9} roughness={0.1} />
+          <meshStandardMaterial color="#c0c0c0" metalness={0.9} roughness={0.1} />
         </mesh>
         <mesh position={[0, 0.5, -0.4]} rotation={[-Math.PI / 8, 0, 0]} castShadow>
           <boxGeometry args={[1.4, 0.9, 0.08]} />
