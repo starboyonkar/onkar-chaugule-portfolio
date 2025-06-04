@@ -1,4 +1,3 @@
-
 import { useEffect, useRef, useState } from 'react';
 import Globe from 'globe.gl';
 import { Eye, Users, Globe as GlobeIcon } from 'lucide-react';
@@ -54,9 +53,11 @@ export const LiveVisitors = () => {
       .atmosphereAltitude(0.25);
 
     // Custom globe material with enhanced properties
-    const globeMaterial = globe.globeMaterial();
-    globeMaterial.bumpScale = 10;
-    globeMaterial.shininess = 0.1;
+    const globeMaterial = globe.globeMaterial() as THREE.MeshPhongMaterial;
+    if (globeMaterial) {
+      globeMaterial.bumpScale = 10;
+      globeMaterial.shininess = 0.1;
+    }
 
     // Enhanced auto-rotate with hover pause
     const controls = globe.controls();
