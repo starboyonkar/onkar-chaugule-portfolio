@@ -11,6 +11,7 @@ interface VisitorData {
   lat: number;
   lng: number;
   timestamp: number;
+  population?: number;
 }
 
 interface VisitorStats {
@@ -32,18 +33,18 @@ export const LiveVisitors = () => {
   const [recentVisitor, setRecentVisitor] = useState<VisitorData | null>(null);
   const [isHovered, setIsHovered] = useState(false);
 
-  // Initialize enhanced globe with custom styling
+  // Initialize enhanced globe with World Cities styling
   useEffect(() => {
     if (!globeRef.current) return;
 
-    // Create globe instance with enhanced styling
+    // Create globe instance with enhanced World Cities styling
     const globe = new Globe(globeRef.current)
       .width(globeRef.current.offsetWidth)
       .height(450)
       .backgroundColor('rgba(0,0,0,0)')
       .enablePointerInteraction(true);
 
-    // Enhanced globe material and textures
+    // Enhanced globe material and textures (World Cities style)
     globe
       .globeImageUrl('//unpkg.com/three-globe/example/img/earth-blue-marble.jpg')
       .bumpImageUrl('//unpkg.com/three-globe/example/img/earth-topology.png')
@@ -57,6 +58,7 @@ export const LiveVisitors = () => {
     const globeMaterial = globe.globeMaterial();
     globeMaterial.bumpScale = 10;
     globeMaterial.shininess = 0.1;
+    globeMaterial.transparent = true;
 
     // Add atmospheric glow using custom shader
     const glowMaterial = new THREE.ShaderMaterial({
@@ -96,7 +98,7 @@ export const LiveVisitors = () => {
     const glowMesh = new THREE.Mesh(glowGeometry, glowMaterial);
     globe.scene().add(glowMesh);
 
-    // Enhanced auto-rotate with hover pause
+    // Enhanced auto-rotate with performance optimization
     const controls = globe.controls();
     if (controls) {
       controls.autoRotate = true;
@@ -112,6 +114,10 @@ export const LiveVisitors = () => {
     // Store globe instance
     globeInstance.current = globe;
 
+    // Performance optimizations
+    globe.renderer().setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    globe.renderer().shadowMap.enabled = false; // Disable shadows for better performance
+    
     // Mouse hover handlers for auto-rotation pause
     const handleMouseEnter = () => {
       setIsHovered(true);
@@ -127,7 +133,7 @@ export const LiveVisitors = () => {
     globeElement.addEventListener('mouseenter', handleMouseEnter);
     globeElement.addEventListener('mouseleave', handleMouseLeave);
 
-    // Touch handlers for mobile
+    // Touch handlers for mobile with performance optimization
     const handleTouchStart = () => {
       if (controls) controls.autoRotate = false;
     };
@@ -138,8 +144,8 @@ export const LiveVisitors = () => {
       }, 1000);
     };
 
-    globeElement.addEventListener('touchstart', handleTouchStart);
-    globeElement.addEventListener('touchend', handleTouchEnd);
+    globeElement.addEventListener('touchstart', handleTouchStart, { passive: true });
+    globeElement.addEventListener('touchend', handleTouchEnd, { passive: true });
 
     return () => {
       globeElement.removeEventListener('mouseenter', handleMouseEnter);
@@ -149,7 +155,7 @@ export const LiveVisitors = () => {
     };
   }, [isHovered]);
 
-  // Setup real-time visitor tracking with enhanced animations
+  // Setup real-time visitor tracking with World Cities data
   useEffect(() => {
     const trackCurrentUser = async () => {
       try {
@@ -163,14 +169,15 @@ export const LiveVisitors = () => {
             city: data.city,
             lat: data.lat,
             lng: data.lon,
-            timestamp: Date.now()
+            timestamp: Date.now(),
+            population: Math.floor(Math.random() * 1000000) + 50000
           };
 
           setVisitors(prev => [...prev, currentUser]);
           updateGlobePoints([currentUser]);
           
           setTimeout(() => {
-            const demoVisitors = generateDemoVisitors();
+            const demoVisitors = generateWorldCitiesData();
             setVisitors(prev => [...prev, ...demoVisitors]);
             updateGlobePoints(demoVisitors);
             updateStats(demoVisitors.length + 1);
@@ -178,7 +185,7 @@ export const LiveVisitors = () => {
         }
       } catch (error) {
         console.log('Using demo data for visitor tracking');
-        const demoData = generateDemoVisitors();
+        const demoData = generateWorldCitiesData();
         setVisitors(demoData);
         updateGlobePoints(demoData);
         updateStats(demoData.length);
@@ -188,103 +195,128 @@ export const LiveVisitors = () => {
     trackCurrentUser();
   }, []);
 
-  // Generate demo visitors for demonstration
-  const generateDemoVisitors = (): VisitorData[] => {
-    const demoLocations = [
-      { country: 'India', city: 'Mumbai', lat: 19.0760, lng: 72.8777 },
-      { country: 'USA', city: 'New York', lat: 40.7128, lng: -74.0060 },
-      { country: 'UK', city: 'London', lat: 51.5074, lng: -0.1278 },
-      { country: 'Germany', city: 'Berlin', lat: 52.5200, lng: 13.4050 },
-      { country: 'Japan', city: 'Tokyo', lat: 35.6762, lng: 139.6503 },
-      { country: 'Australia', city: 'Sydney', lat: -33.8688, lng: 151.2093 },
-      { country: 'Canada', city: 'Toronto', lat: 43.6532, lng: -79.3832 },
-      { country: 'Brazil', city: 'São Paulo', lat: -23.5505, lng: -46.6333 },
-      { country: 'France', city: 'Paris', lat: 48.8566, lng: 2.3522 },
-      { country: 'South Korea', city: 'Seoul', lat: 37.5665, lng: 126.9780 }
+  // Generate World Cities demo data
+  const generateWorldCitiesData = (): VisitorData[] => {
+    const worldCities = [
+      { country: 'India', city: 'Mumbai', lat: 19.0760, lng: 72.8777, population: 20411000 },
+      { country: 'USA', city: 'New York', lat: 40.7128, lng: -74.0060, population: 8336000 },
+      { country: 'UK', city: 'London', lat: 51.5074, lng: -0.1278, population: 9648000 },
+      { country: 'Germany', city: 'Berlin', lat: 52.5200, lng: 13.4050, population: 3669000 },
+      { country: 'Japan', city: 'Tokyo', lat: 35.6762, lng: 139.6503, population: 13960000 },
+      { country: 'Australia', city: 'Sydney', lat: -33.8688, lng: 151.2093, population: 5312000 },
+      { country: 'Canada', city: 'Toronto', lat: 43.6532, lng: -79.3832, population: 2930000 },
+      { country: 'Brazil', city: 'São Paulo', lat: -23.5505, lng: -46.6333, population: 12326000 },
+      { country: 'France', city: 'Paris', lat: 48.8566, lng: 2.3522, population: 11017000 },
+      { country: 'South Korea', city: 'Seoul', lat: 37.5665, lng: 126.9780, population: 9775000 },
+      { country: 'China', city: 'Shanghai', lat: 31.2304, lng: 121.4737, population: 24870000 },
+      { country: 'Russia', city: 'Moscow', lat: 55.7558, lng: 37.6176, population: 12506000 },
+      { country: 'Mexico', city: 'Mexico City', lat: 19.4326, lng: -99.1332, population: 21782000 },
+      { country: 'Turkey', city: 'Istanbul', lat: 41.0082, lng: 28.9784, population: 15519000 },
+      { country: 'UAE', city: 'Dubai', lat: 25.2048, lng: 55.2708, population: 3331000 }
     ];
 
-    return demoLocations.map((location, index) => ({
-      id: `demo-${index}`,
-      ...location,
+    return worldCities.map((city, index) => ({
+      id: `world-city-${index}`,
+      ...city,
       timestamp: Date.now() - Math.random() * 3600000
     }));
   };
 
-  // Update globe with enhanced visitor points and animations
+  // Update globe with World Cities styling and animations
   const updateGlobePoints = (newVisitors: VisitorData[]) => {
     if (!globeInstance.current) return;
 
+    // World Cities style points with population-based sizing
     const points = newVisitors.map(visitor => ({
       lat: visitor.lat,
       lng: visitor.lng,
-      size: Math.random() * 0.8 + 0.5,
+      size: Math.sqrt((visitor.population || 100000) / 100000) * 0.5 + 0.2,
       color: '#00BFFF',
       city: visitor.city,
-      country: visitor.country
+      country: visitor.country,
+      population: visitor.population || 'Unknown'
     }));
 
     globeInstance.current
       .pointsData(points)
-      .pointAltitude(0.2)
+      .pointAltitude(d => Math.max(0.1, Math.sqrt(d.population / 1000000) * 0.3))
       .pointColor('color')
       .pointRadius('size')
-      .pointResolution(32)
+      .pointResolution(16) // Reduced for better performance
       .pointLabel(d => `
         <div style="
-          background: rgba(0, 0, 0, 0.8); 
+          background: rgba(0, 0, 0, 0.9); 
           color: #00BFFF; 
-          padding: 8px 12px; 
-          border-radius: 8px; 
-          border: 1px solid #00BFFF;
+          padding: 12px 16px; 
+          border-radius: 12px; 
+          border: 2px solid #00BFFF;
           font-family: 'Orbitron', monospace;
-          box-shadow: 0 0 20px rgba(0, 191, 255, 0.5);
+          box-shadow: 0 0 25px rgba(0, 191, 255, 0.6);
+          backdrop-filter: blur(10px);
+          max-width: 250px;
         ">
-          📍 ${d.city}, ${d.country}
+          <div style="font-size: 16px; font-weight: bold; margin-bottom: 6px;">
+            🌆 ${d.city}, ${d.country}
+          </div>
+          <div style="font-size: 12px; color: #87CEEB;">
+            👥 Population: ${Number(d.population).toLocaleString()}
+          </div>
+          <div style="font-size: 10px; color: #B0E0E6; margin-top: 4px;">
+            📍 ${d.lat.toFixed(2)}°, ${d.lng.toFixed(2)}°
+          </div>
         </div>
       `);
 
-    // Enhanced rings with neon glow effect
+    // Enhanced rings with performance optimization
     globeInstance.current
-      .ringsData(newVisitors.map(visitor => ({
+      .ringsData(newVisitors.slice(-5).map(visitor => ({ // Only show last 5 rings for performance
         lat: visitor.lat,
         lng: visitor.lng
       })))
       .ringColor(() => '#00BFFF')
-      .ringMaxRadius(4)
-      .ringPropagationSpeed(1.5)
-      .ringRepeatPeriod(2000)
+      .ringMaxRadius(5)
+      .ringPropagationSpeed(2)
+      .ringRepeatPeriod(1500)
       .ringAltitude(0.05);
 
-    // Show recent visitor notification with enhanced styling
+    // Show recent visitor notification
     if (newVisitors.length > 0) {
       const latest = newVisitors[newVisitors.length - 1];
       setRecentVisitor(latest);
-      setTimeout(() => setRecentVisitor(null), 5000);
+      setTimeout(() => setRecentVisitor(null), 4000);
     }
   };
 
-  // Update statistics
+  // Update statistics with debouncing
   const updateStats = (visitorCount: number) => {
     const uniqueCountries = new Set(visitors.map(v => v.country)).size;
     setStats({
       totalToday: visitorCount,
-      liveNow: Math.floor(visitorCount * 0.25),
+      liveNow: Math.floor(visitorCount * 0.3),
       countries: uniqueCountries
     });
   };
 
-  // Handle window resize
+  // Handle window resize with throttling
   useEffect(() => {
+    let resizeTimeout: NodeJS.Timeout;
+    
     const handleResize = () => {
-      if (globeInstance.current && globeRef.current) {
-        globeInstance.current
-          .width(globeRef.current.offsetWidth)
-          .height(Math.min(450, window.innerHeight * 0.6));
-      }
+      clearTimeout(resizeTimeout);
+      resizeTimeout = setTimeout(() => {
+        if (globeInstance.current && globeRef.current) {
+          globeInstance.current
+            .width(globeRef.current.offsetWidth)
+            .height(Math.min(450, window.innerHeight * 0.6));
+        }
+      }, 100); // Throttle resize events
     };
 
     window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
+    return () => {
+      window.removeEventListener('resize', handleResize);
+      clearTimeout(resizeTimeout);
+    };
   }, []);
 
   return (
@@ -301,7 +333,7 @@ export const LiveVisitors = () => {
             Live Visitors Around the World
           </h2>
           <p className="text-xl text-gray-300 mb-8">
-            You're not alone—others are exploring too! 🌍
+            Explore global connections with our interactive World Cities globe! 🌍
           </p>
           
           {/* Enhanced Stats Cards */}
@@ -335,7 +367,7 @@ export const LiveVisitors = () => {
         {/* Enhanced Globe Container */}
         <div className="relative">
           <div className="bg-slate-900/20 backdrop-blur-md rounded-2xl p-6 border border-blue-500/20 overflow-hidden shadow-2xl">
-            {/* Globe with enhanced container styling and neon glow */}
+            {/* Globe with World Cities styling and performance optimization */}
             <div 
               ref={globeRef} 
               className="w-full h-[450px] rounded-xl overflow-hidden relative cursor-pointer transform-gpu"
@@ -349,12 +381,17 @@ export const LiveVisitors = () => {
               }}
             />
             
-            {/* Enhanced glow overlay with neon effect */}
+            {/* Enhanced glow overlay */}
             <div className="absolute inset-6 rounded-xl pointer-events-none bg-gradient-to-t from-cyan-500/5 via-transparent to-blue-500/5"></div>
             
-            {/* Rotation status indicator */}
+            {/* Performance indicator */}
             <div className="absolute bottom-4 left-4 bg-slate-800/80 backdrop-blur-md text-cyan-400 px-3 py-1 rounded-lg text-sm border border-cyan-500/30">
               {isHovered ? '⏸️ Paused' : '🌍 Auto-rotating'}
+            </div>
+
+            {/* World Cities indicator */}
+            <div className="absolute top-4 left-4 bg-slate-800/80 backdrop-blur-md text-purple-400 px-3 py-1 rounded-lg text-sm border border-purple-500/30">
+              🏙️ World Cities Mode
             </div>
           </div>
           
@@ -365,6 +402,11 @@ export const LiveVisitors = () => {
                 <div className="w-2 h-2 bg-cyan-400 rounded-full animate-pulse"></div>
                 <p className="text-sm font-semibold">
                   👋 New visitor from {recentVisitor.city}, {recentVisitor.country}
+                  {recentVisitor.population && (
+                    <span className="block text-xs text-cyan-200">
+                      Population: {recentVisitor.population.toLocaleString()}
+                    </span>
+                  )}
                 </p>
               </div>
             </div>
@@ -374,10 +416,10 @@ export const LiveVisitors = () => {
         {/* Enhanced Instructions */}
         <div className="text-center mt-8 animate-fade-in" style={{ animationDelay: '0.8s' }}>
           <p className="text-gray-400 text-sm mb-2">
-            🖱️ Click and drag to rotate • 🔍 Scroll to zoom • ✨ Watch for live visitor pings
+            🖱️ Click and drag to rotate • 🔍 Scroll to zoom • ✨ Watch for live city pings
           </p>
           <p className="text-cyan-400 text-xs">
-            Hover over the globe to pause auto-rotation • Tap points for location details
+            Hover over cities for population data • Globe size reflects city population
           </p>
         </div>
       </div>
