@@ -1,7 +1,7 @@
 
 import { Canvas, useFrame } from '@react-three/fiber';
 import { useRef, useState, useEffect } from 'react';
-import { OrbitControls, PerspectiveCamera, Environment, useGLTF } from '@react-three/drei';
+import { OrbitControls, PerspectiveCamera, Environment } from '@react-three/drei';
 import * as THREE from 'three';
 
 // Computer Setup 3D Model Component
@@ -69,7 +69,7 @@ const ComputerModel = () => {
       <group position={[-1.5, -0.8, 0]} rotation={[0, Math.PI / 6, 0]}>
         <mesh position={[0, 0, 0]}>
           <boxGeometry args={[1, 0.05, 0.8]} />
-          <meshStandardMaterial color="#silver" />
+          <meshStandardMaterial color="silver" />
         </mesh>
         <mesh position={[0, 0.4, -0.3]} rotation={[-Math.PI / 6, 0, 0]}>
           <boxGeometry args={[1, 0.7, 0.05]} />
