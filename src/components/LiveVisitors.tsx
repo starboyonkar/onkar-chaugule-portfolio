@@ -58,44 +58,6 @@ export const LiveVisitors = () => {
     globeMaterial.bumpScale = 10;
     globeMaterial.shininess = 0.1;
 
-    // Add atmospheric glow using custom shader
-    const glowMaterial = new THREE.ShaderMaterial({
-      uniforms: {
-        'c': { type: 'f', value: 0.3 },
-        'p': { type: 'f', value: 4.5 },
-        glowColor: { type: 'c', value: new THREE.Color(0x4A90E2) },
-        viewVector: { type: 'v3', value: new THREE.Vector3() }
-      },
-      vertexShader: `
-        uniform vec3 viewVector;
-        uniform float c;
-        uniform float p;
-        varying float intensity;
-        void main() {
-          vec3 vNormal = normalize(normalMatrix * normal);
-          vec3 vNormel = normalize(normalMatrix * viewVector);
-          intensity = pow(c - dot(vNormal, vNormel), p);
-          gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
-        }
-      `,
-      fragmentShader: `
-        uniform vec3 glowColor;
-        varying float intensity;
-        void main() {
-          vec3 glow = glowColor * intensity;
-          gl_FragColor = vec4(glow, 1.0);
-        }
-      `,
-      side: THREE.FrontSide,
-      blending: THREE.AdditiveBlending,
-      transparent: true
-    });
-
-    // Create glow effect
-    const glowGeometry = new THREE.SphereGeometry(100 * 1.1, 64, 64);
-    const glowMesh = new THREE.Mesh(glowGeometry, glowMaterial);
-    globe.scene().add(glowMesh);
-
     // Enhanced auto-rotate with hover pause
     const controls = globe.controls();
     if (controls) {
