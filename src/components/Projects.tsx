@@ -1,3 +1,4 @@
+
 import { Github, ExternalLink, Play, Youtube, Globe } from 'lucide-react';
 import { useState } from 'react';
 
@@ -24,19 +25,19 @@ export const Projects = () => {
       tech: ["React.js", "TypeScript", "Tailwind CSS", "Node.js", "Jenkins CI/CD Pipeline", "Docker", "GitHub", "AWS EC2 Deployment"],
       github: "https://github.com/starboyonkar",
       demo: "https://borewell-crm-billing.netlify.app/",
-      image: "/lovable-uploads/b6caca73-004c-4fc3-b541-ed24a5e963b1.png",
+      image: "/lovable-uploads/bdbedaed-e268-41b5-8dab-333442fff0a9.png",
       color: "from-orange-500 to-red-500",
       featured: true,
       isImageUrl: true,
       hasLiveDemo: true
     },
     {
-      title: "Design and Virtual Twin of an Autonomous Underwater Vehicle (AUV)",
+      title: "DESIGN AND DEVELOPMENT OF VIRTUAL TWIN OF AN AUTONOMOUS UNDERWATER VEHICLE (AUV)",
       description: "A sea-wheel-shaped autonomous marine robot with 8 thrusters and smart navigation. Built with real-time image processing and robotics logic for underwater operations.",
       tech: ["Raspberry Pi", "Embedded Python", "Computer Vision", "Real-Time Video", "Sensor Integration", "Robotics"],
       github: "https://github.com/starboyonkar",
       demo: null,
-      image: "/lovable-uploads/a008fbba-ea96-4b45-9f64-09274f6df6cc.png",
+      image: "/lovable-uploads/5f824a66-d1db-4eb9-ba74-a8cef4d21983.png",
       color: "from-cyan-500 to-blue-500",
       featured: true,
       isImageUrl: true
@@ -104,12 +105,12 @@ export const Projects = () => {
               <div className="h-80 bg-slate-800 relative overflow-hidden cursor-pointer"
                    onClick={() => project.isImageUrl && handleImageClick(project.image)}>
                 <div className="absolute inset-0 bg-black/20 group-hover:bg-black/10 transition-all duration-300"></div>
-                <div className="absolute inset-0 p-4">
+                <div className="absolute inset-0 p-4 flex items-center justify-center">
                   {project.isImageUrl ? (
                     <img 
                       src={project.image} 
                       alt={project.title}
-                      className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-500"
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 rounded-lg"
                     />
                   ) : (
                     <div className="text-8xl opacity-80 group-hover:scale-110 transition-transform duration-500 flex items-center justify-center h-full">
