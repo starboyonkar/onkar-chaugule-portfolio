@@ -18,7 +18,11 @@ const ModelLoader = () => {
 };
 
 // Computer Monitor Component
-const Monitor = ({ position, rotation = [0, 0, 0] as [number, number, number], scale = 1 }) => {
+const Monitor = ({ position, rotation = [0, 0, 0], scale = 1 }: { 
+  position: [number, number, number]; 
+  rotation?: [number, number, number]; 
+  scale?: number 
+}) => {
   const monitorRef = useRef<THREE.Group>(null);
   const [hovered, setHovered] = useState(false);
 
@@ -93,7 +97,10 @@ const Monitor = ({ position, rotation = [0, 0, 0] as [number, number, number], s
 };
 
 // PC Tower Component
-const PCTower = ({ position, rotation = [0, 0, 0] as [number, number, number] }) => {
+const PCTower = ({ position, rotation = [0, 0, 0] }: { 
+  position: [number, number, number]; 
+  rotation?: [number, number, number] 
+}) => {
   const towerRef = useRef<THREE.Group>(null);
   const fanRef = useRef<THREE.Mesh>(null);
   const [isOn, setIsOn] = useState(false);
@@ -173,7 +180,10 @@ const PCTower = ({ position, rotation = [0, 0, 0] as [number, number, number] })
 };
 
 // Mechanical Keyboard Component
-const MechanicalKeyboard = ({ position, rotation = [0, 0, 0] as [number, number, number] }) => {
+const MechanicalKeyboard = ({ position, rotation = [0, 0, 0] }: { 
+  position: [number, number, number]; 
+  rotation?: [number, number, number] 
+}) => {
   const keyboardRef = useRef<THREE.Group>(null);
   const [typingAnimation, setTypingAnimation] = useState(false);
 
@@ -237,7 +247,10 @@ const MechanicalKeyboard = ({ position, rotation = [0, 0, 0] as [number, number,
 };
 
 // Gaming Mouse Component
-const GamingMouse = ({ position, rotation = [0, 0, 0] as [number, number, number] }) => {
+const GamingMouse = ({ position, rotation = [0, 0, 0] }: { 
+  position: [number, number, number]; 
+  rotation?: [number, number, number] 
+}) => {
   const mouseRef = useRef<THREE.Mesh>(null);
   const [clicked, setClicked] = useState(false);
 
@@ -289,7 +302,7 @@ const GamingMouse = ({ position, rotation = [0, 0, 0] as [number, number, number
 };
 
 // Desk Component
-const Desk = ({ position = [0, 0, 0] as [number, number, number] }) => {
+const Desk = ({ position = [0, 0, 0] }: { position?: [number, number, number] }) => {
   return (
     <group position={position}>
       {/* Desktop Surface */}
@@ -304,12 +317,12 @@ const Desk = ({ position = [0, 0, 0] as [number, number, number] }) => {
 
       {/* Desk Legs */}
       {[
-        [-1.8, -0.4, -1],
-        [1.8, -0.4, -1],
-        [-1.8, -0.4, 1],
-        [1.8, -0.4, 1]
+        [-1.8, -0.4, -1] as [number, number, number],
+        [1.8, -0.4, -1] as [number, number, number],
+        [-1.8, -0.4, 1] as [number, number, number],
+        [1.8, -0.4, 1] as [number, number, number]
       ].map((pos, i) => (
-        <mesh key={i} position={pos as [number, number, number]} castShadow>
+        <mesh key={i} position={pos} castShadow>
           <cylinderGeometry args={[0.05, 0.05, 0.8]} />
           <meshStandardMaterial color="#4a4a4a" metalness={0.5} roughness={0.7} />
         </mesh>
