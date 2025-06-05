@@ -18,7 +18,7 @@ const ModelLoader = () => {
 };
 
 // Computer Monitor Component
-const Monitor = ({ position, rotation = [0, 0, 0], scale = 1 }) => {
+const Monitor = ({ position, rotation = [0, 0, 0] as [number, number, number], scale = 1 }) => {
   const monitorRef = useRef<THREE.Group>(null);
   const [hovered, setHovered] = useState(false);
 
@@ -93,7 +93,7 @@ const Monitor = ({ position, rotation = [0, 0, 0], scale = 1 }) => {
 };
 
 // PC Tower Component
-const PCTower = ({ position, rotation = [0, 0, 0] }) => {
+const PCTower = ({ position, rotation = [0, 0, 0] as [number, number, number] }) => {
   const towerRef = useRef<THREE.Group>(null);
   const fanRef = useRef<THREE.Mesh>(null);
   const [isOn, setIsOn] = useState(false);
@@ -173,7 +173,7 @@ const PCTower = ({ position, rotation = [0, 0, 0] }) => {
 };
 
 // Mechanical Keyboard Component
-const MechanicalKeyboard = ({ position, rotation = [0, 0, 0] }) => {
+const MechanicalKeyboard = ({ position, rotation = [0, 0, 0] as [number, number, number] }) => {
   const keyboardRef = useRef<THREE.Group>(null);
   const [typingAnimation, setTypingAnimation] = useState(false);
 
@@ -237,7 +237,7 @@ const MechanicalKeyboard = ({ position, rotation = [0, 0, 0] }) => {
 };
 
 // Gaming Mouse Component
-const GamingMouse = ({ position, rotation = [0, 0, 0] }) => {
+const GamingMouse = ({ position, rotation = [0, 0, 0] as [number, number, number] }) => {
   const mouseRef = useRef<THREE.Mesh>(null);
   const [clicked, setClicked] = useState(false);
 
@@ -289,7 +289,7 @@ const GamingMouse = ({ position, rotation = [0, 0, 0] }) => {
 };
 
 // Desk Component
-const Desk = ({ position = [0, 0, 0] }) => {
+const Desk = ({ position = [0, 0, 0] as [number, number, number] }) => {
   return (
     <group position={position}>
       {/* Desktop Surface */}
