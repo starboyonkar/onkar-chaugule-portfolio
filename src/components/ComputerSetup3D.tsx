@@ -1,7 +1,7 @@
 
 import { Canvas, useFrame, useLoader } from '@react-three/fiber';
 import { useRef, useState, useEffect, Suspense } from 'react';
-import { OrbitControls, PerspectiveCamera, Environment, useGLTF, Html, ContactShadows } from '@react-three/drei';
+import { OrbitControls, PerspectiveCamera, Environment, useGLTF, Html, ContactShadows, Text } from '@react-three/drei';
 import { motion } from 'framer-motion';
 import * as THREE from 'three';
 
@@ -17,286 +17,72 @@ const ModelLoader = () => {
   );
 };
 
-// Programmer Desktop 3D Model Component
-const ProgrammerDesktop = () => {
-  const meshRef = useRef<THREE.Group>(null);
+// Computer Monitor Component
+const Monitor = ({ position, rotation = [0, 0, 0], scale = 1 }) => {
+  const monitorRef = useRef<THREE.Group>(null);
   const [hovered, setHovered] = useState(false);
-  const [loaded, setLoaded] = useState(false);
-
-  // Try to load the actual Sketchfab model
-  // Replace this path with the actual .glb file path when available
-  // const { scene } = useGLTF('/models/programmer-desktop-3d-pc.glb');
 
   useFrame((state) => {
-    if (meshRef.current) {
-      // Smooth floating animation
-      meshRef.current.position.y = Math.sin(state.clock.elapsedTime * 0.5) * 0.1;
-      
-      // Subtle auto-rotation when not hovered
-      if (!hovered) {
-        meshRef.current.rotation.y = Math.sin(state.clock.elapsedTime * 0.2) * 0.1;
-      }
-      
-      // Add subtle breathing effect to scale
-      const breathingScale = 1 + Math.sin(state.clock.elapsedTime * 0.3) * 0.02;
-      meshRef.current.scale.setScalar(hovered ? 1.05 : breathingScale);
+    if (monitorRef.current) {
+      const time = state.clock.elapsedTime;
+      monitorRef.current.position.y = position[1] + Math.sin(time * 0.5) * 0.02;
     }
   });
 
-  // Define desk leg positions with proper typing
-  const deskLegPositions: [number, number, number][] = [
-    [-2.5, -1.8, -1.2],
-    [2.5, -1.8, -1.2],
-    [-2.5, -1.8, 1.2],
-    [2.5, -1.8, 1.2]
-  ];
-
-  // Enhanced realistic computer setup
   return (
     <group 
-      ref={meshRef} 
+      ref={monitorRef} 
+      position={position} 
+      rotation={rotation} 
+      scale={scale}
       onPointerOver={() => setHovered(true)}
       onPointerOut={() => setHovered(false)}
-      onClick={() => setLoaded(!loaded)}
     >
-      {/* Main Desk with wood texture effect */}
-      <mesh position={[0, -1.2, 0]} castShadow receiveShadow>
-        <boxGeometry args={[6, 0.4, 3.5]} />
-        <meshStandardMaterial 
-          color="#654321" 
-          roughness={0.8} 
-          metalness={0.1}
-          normalScale={new THREE.Vector2(0.5, 0.5)}
-        />
-      </mesh>
-      
-      {/* Desk legs */}
-      {deskLegPositions.map((pos, i) => (
-        <mesh key={i} position={pos} castShadow>
-          <cylinderGeometry args={[0.08, 0.08, 1.2]} />
-          <meshStandardMaterial color="#4a4a4a" metalness={0.3} roughness={0.7} />
-        </mesh>
-      ))}
-      
       {/* Monitor Stand */}
-      <mesh position={[0, -0.3, -1.2]} castShadow>
-        <cylinderGeometry args={[0.2, 0.25, 0.8]} />
+      <mesh position={[0, -0.3, 0]}>
+        <cylinderGeometry args={[0.15, 0.2, 0.6]} />
         <meshStandardMaterial color="#1a1a1a" metalness={0.9} roughness={0.1} />
       </mesh>
-      
-      {/* Main Monitor Frame */}
-      <mesh position={[0, 0.8, -1.2]} castShadow>
-        <boxGeometry args={[3.5, 2.2, 0.2]} />
-        <meshStandardMaterial color="#0d0d0d" metalness={0.8} roughness={0.2} />
+
+      {/* Monitor Base */}
+      <mesh position={[0, -0.6, 0]}>
+        <cylinderGeometry args={[0.3, 0.3, 0.05]} />
+        <meshStandardMaterial color="#2a2a2a" metalness={0.8} roughness={0.2} />
       </mesh>
-      
-      {/* Monitor Screen with enhanced glow */}
-      <mesh position={[0, 0.8, -1.1]}>
-        <boxGeometry args={[3.3, 2, 0.05]} />
+
+      {/* Monitor Frame */}
+      <mesh position={[0, 0.2, 0]}>
+        <boxGeometry args={[2.4, 1.4, 0.08]} />
+        <meshStandardMaterial color="#0a0a0a" metalness={0.9} roughness={0.1} />
+      </mesh>
+
+      {/* Screen */}
+      <mesh position={[0, 0.2, 0.041]}>
+        <boxGeometry args={[2.2, 1.2, 0.01]} />
         <meshStandardMaterial 
-          color="#000030" 
-          emissive={hovered ? "#0080ff" : "#004080"}
-          emissiveIntensity={hovered ? 0.6 : 0.3}
-          transparent
-          opacity={0.9}
+          color="#000033"
+          emissive={hovered ? "#0066ff" : "#003366"}
+          emissiveIntensity={hovered ? 0.8 : 0.4}
         />
       </mesh>
-      
-      {/* Screen content simulation */}
-      <mesh position={[0, 0.8, -1.05]}>
-        <boxGeometry args={[3.2, 1.8, 0.01]} />
+
+      {/* Screen Content */}
+      <mesh position={[0, 0.2, 0.045]}>
+        <boxGeometry args={[2.1, 1.1, 0.001]} />
         <meshStandardMaterial 
           color="#001122"
           emissive="#00ff88"
-          emissiveIntensity={0.2}
-        />
-      </mesh>
-      
-      {/* Secondary Monitor */}
-      <group position={[2.5, 0.5, -1]} rotation={[0, -0.4, 0]}>
-        <mesh castShadow>
-          <boxGeometry args={[2.2, 1.5, 0.15]} />
-          <meshStandardMaterial color="#1a1a1a" metalness={0.8} roughness={0.2} />
-        </mesh>
-        <mesh position={[0, 0, 0.08]}>
-          <boxGeometry args={[2, 1.3, 0.02]} />
-          <meshStandardMaterial 
-            color="#001a40" 
-            emissive="#0066cc" 
-            emissiveIntensity={hovered ? 0.4 : 0.2}
-          />
-        </mesh>
-      </group>
-      
-      {/* Mechanical Keyboard with RGB */}
-      <mesh position={[0, -1.05, 0.6]} castShadow>
-        <boxGeometry args={[2.2, 0.2, 0.9]} />
-        <meshStandardMaterial 
-          color="#1a1a1a" 
-          emissive={hovered ? "#ff0088" : "#0044ff"} 
           emissiveIntensity={0.3}
-          metalness={0.7} 
-          roughness={0.3} 
         />
       </mesh>
-      
-      {/* Individual keys */}
-      {Array.from({length: 60}).map((_, i) => {
-        const row = Math.floor(i / 12);
-        const col = i % 12;
-        return (
-          <mesh 
-            key={i} 
-            position={[
-              (col - 5.5) * 0.15, 
-              -0.93, 
-              (row - 2) * 0.15 + 0.6
-            ]} 
-            castShadow
-          >
-            <boxGeometry args={[0.12, 0.08, 0.12]} />
-            <meshStandardMaterial 
-              color="#2a2a2a"
-              emissive={hovered ? "#ff3366" : "#0033ff"}
-              emissiveIntensity={0.1}
-            />
-          </mesh>
-        );
-      })}
-      
-      {/* Gaming Mouse with RGB */}
-      <mesh position={[1.8, -1, 0.6]} castShadow>
-        <boxGeometry args={[0.4, 0.12, 0.6]} />
-        <meshStandardMaterial 
-          color="#1a1a1a" 
-          emissive="#ff3366" 
-          emissiveIntensity={hovered ? 0.5 : 0.2}
-          metalness={0.8} 
-          roughness={0.2} 
-        />
-      </mesh>
-      
-      {/* Mouse pad */}
-      <mesh position={[1.5, -1.15, 0.5]} receiveShadow>
-        <boxGeometry args={[1.2, 0.02, 1]} />
-        <meshStandardMaterial color="#2a2a2a" roughness={0.9} />
-      </mesh>
-      
-      {/* Gaming PC Tower */}
-      <group position={[-2.2, -0.2, 0.8]}>
-        <mesh castShadow>
-          <boxGeometry args={[0.9, 2, 1.6]} />
-          <meshStandardMaterial color="#0d0d0d" metalness={0.9} roughness={0.1} />
-        </mesh>
-        
-        {/* Tempered glass side panel */}
-        <mesh position={[0.46, 0, 0]}>
-          <boxGeometry args={[0.02, 1.8, 1.4]} />
-          <meshPhysicalMaterial 
-            color="#000000" 
-            transparent
-            opacity={0.3}
-            transmission={0.9}
-            roughness={0}
-            metalness={0}
-          />
-        </mesh>
-        
-        {/* RGB lighting strips */}
-        <mesh position={[0.45, 0.7, 0]}>
-          <boxGeometry args={[0.01, 0.1, 1.2]} />
+
+      {/* Code Lines Simulation */}
+      {[...Array(8)].map((_, i) => (
+        <mesh key={i} position={[-0.8 + (i % 2) * 0.4, 0.5 - i * 0.12, 0.046]}>
+          <boxGeometry args={[0.6, 0.02, 0.001]} />
           <meshStandardMaterial 
-            emissive={hovered ? "#ff00ff" : "#00ffff"} 
-            emissiveIntensity={0.8}
-          />
-        </mesh>
-        <mesh position={[0.45, -0.7, 0]}>
-          <boxGeometry args={[0.01, 0.1, 1.2]} />
-          <meshStandardMaterial 
-            emissive={hovered ? "#ffff00" : "#ff0080"} 
-            emissiveIntensity={0.8}
-          />
-        </mesh>
-        
-        {/* CPU cooler fan (visible through glass) */}
-        <mesh position={[0.2, 0.3, 0]} rotation={[0, 0, loaded ? Math.PI * 4 : 0]}>
-          <cylinderGeometry args={[0.2, 0.2, 0.05]} />
-          <meshStandardMaterial 
-            color="#333333"
-            emissive="#0080ff"
-            emissiveIntensity={0.3}
-          />
-        </mesh>
-      </group>
-      
-      {/* Laptop */}
-      <group position={[-1.8, -1, -0.3]} rotation={[0, Math.PI / 5, 0]}>
-        <mesh castShadow>
-          <boxGeometry args={[1.4, 0.08, 1]} />
-          <meshStandardMaterial color="#c0c0c0" metalness={0.9} roughness={0.1} />
-        </mesh>
-        <mesh position={[0, 0.5, -0.4]} rotation={[-Math.PI / 8, 0, 0]} castShadow>
-          <boxGeometry args={[1.4, 0.9, 0.08]} />
-          <meshStandardMaterial color="#0d0d0d" metalness={0.8} roughness={0.2} />
-        </mesh>
-        <mesh position={[0, 0.5, -0.35]} rotation={[-Math.PI / 8, 0, 0]}>
-          <boxGeometry args={[1.3, 0.8, 0.01]} />
-          <meshStandardMaterial 
-            color="#001122"
-            emissive="#004080"
-            emissiveIntensity={0.2}
-          />
-        </mesh>
-      </group>
-      
-      {/* Books stack */}
-      {[0, 0.1, 0.2].map((height, i) => (
-        <mesh key={i} position={[2.2, -1.05 + height, 1]} castShadow>
-          <boxGeometry args={[0.8, 0.1, 0.2]} />
-          <meshStandardMaterial 
-            color={['#8B0000', '#006400', '#4B0082'][i]} 
-            roughness={0.8} 
-          />
-        </mesh>
-      ))}
-      
-      {/* Coffee mug with steam effect */}
-      <mesh position={[-0.8, -1, 1.2]} castShadow>
-        <cylinderGeometry args={[0.15, 0.15, 0.25]} />
-        <meshStandardMaterial color="#654321" roughness={0.6} />
-      </mesh>
-      
-      {/* Headphones */}
-      <group position={[0.5, -0.8, -1.2]}>
-        <mesh>
-          <torusGeometry args={[0.2, 0.05, 8, 16]} />
-          <meshStandardMaterial color="#1a1a1a" metalness={0.8} />
-        </mesh>
-        <mesh position={[-0.15, -0.1, 0]}>
-          <sphereGeometry args={[0.08]} />
-          <meshStandardMaterial color="#2a2a2a" />
-        </mesh>
-        <mesh position={[0.15, -0.1, 0]}>
-          <sphereGeometry args={[0.08]} />
-          <meshStandardMaterial color="#2a2a2a" />
-        </mesh>
-      </group>
-      
-      {/* Enhanced ambient particles */}
-      {[...Array(20)].map((_, i) => (
-        <mesh
-          key={i}
-          position={[
-            (Math.random() - 0.5) * 10,
-            Math.random() * 5,
-            (Math.random() - 0.5) * 8
-          ]}
-        >
-          <sphereGeometry args={[0.04]} />
-          <meshStandardMaterial 
-            color="#4A90E2" 
-            emissive="#4A90E2" 
-            emissiveIntensity={hovered ? 1 : 0.5}
+            emissive="#00ff88"
+            emissiveIntensity={0.6}
             transparent
             opacity={0.8}
           />
@@ -306,47 +92,338 @@ const ProgrammerDesktop = () => {
   );
 };
 
-// Enhanced Floating Particles Component
-const FloatingParticles = () => {
-  const particlesRef = useRef<THREE.Points>(null);
-  
+// PC Tower Component
+const PCTower = ({ position, rotation = [0, 0, 0] }) => {
+  const towerRef = useRef<THREE.Group>(null);
+  const fanRef = useRef<THREE.Mesh>(null);
+  const [isOn, setIsOn] = useState(false);
+
   useFrame((state) => {
-    if (particlesRef.current) {
-      particlesRef.current.rotation.y = state.clock.elapsedTime * 0.02;
-      particlesRef.current.rotation.x = Math.sin(state.clock.elapsedTime * 0.05) * 0.1;
+    if (fanRef.current && isOn) {
+      fanRef.current.rotation.z += 0.3;
+    }
+    if (towerRef.current) {
+      const time = state.clock.elapsedTime;
+      towerRef.current.position.y = position[1] + Math.sin(time * 0.3) * 0.01;
     }
   });
 
-  const particleCount = 200;
-  const positions = new Float32Array(particleCount * 3);
-  
-  for (let i = 0; i < particleCount; i++) {
-    positions[i * 3] = (Math.random() - 0.5) * 30;
-    positions[i * 3 + 1] = (Math.random() - 0.5) * 30;
-    positions[i * 3 + 2] = (Math.random() - 0.5) * 30;
-  }
-
   return (
-    <points ref={particlesRef}>
-      <bufferGeometry>
-        <bufferAttribute
-          attach="attributes-position"
-          array={positions}
-          count={particleCount}
-          itemSize={3}
+    <group 
+      ref={towerRef} 
+      position={position} 
+      rotation={rotation}
+      onClick={() => setIsOn(!isOn)}
+    >
+      {/* Main Tower Body */}
+      <mesh>
+        <boxGeometry args={[0.8, 1.8, 1.4]} />
+        <meshStandardMaterial color="#0f0f0f" metalness={0.9} roughness={0.1} />
+      </mesh>
+
+      {/* Tempered Glass Panel */}
+      <mesh position={[0.41, 0, 0]}>
+        <boxGeometry args={[0.02, 1.6, 1.2]} />
+        <meshPhysicalMaterial 
+          color="#000000"
+          transparent
+          opacity={0.2}
+          transmission={0.9}
+          roughness={0}
+          metalness={0}
         />
-      </bufferGeometry>
-      <pointsMaterial
-        color="#4A90E2"
-        size={0.1}
-        transparent
-        opacity={0.6}
-      />
-    </points>
+      </mesh>
+
+      {/* RGB Strips */}
+      <mesh position={[0.4, 0.6, 0]}>
+        <boxGeometry args={[0.01, 0.05, 1]} />
+        <meshStandardMaterial 
+          emissive={isOn ? "#ff00ff" : "#0066ff"}
+          emissiveIntensity={isOn ? 1.2 : 0.6}
+        />
+      </mesh>
+      <mesh position={[0.4, -0.6, 0]}>
+        <boxGeometry args={[0.01, 0.05, 1]} />
+        <meshStandardMaterial 
+          emissive={isOn ? "#00ffff" : "#ff3366"}
+          emissiveIntensity={isOn ? 1.2 : 0.6}
+        />
+      </mesh>
+
+      {/* CPU Fan */}
+      <mesh ref={fanRef} position={[0.35, 0.2, 0]} rotation={[0, 0, 0]}>
+        <cylinderGeometry args={[0.15, 0.15, 0.03]} />
+        <meshStandardMaterial 
+          color="#333333"
+          emissive={isOn ? "#0080ff" : "#004080"}
+          emissiveIntensity={isOn ? 0.5 : 0.2}
+        />
+      </mesh>
+
+      {/* Power Button */}
+      <mesh position={[0, 0.8, 0.71]}>
+        <cylinderGeometry args={[0.03, 0.03, 0.02]} />
+        <meshStandardMaterial 
+          emissive={isOn ? "#00ff00" : "#ff0000"}
+          emissiveIntensity={0.8}
+        />
+      </mesh>
+    </group>
   );
 };
 
-// Main Computer Setup 3D Component
+// Mechanical Keyboard Component
+const MechanicalKeyboard = ({ position, rotation = [0, 0, 0] }) => {
+  const keyboardRef = useRef<THREE.Group>(null);
+  const [typingAnimation, setTypingAnimation] = useState(false);
+
+  useFrame((state) => {
+    if (keyboardRef.current) {
+      const time = state.clock.elapsedTime;
+      if (typingAnimation) {
+        keyboardRef.current.position.y = position[1] + Math.sin(time * 10) * 0.005;
+      }
+    }
+  });
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setTypingAnimation(true);
+      setTimeout(() => setTypingAnimation(false), 500);
+    }, 3000);
+    return () => clearInterval(interval);
+  }, []);
+
+  return (
+    <group ref={keyboardRef} position={position} rotation={rotation}>
+      {/* Keyboard Base */}
+      <mesh>
+        <boxGeometry args={[1.8, 0.15, 0.6]} />
+        <meshStandardMaterial 
+          color="#1a1a1a"
+          emissive="#0044ff"
+          emissiveIntensity={typingAnimation ? 0.4 : 0.1}
+          metalness={0.8}
+          roughness={0.2}
+        />
+      </mesh>
+
+      {/* Individual Keys */}
+      {Array.from({length: 48}).map((_, i) => {
+        const row = Math.floor(i / 12);
+        const col = i % 12;
+        const isPressed = typingAnimation && Math.random() > 0.7;
+        
+        return (
+          <mesh 
+            key={i} 
+            position={[
+              (col - 5.5) * 0.12, 
+              0.075 + (isPressed ? -0.02 : 0), 
+              (row - 1.5) * 0.12
+            ]}
+          >
+            <boxGeometry args={[0.08, 0.06, 0.08]} />
+            <meshStandardMaterial 
+              color="#2a2a2a"
+              emissive={isPressed ? "#ff3366" : "#0033ff"}
+              emissiveIntensity={isPressed ? 0.8 : 0.2}
+            />
+          </mesh>
+        );
+      })}
+    </group>
+  );
+};
+
+// Gaming Mouse Component
+const GamingMouse = ({ position, rotation = [0, 0, 0] }) => {
+  const mouseRef = useRef<THREE.Mesh>(null);
+  const [clicked, setClicked] = useState(false);
+
+  useFrame(() => {
+    if (mouseRef.current && clicked) {
+      mouseRef.current.position.y = position[1] - 0.02;
+    } else if (mouseRef.current) {
+      mouseRef.current.position.y = position[1];
+    }
+  });
+
+  useEffect(() => {
+    if (clicked) {
+      const timeout = setTimeout(() => setClicked(false), 100);
+      return () => clearTimeout(timeout);
+    }
+  }, [clicked]);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setClicked(true);
+    }, 4000);
+    return () => clearInterval(interval);
+  }, []);
+
+  return (
+    <group position={position} rotation={rotation}>
+      <mesh ref={mouseRef} onClick={() => setClicked(true)}>
+        <boxGeometry args={[0.3, 0.08, 0.5]} />
+        <meshStandardMaterial 
+          color="#1a1a1a"
+          emissive="#ff3366"
+          emissiveIntensity={clicked ? 1 : 0.3}
+          metalness={0.9}
+          roughness={0.1}
+        />
+      </mesh>
+      
+      {/* RGB Light Strip */}
+      <mesh position={[0, 0.041, 0]}>
+        <boxGeometry args={[0.25, 0.001, 0.4]} />
+        <meshStandardMaterial 
+          emissive={clicked ? "#00ffff" : "#ff0080"}
+          emissiveIntensity={1}
+        />
+      </mesh>
+    </group>
+  );
+};
+
+// Desk Component
+const Desk = ({ position = [0, 0, 0] }) => {
+  return (
+    <group position={position}>
+      {/* Desktop Surface */}
+      <mesh position={[0, 0, 0]} receiveShadow>
+        <boxGeometry args={[4, 0.1, 2.5]} />
+        <meshStandardMaterial 
+          color="#654321"
+          roughness={0.8}
+          metalness={0.1}
+        />
+      </mesh>
+
+      {/* Desk Legs */}
+      {[
+        [-1.8, -0.4, -1],
+        [1.8, -0.4, -1],
+        [-1.8, -0.4, 1],
+        [1.8, -0.4, 1]
+      ].map((pos, i) => (
+        <mesh key={i} position={pos as [number, number, number]} castShadow>
+          <cylinderGeometry args={[0.05, 0.05, 0.8]} />
+          <meshStandardMaterial color="#4a4a4a" metalness={0.5} roughness={0.7} />
+        </mesh>
+      ))}
+
+      {/* Mouse Pad */}
+      <mesh position={[1.2, 0.051, 0.3]} receiveShadow>
+        <boxGeometry args={[0.8, 0.001, 0.6]} />
+        <meshStandardMaterial color="#2a2a2a" roughness={0.9} />
+      </mesh>
+    </group>
+  );
+};
+
+// Main Computer Setup Component
+const ComputerSetup = () => {
+  const setupRef = useRef<THREE.Group>(null);
+  const [hovered, setHovered] = useState(false);
+
+  useFrame((state) => {
+    if (setupRef.current) {
+      const time = state.clock.elapsedTime;
+      setupRef.current.rotation.y = Math.sin(time * 0.1) * 0.05;
+      setupRef.current.position.y = Math.sin(time * 0.3) * 0.02;
+    }
+  });
+
+  return (
+    <group 
+      ref={setupRef}
+      onPointerOver={() => setHovered(true)}
+      onPointerOut={() => setHovered(false)}
+    >
+      <Desk position={[0, -0.8, 0]} />
+      <Monitor position={[0, 0.5, -0.8]} />
+      <Monitor position={[1.8, 0.2, -0.6]} rotation={[0, -0.3, 0]} scale={0.7} />
+      <PCTower position={[-1.5, 0, 0.5]} />
+      <MechanicalKeyboard position={[0, -0.7, 0.4]} />
+      <GamingMouse position={[1.2, -0.7, 0.3]} />
+      
+      {/* Coffee Mug */}
+      <mesh position={[-0.6, -0.7, 0.8]} castShadow>
+        <cylinderGeometry args={[0.08, 0.08, 0.15]} />
+        <meshStandardMaterial color="#654321" roughness={0.6} />
+      </mesh>
+
+      {/* Books Stack */}
+      {[0, 0.05, 0.1].map((height, i) => (
+        <mesh key={i} position={[1.6, -0.75 + height, 0.8]} castShadow>
+          <boxGeometry args={[0.6, 0.05, 0.15]} />
+          <meshStandardMaterial 
+            color={['#8B0000', '#006400', '#4B0082'][i]} 
+            roughness={0.8} 
+          />
+        </mesh>
+      ))}
+
+      {/* Ambient Particles */}
+      {[...Array(15)].map((_, i) => (
+        <mesh
+          key={i}
+          position={[
+            (Math.random() - 0.5) * 8,
+            Math.random() * 4,
+            (Math.random() - 0.5) * 6
+          ]}
+        >
+          <sphereGeometry args={[0.02]} />
+          <meshStandardMaterial 
+            color="#4A90E2" 
+            emissive="#4A90E2" 
+            emissiveIntensity={hovered ? 1.2 : 0.6}
+            transparent
+            opacity={0.8}
+          />
+        </mesh>
+      ))}
+    </group>
+  );
+};
+
+// Floating Code Particles
+const FloatingCode = () => {
+  const codeRef = useRef<THREE.Group>(null);
+  
+  useFrame((state) => {
+    if (codeRef.current) {
+      codeRef.current.rotation.y = state.clock.elapsedTime * 0.02;
+    }
+  });
+
+  return (
+    <group ref={codeRef}>
+      {['React', 'Three.js', 'TypeScript', 'Vite', 'WebGL'].map((text, i) => (
+        <Text
+          key={i}
+          position={[
+            Math.sin(i * 1.2) * 6,
+            Math.cos(i * 0.8) * 3 + 2,
+            Math.sin(i * 0.5) * 4
+          ]}
+          fontSize={0.3}
+          color="#4A90E2"
+          anchorX="center"
+          anchorY="middle"
+        >
+          {text}
+        </Text>
+      ))}
+    </group>
+  );
+};
+
+// Main Component
 export const ComputerSetup3D = () => {
   const [isMobile, setIsMobile] = useState(false);
   const [isLoaded, setIsLoaded] = useState(false);
@@ -359,8 +436,7 @@ export const ComputerSetup3D = () => {
     checkMobile();
     window.addEventListener('resize', checkMobile);
     
-    // Simulate loading delay for smooth entry
-    const timer = setTimeout(() => setIsLoaded(true), 1200);
+    const timer = setTimeout(() => setIsLoaded(true), 1500);
     
     return () => {
       window.removeEventListener('resize', checkMobile);
@@ -369,7 +445,6 @@ export const ComputerSetup3D = () => {
   }, []);
 
   if (isMobile) {
-    // Enhanced mobile fallback with better visual representation
     return (
       <motion.div 
         className="w-full h-64 flex items-center justify-center"
@@ -378,7 +453,6 @@ export const ComputerSetup3D = () => {
         transition={{ duration: 1 }}
       >
         <div className="relative group">
-          {/* Main setup illustration */}
           <div className="relative">
             {/* Monitor */}
             <div className="w-48 h-28 bg-gradient-to-b from-gray-800 to-gray-900 rounded-xl flex items-center justify-center shadow-2xl border border-blue-500/30">
@@ -389,42 +463,17 @@ export const ComputerSetup3D = () => {
               </div>
             </div>
             
-            {/* Monitor stand */}
             <div className="w-8 h-6 bg-gray-700 rounded-b-lg mx-auto shadow-lg"></div>
             <div className="w-16 h-2 bg-gray-600 rounded-full mx-auto mt-1"></div>
             
-            {/* PC Tower */}
             <div className="absolute -left-12 top-6 w-8 h-16 bg-gradient-to-b from-gray-800 to-black rounded border border-blue-400/30">
               <div className="w-1 h-12 bg-gradient-to-b from-blue-500 to-purple-500 rounded mx-auto mt-2 animate-pulse"></div>
             </div>
             
-            {/* Keyboard */}
             <div className="w-32 h-4 bg-gray-700 rounded mt-2 mx-auto border border-gray-600"></div>
           </div>
           
-          {/* RGB glow effect */}
           <div className="absolute -inset-4 bg-gradient-to-r from-blue-500/10 via-purple-500/10 to-blue-500/10 rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-          
-          {/* Floating particles */}
-          {[...Array(8)].map((_, i) => (
-            <motion.div
-              key={i}
-              className="absolute w-1 h-1 bg-blue-400 rounded-full"
-              style={{
-                top: `${20 + (i % 3) * 30}%`,
-                left: `${10 + i * 12}%`,
-              }}
-              animate={{
-                y: [0, -20, 0],
-                opacity: [0.3, 1, 0.3],
-              }}
-              transition={{
-                duration: 2 + i * 0.3,
-                repeat: Infinity,
-                delay: i * 0.2,
-              }}
-            />
-          ))}
         </div>
       </motion.div>
     );
@@ -439,7 +488,7 @@ export const ComputerSetup3D = () => {
     >
       <Canvas
         shadows
-        camera={{ position: [0, 4, 10], fov: 45 }}
+        camera={{ position: [5, 3, 8], fov: 50 }}
         style={{ background: 'transparent' }}
         gl={{ 
           antialias: true, 
@@ -448,92 +497,79 @@ export const ComputerSetup3D = () => {
         }}
       >
         <Suspense fallback={<ModelLoader />}>
-          {/* Professional Lighting Setup */}
-          <ambientLight intensity={0.3} />
+          {/* Enhanced Lighting */}
+          <ambientLight intensity={0.4} />
           <directionalLight
-            position={[10, 15, 5]}
-            intensity={1.5}
+            position={[10, 10, 5]}
+            intensity={1}
             castShadow
-            shadow-mapSize-width={4096}
-            shadow-mapSize-height={4096}
+            shadow-mapSize-width={2048}
+            shadow-mapSize-height={2048}
             shadow-camera-far={50}
-            shadow-camera-left={-15}
-            shadow-camera-right={15}
-            shadow-camera-top={15}
-            shadow-camera-bottom={-15}
+            shadow-camera-left={-10}
+            shadow-camera-right={10}
+            shadow-camera-top={10}
+            shadow-camera-bottom={-10}
           />
           
-          {/* Accent lighting */}
-          <pointLight position={[-15, 5, -10]} intensity={0.8} color="#4A90E2" />
-          <pointLight position={[15, 8, 10]} intensity={0.6} color="#ff3366" />
-          <pointLight position={[0, 10, 5]} intensity={0.4} color="#00ff88" />
-          
-          {/* Rim lighting */}
+          <pointLight position={[-5, 5, -5]} intensity={0.6} color="#4A90E2" />
+          <pointLight position={[5, 5, 5]} intensity={0.4} color="#ff3366" />
           <spotLight
-            position={[5, 15, 5]}
-            angle={0.4}
+            position={[0, 10, 0]}
+            angle={0.3}
             penumbra={1}
-            intensity={1.2}
+            intensity={0.8}
             color="#ffffff"
             castShadow
           />
           
-          {/* 3D Models */}
-          <ProgrammerDesktop />
-          <FloatingParticles />
+          <ComputerSetup />
+          <FloatingCode />
           
-          {/* Enhanced ground contact shadows */}
           <ContactShadows 
-            position={[0, -2.5, 0]} 
-            opacity={0.6} 
-            scale={20} 
-            blur={2} 
+            position={[0, -1.5, 0]} 
+            opacity={0.4} 
+            scale={15} 
+            blur={2.5} 
           />
           
-          {/* Professional Environment */}
           <Environment preset="studio" />
           
-          {/* Advanced Camera Controls */}
           <OrbitControls
             enableZoom={true}
             enablePan={true}
             autoRotate={true}
-            autoRotateSpeed={0.5}
-            maxPolarAngle={Math.PI / 1.8}
+            autoRotateSpeed={0.8}
+            maxPolarAngle={Math.PI / 2}
             minPolarAngle={Math.PI / 6}
-            maxDistance={20}
-            minDistance={5}
-            dampingFactor={0.03}
+            maxDistance={15}
+            minDistance={3}
+            dampingFactor={0.05}
             enableDamping={true}
-            zoomSpeed={0.5}
-            panSpeed={0.5}
-            rotateSpeed={0.5}
           />
         </Suspense>
       </Canvas>
       
-      {/* Loading Overlay */}
       {!isLoaded && (
         <div className="absolute inset-0 bg-slate-900/90 flex items-center justify-center backdrop-blur-sm">
           <div className="text-center space-y-6">
             <div className="relative">
               <div className="w-16 h-16 border-4 border-blue-400/30 border-t-blue-400 rounded-full animate-spin mx-auto"></div>
-              <div className="w-12 h-12 border-4 border-purple-400/30 border-t-purple-400 rounded-full animate-spin absolute top-2 left-1/2 transform -translate-x-1/2 animate-reverse"></div>
+              <div className="w-12 h-12 border-4 border-purple-400/30 border-t-purple-400 rounded-full animate-spin absolute top-2 left-1/2 transform -translate-x-1/2"></div>
             </div>
             <div className="space-y-2">
               <p className="text-blue-400 font-mono text-lg">Loading 3D Workspace...</p>
-              <p className="text-gray-400 text-sm">Initializing realistic programmer setup</p>
+              <p className="text-gray-400 text-sm">Building realistic programmer setup</p>
             </div>
           </div>
         </div>
       )}
       
-      {/* Interactive Instructions */}
       <motion.div 
         className="absolute bottom-4 left-4 text-xs text-gray-300 space-y-1 bg-black/30 backdrop-blur-sm rounded-lg p-3"
         initial={{ opacity: 0, x: -20 }}
         animate={{ opacity: isLoaded ? 1 : 0, x: 0 }}
-        transition={{ delay: 2.5 }}
+        transition={{ delay: 2 }}
       >
         <div className="flex items-center gap-2">
           <span className="text-blue-400">🖱️</span>
@@ -541,21 +577,15 @@ export const ComputerSetup3D = () => {
         </div>
         <div className="flex items-center gap-2">
           <span className="text-purple-400">🔍</span>
-          <span>Scroll to zoom in/out</span>
+          <span>Scroll to zoom</span>
         </div>
         <div className="flex items-center gap-2">
-          <span className="text-green-400">🎯</span>
-          <span>Hover for RGB effects</span>
-        </div>
-        <div className="flex items-center gap-2">
-          <span className="text-yellow-400">⚡</span>
-          <span>Click PC to activate fan</span>
+          <span className="text-green-400">💻</span>
+          <span>Click PC to power on</span>
         </div>
       </motion.div>
       
-      {/* Enhanced gradient overlay for depth */}
       <div className="absolute inset-0 bg-gradient-to-t from-slate-900/60 via-transparent to-transparent pointer-events-none" />
-      <div className="absolute inset-0 bg-gradient-to-r from-slate-900/20 via-transparent to-slate-900/20 pointer-events-none" />
     </motion.div>
   );
 };
