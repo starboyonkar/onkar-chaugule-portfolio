@@ -1,4 +1,3 @@
-
 import { Canvas, useFrame, useLoader } from '@react-three/fiber';
 import { useRef, useState, useEffect, Suspense } from 'react';
 import { OrbitControls, PerspectiveCamera, Environment, useGLTF, Html, ContactShadows, Text } from '@react-three/drei';
@@ -522,10 +521,12 @@ export const ComputerSetup3D = () => {
         gl={{ 
           antialias: !isMobile, 
           powerPreference: isMobile ? "low-power" : "high-performance",
-          alpha: true,
-          pixelRatio: Math.min(window.devicePixelRatio, isMobile ? 1.5 : 2)
+          alpha: true
         }}
         performance={{ min: 0.5 }}
+        onCreated={({ gl }) => {
+          gl.setPixelRatio(Math.min(window.devicePixelRatio, isMobile ? 1.5 : 2));
+        }}
       >
         <Suspense fallback={<ModelLoader />}>
           {/* Optimized Lighting */}

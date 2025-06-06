@@ -1,4 +1,3 @@
-
 import { useEffect, useRef, useState } from 'react';
 import Globe from 'globe.gl';
 import { Eye, Users, Globe as GlobeIcon } from 'lucide-react';
@@ -53,11 +52,14 @@ export const LiveVisitors = () => {
       .width(globeRef.current.offsetWidth)
       .height(isMobile ? 350 : 450)
       .backgroundColor('rgba(0,0,0,0)')
-      .enablePointerInteraction(true)
-      .rendererConfig({
-        antialias: !isMobile,
-        powerPreference: isMobile ? "low-power" : "high-performance"
-      });
+      .enablePointerInteraction(true);
+
+    // Set renderer properties after creation
+    const renderer = globe.renderer();
+    if (renderer) {
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, isMobile ? 1.5 : 2));
+      renderer.antialias = !isMobile;
+    }
 
     // Enhanced globe material and textures with mobile optimization
     globe
