@@ -1,6 +1,7 @@
-import { Canvas, useFrame, useLoader } from '@react-three/fiber';
+
+import { Canvas, useFrame } from '@react-three/fiber';
 import { useRef, useState, useEffect, Suspense } from 'react';
-import { OrbitControls, PerspectiveCamera, Environment, useGLTF, Html, ContactShadows, Text } from '@react-three/drei';
+import { OrbitControls, Environment, Html, ContactShadows, Text } from '@react-three/drei';
 import { motion } from 'framer-motion';
 import * as THREE from 'three';
 
@@ -10,7 +11,7 @@ const ModelLoader = () => {
     <Html center>
       <div className="flex items-center space-x-2 text-blue-400">
         <div className="w-4 h-4 border-2 border-blue-400 border-t-transparent rounded-full animate-spin"></div>
-        <span>Loading 3D Model...</span>
+        <span className="text-sm">Loading 3D Model...</span>
       </div>
     </Html>
   );
@@ -28,7 +29,7 @@ const Monitor = ({ position, rotation = [0, 0, 0] as [number, number, number], s
   useFrame((state) => {
     if (monitorRef.current) {
       const time = state.clock.elapsedTime;
-      monitorRef.current.position.y = position[1] + Math.sin(time * 0.5) * 0.02;
+      monitorRef.current.position.y = position[1] + Math.sin(time * 0.5) * 0.01;
     }
   });
 
@@ -42,19 +43,19 @@ const Monitor = ({ position, rotation = [0, 0, 0] as [number, number, number], s
       onPointerOut={() => setHovered(false)}
     >
       {/* Monitor Stand */}
-      <mesh position={[0, -0.3, 0]}>
+      <mesh position={[0, -0.3, 0]} castShadow>
         <cylinderGeometry args={[0.15, 0.2, 0.6]} />
         <meshStandardMaterial color="#1a1a1a" metalness={0.9} roughness={0.1} />
       </mesh>
 
       {/* Monitor Base */}
-      <mesh position={[0, -0.6, 0]}>
+      <mesh position={[0, -0.6, 0]} receiveShadow>
         <cylinderGeometry args={[0.3, 0.3, 0.05]} />
         <meshStandardMaterial color="#2a2a2a" metalness={0.8} roughness={0.2} />
       </mesh>
 
       {/* Monitor Frame */}
-      <mesh position={[0, 0.2, 0]}>
+      <mesh position={[0, 0.2, 0]} castShadow>
         <boxGeometry args={[2.4, 1.4, 0.08]} />
         <meshStandardMaterial color="#0a0a0a" metalness={0.9} roughness={0.1} />
       </mesh>
@@ -80,8 +81,8 @@ const Monitor = ({ position, rotation = [0, 0, 0] as [number, number, number], s
       </mesh>
 
       {/* Code Lines Simulation */}
-      {[...Array(8)].map((_, i) => (
-        <mesh key={i} position={[-0.8 + (i % 2) * 0.4, 0.5 - i * 0.12, 0.046]}>
+      {[...Array(6)].map((_, i) => (
+        <mesh key={i} position={[-0.8 + (i % 2) * 0.4, 0.5 - i * 0.15, 0.046]}>
           <boxGeometry args={[0.6, 0.02, 0.001]} />
           <meshStandardMaterial 
             emissive="#00ff88"
@@ -96,9 +97,10 @@ const Monitor = ({ position, rotation = [0, 0, 0] as [number, number, number], s
 };
 
 // PC Tower Component
-const PCTower = ({ position, rotation = [0, 0, 0] as [number, number, number] }: { 
+const PCTower = ({ position, rotation = [0, 0, 0] as [number, number, number], isMobile }: { 
   position: [number, number, number]; 
-  rotation?: [number, number, number] 
+  rotation?: [number, number, number];
+  isMobile: boolean;
 }) => {
   const towerRef = useRef<THREE.Group>(null);
   const fanRef = useRef<THREE.Mesh>(null);
@@ -106,11 +108,11 @@ const PCTower = ({ position, rotation = [0, 0, 0] as [number, number, number] }:
 
   useFrame((state) => {
     if (fanRef.current && isOn) {
-      fanRef.current.rotation.z += 0.3;
+      fanRef.current.rotation.z += 0.2;
     }
-    if (towerRef.current) {
+    if (towerRef.current && !isMobile) {
       const time = state.clock.elapsedTime;
-      towerRef.current.position.y = position[1] + Math.sin(time * 0.3) * 0.01;
+      towerRef.current.position.y = position[1] + Math.sin(time * 0.3) * 0.008;
     }
   });
 
@@ -122,7 +124,7 @@ const PCTower = ({ position, rotation = [0, 0, 0] as [number, number, number] }:
       onClick={() => setIsOn(!isOn)}
     >
       {/* Main Tower Body */}
-      <mesh>
+      <mesh castShadow>
         <boxGeometry args={[0.8, 1.8, 1.4]} />
         <meshStandardMaterial color="#0f0f0f" metalness={0.9} roughness={0.1} />
       </mesh>
@@ -178,19 +180,20 @@ const PCTower = ({ position, rotation = [0, 0, 0] as [number, number, number] }:
   );
 };
 
-// Simplified Keyboard for mobile performance
-const MechanicalKeyboard = ({ position, rotation = [0, 0, 0] as [number, number, number] }: { 
+// Optimized Keyboard for mobile performance
+const MechanicalKeyboard = ({ position, rotation = [0, 0, 0] as [number, number, number], isMobile }: { 
   position: [number, number, number]; 
-  rotation?: [number, number, number] 
+  rotation?: [number, number, number];
+  isMobile: boolean;
 }) => {
   const keyboardRef = useRef<THREE.Group>(null);
   const [typingAnimation, setTypingAnimation] = useState(false);
 
   useFrame((state) => {
-    if (keyboardRef.current) {
+    if (keyboardRef.current && !isMobile) {
       const time = state.clock.elapsedTime;
       if (typingAnimation) {
-        keyboardRef.current.position.y = position[1] + Math.sin(time * 10) * 0.005;
+        keyboardRef.current.position.y = position[1] + Math.sin(time * 8) * 0.003;
       }
     }
   });
@@ -198,15 +201,18 @@ const MechanicalKeyboard = ({ position, rotation = [0, 0, 0] as [number, number,
   useEffect(() => {
     const interval = setInterval(() => {
       setTypingAnimation(true);
-      setTimeout(() => setTypingAnimation(false), 500);
-    }, 3000);
+      setTimeout(() => setTypingAnimation(false), 400);
+    }, isMobile ? 5000 : 3000);
     return () => clearInterval(interval);
-  }, []);
+  }, [isMobile]);
+
+  const keyCount = isMobile ? 16 : 24;
+  const keysPerRow = isMobile ? 4 : 6;
 
   return (
     <group ref={keyboardRef} position={position} rotation={rotation}>
       {/* Keyboard Base */}
-      <mesh>
+      <mesh castShadow receiveShadow>
         <boxGeometry args={[1.8, 0.15, 0.6]} />
         <meshStandardMaterial 
           color="#1a1a1a"
@@ -217,20 +223,21 @@ const MechanicalKeyboard = ({ position, rotation = [0, 0, 0] as [number, number,
         />
       </mesh>
 
-      {/* Simplified key grid for better performance */}
-      {Array.from({length: 24}).map((_, i) => {
-        const row = Math.floor(i / 6);
-        const col = i % 6;
-        const isPressed = typingAnimation && Math.random() > 0.7;
+      {/* Optimized key grid */}
+      {Array.from({length: keyCount}).map((_, i) => {
+        const row = Math.floor(i / keysPerRow);
+        const col = i % keysPerRow;
+        const isPressed = typingAnimation && Math.random() > 0.8;
         
         return (
           <mesh 
             key={i} 
             position={[
-              (col - 2.5) * 0.24, 
-              0.075 + (isPressed ? -0.02 : 0), 
+              (col - (keysPerRow - 1) / 2) * 0.24, 
+              0.075 + (isPressed ? -0.015 : 0), 
               (row - 1.5) * 0.12
             ]}
+            castShadow
           >
             <boxGeometry args={[0.16, 0.06, 0.08]} />
             <meshStandardMaterial 
@@ -255,7 +262,7 @@ const GamingMouse = ({ position, rotation = [0, 0, 0] as [number, number, number
 
   useFrame(() => {
     if (mouseRef.current && clicked) {
-      mouseRef.current.position.y = position[1] - 0.02;
+      mouseRef.current.position.y = position[1] - 0.015;
     } else if (mouseRef.current) {
       mouseRef.current.position.y = position[1];
     }
@@ -263,7 +270,7 @@ const GamingMouse = ({ position, rotation = [0, 0, 0] as [number, number, number
 
   useEffect(() => {
     if (clicked) {
-      const timeout = setTimeout(() => setClicked(false), 100);
+      const timeout = setTimeout(() => setClicked(false), 80);
       return () => clearTimeout(timeout);
     }
   }, [clicked]);
@@ -271,13 +278,13 @@ const GamingMouse = ({ position, rotation = [0, 0, 0] as [number, number, number
   useEffect(() => {
     const interval = setInterval(() => {
       setClicked(true);
-    }, 4000);
+    }, 4500);
     return () => clearInterval(interval);
   }, []);
 
   return (
     <group position={position} rotation={rotation}>
-      <mesh ref={mouseRef} onClick={() => setClicked(true)}>
+      <mesh ref={mouseRef} onClick={() => setClicked(true)} castShadow>
         <boxGeometry args={[0.3, 0.08, 0.5]} />
         <meshStandardMaterial 
           color="#1a1a1a"
@@ -305,7 +312,7 @@ const Desk = ({ position = [0, 0, 0] as [number, number, number] }: { position?:
   return (
     <group position={position}>
       {/* Desktop Surface */}
-      <mesh position={[0, 0, 0]} receiveShadow>
+      <mesh position={[0, 0, 0]} receiveShadow castShadow>
         <boxGeometry args={[4, 0.1, 2.5]} />
         <meshStandardMaterial 
           color="#654321"
@@ -314,7 +321,7 @@ const Desk = ({ position = [0, 0, 0] as [number, number, number] }: { position?:
         />
       </mesh>
 
-      {/* Desk Legs - simplified for mobile */}
+      {/* Desk Legs */}
       {[
         [-1.8, -0.4, -1] as [number, number, number],
         [1.8, -0.4, -1] as [number, number, number],
@@ -343,8 +350,8 @@ const ComputerSetup = ({ isMobile }: { isMobile: boolean }) => {
   useFrame((state) => {
     if (setupRef.current && !isMobile) {
       const time = state.clock.elapsedTime;
-      setupRef.current.rotation.y = Math.sin(time * 0.1) * 0.05;
-      setupRef.current.position.y = Math.sin(time * 0.3) * 0.02;
+      setupRef.current.rotation.y = Math.sin(time * 0.08) * 0.03;
+      setupRef.current.position.y = Math.sin(time * 0.2) * 0.015;
     }
   });
 
@@ -353,8 +360,8 @@ const ComputerSetup = ({ isMobile }: { isMobile: boolean }) => {
       <Desk position={[0, -0.8, 0]} />
       <Monitor position={[0, 0.5, -0.8]} />
       {!isMobile && <Monitor position={[1.8, 0.2, -0.6]} rotation={[0, -0.3, 0]} scale={0.7} />}
-      <PCTower position={[-1.5, 0, 0.5]} />
-      <MechanicalKeyboard position={[0, -0.7, 0.4]} />
+      <PCTower position={[-1.5, 0, 0.5]} isMobile={isMobile} />
+      <MechanicalKeyboard position={[0, -0.7, 0.4]} isMobile={isMobile} />
       <GamingMouse position={[1.2, -0.7, 0.3]} />
       
       {/* Coffee Mug */}
@@ -376,23 +383,23 @@ const ComputerSetup = ({ isMobile }: { isMobile: boolean }) => {
             </mesh>
           ))}
 
-          {/* Ambient Particles - reduced for mobile */}
-          {[...Array(8)].map((_, i) => (
+          {/* Ambient Particles */}
+          {[...Array(6)].map((_, i) => (
             <mesh
               key={i}
               position={[
-                (Math.random() - 0.5) * 6,
-                Math.random() * 3,
-                (Math.random() - 0.5) * 4
+                (Math.random() - 0.5) * 5,
+                Math.random() * 2.5 + 0.5,
+                (Math.random() - 0.5) * 3.5
               ]}
             >
-              <sphereGeometry args={[0.02]} />
+              <sphereGeometry args={[0.015]} />
               <meshStandardMaterial 
                 color="#4A90E2" 
                 emissive="#4A90E2" 
-                emissiveIntensity={0.6}
+                emissiveIntensity={0.5}
                 transparent
-                opacity={0.8}
+                opacity={0.7}
               />
             </mesh>
           ))}
@@ -402,17 +409,17 @@ const ComputerSetup = ({ isMobile }: { isMobile: boolean }) => {
   );
 };
 
-// Floating Code Particles - simplified for mobile
+// Floating Code Particles
 const FloatingCode = ({ isMobile }: { isMobile: boolean }) => {
   const codeRef = useRef<THREE.Group>(null);
   
   useFrame((state) => {
     if (codeRef.current && !isMobile) {
-      codeRef.current.rotation.y = state.clock.elapsedTime * 0.02;
+      codeRef.current.rotation.y = state.clock.elapsedTime * 0.015;
     }
   });
 
-  const texts = isMobile ? ['React', 'TypeScript'] : ['React', 'Three.js', 'TypeScript', 'Vite', 'WebGL'];
+  const texts = isMobile ? ['React', 'Three.js'] : ['React', 'Three.js', 'TypeScript', 'WebGL'];
 
   return (
     <group ref={codeRef}>
@@ -420,11 +427,11 @@ const FloatingCode = ({ isMobile }: { isMobile: boolean }) => {
         <Text
           key={i}
           position={[
-            Math.sin(i * 1.2) * (isMobile ? 3 : 6),
-            Math.cos(i * 0.8) * (isMobile ? 2 : 3) + 2,
-            Math.sin(i * 0.5) * (isMobile ? 2 : 4)
+            Math.sin(i * 1.5) * (isMobile ? 2.5 : 5),
+            Math.cos(i * 0.8) * (isMobile ? 1.5 : 2.5) + 1.5,
+            Math.sin(i * 0.6) * (isMobile ? 1.5 : 3)
           ]}
-          fontSize={isMobile ? 0.2 : 0.3}
+          fontSize={isMobile ? 0.15 : 0.25}
           color="#4A90E2"
           anchorX="center"
           anchorY="middle"
@@ -436,33 +443,33 @@ const FloatingCode = ({ isMobile }: { isMobile: boolean }) => {
   );
 };
 
-// Mobile fallback component
+// Enhanced Mobile Fallback
 const MobileFallback = () => (
   <motion.div 
-    className="w-full h-96 flex items-center justify-center"
-    initial={{ opacity: 0, scale: 0.8 }}
+    className="w-full h-80 md:h-96 flex items-center justify-center bg-gradient-to-br from-slate-900 to-slate-800 rounded-2xl"
+    initial={{ opacity: 0, scale: 0.9 }}
     animate={{ opacity: 1, scale: 1 }}
-    transition={{ duration: 1 }}
+    transition={{ duration: 0.8 }}
   >
-    <div className="relative group">
+    <div className="relative group p-6">
       <div className="relative">
         {/* Monitor */}
-        <div className="w-64 h-36 bg-gradient-to-b from-gray-800 to-gray-900 rounded-xl flex items-center justify-center shadow-2xl border border-blue-500/30">
-          <div className="w-60 h-32 bg-gradient-to-br from-blue-900/40 to-purple-900/40 rounded-lg border-2 border-blue-400/40 animate-pulse">
+        <div className="w-48 sm:w-64 h-28 sm:h-36 bg-gradient-to-b from-gray-800 to-gray-900 rounded-xl flex items-center justify-center shadow-2xl border border-blue-500/30">
+          <div className="w-44 sm:w-60 h-24 sm:h-32 bg-gradient-to-br from-blue-900/40 to-purple-900/40 rounded-lg border-2 border-blue-400/40 animate-pulse">
             <div className="w-full h-full bg-gradient-to-br from-blue-500/20 to-purple-500/20 rounded-lg flex items-center justify-center">
-              <div className="text-blue-400 text-lg font-mono">CODING...</div>
+              <div className="text-blue-400 text-sm sm:text-lg font-mono">CODING...</div>
             </div>
           </div>
         </div>
         
-        <div className="w-12 h-8 bg-gray-700 rounded-b-lg mx-auto shadow-lg"></div>
-        <div className="w-20 h-3 bg-gray-600 rounded-full mx-auto mt-2"></div>
+        <div className="w-8 sm:w-12 h-6 sm:h-8 bg-gray-700 rounded-b-lg mx-auto shadow-lg"></div>
+        <div className="w-16 sm:w-20 h-2 sm:h-3 bg-gray-600 rounded-full mx-auto mt-2"></div>
         
-        <div className="absolute -left-16 top-8 w-12 h-20 bg-gradient-to-b from-gray-800 to-black rounded border border-blue-400/30">
-          <div className="w-2 h-16 bg-gradient-to-b from-blue-500 to-purple-500 rounded mx-auto mt-2 animate-pulse"></div>
+        <div className="absolute -left-12 sm:-left-16 top-6 sm:top-8 w-8 sm:w-12 h-16 sm:h-20 bg-gradient-to-b from-gray-800 to-black rounded border border-blue-400/30">
+          <div className="w-1.5 sm:w-2 h-12 sm:h-16 bg-gradient-to-b from-blue-500 to-purple-500 rounded mx-auto mt-2 animate-pulse"></div>
         </div>
         
-        <div className="w-40 h-6 bg-gray-700 rounded mt-4 mx-auto border border-gray-600"></div>
+        <div className="w-32 sm:w-40 h-4 sm:h-6 bg-gray-700 rounded mt-4 mx-auto border border-gray-600"></div>
       </div>
       
       <div className="absolute -inset-4 bg-gradient-to-r from-blue-500/10 via-purple-500/10 to-blue-500/10 rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
@@ -475,24 +482,34 @@ export const ComputerSetup3D = () => {
   const [isMobile, setIsMobile] = useState(false);
   const [isLoaded, setIsLoaded] = useState(false);
   const [showFallback, setShowFallback] = useState(false);
+  const [error, setError] = useState(false);
 
   useEffect(() => {
     const checkDevice = () => {
-      const mobile = window.innerWidth < 768;
+      const width = window.innerWidth;
+      const userAgent = navigator.userAgent;
+      const isTouchDevice = 'ontouchstart' in window;
+      const isMobileUA = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(userAgent);
+      
+      const mobile = width < 768 || isTouchDevice || isMobileUA;
       setIsMobile(mobile);
       
-      // Show fallback for very small screens or low-end devices
+      // Enhanced device capability detection
       const isLowEnd = mobile && (
-        /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ||
-        window.devicePixelRatio < 2
+        width < 480 ||
+        navigator.hardwareConcurrency < 4 ||
+        (navigator as any).deviceMemory < 4
       );
-      setShowFallback(isLowEnd && window.innerWidth < 480);
+      
+      setShowFallback(isLowEnd);
     };
     
     checkDevice();
     window.addEventListener('resize', checkDevice);
     
-    const timer = setTimeout(() => setIsLoaded(true), 1000);
+    const timer = setTimeout(() => {
+      setIsLoaded(true);
+    }, 800);
     
     return () => {
       window.removeEventListener('resize', checkDevice);
@@ -500,22 +517,31 @@ export const ComputerSetup3D = () => {
     };
   }, []);
 
-  if (showFallback) {
+  // Error boundary for 3D rendering
+  useEffect(() => {
+    const handleError = () => setError(true);
+    window.addEventListener('error', handleError);
+    return () => window.removeEventListener('error', handleError);
+  }, []);
+
+  if (showFallback || error) {
     return <MobileFallback />;
   }
 
   return (
     <motion.div 
-      className="w-full h-96 relative overflow-hidden rounded-2xl"
-      initial={{ opacity: 0, y: 50 }}
-      animate={{ opacity: isLoaded ? 1 : 0.3, y: 0 }}
-      transition={{ duration: 1.5, ease: "easeOut" }}
+      className="w-full h-80 md:h-96 relative overflow-hidden rounded-2xl bg-gradient-to-br from-slate-900/50 to-slate-800/50"
+      initial={{ opacity: 0, y: 30 }}
+      animate={{ opacity: isLoaded ? 1 : 0.5, y: 0 }}
+      transition={{ duration: 1.2, ease: "easeOut" }}
     >
       <Canvas
         shadows={!isMobile}
         camera={{ 
-          position: isMobile ? [3, 2, 5] : [5, 3, 8], 
-          fov: isMobile ? 60 : 50 
+          position: isMobile ? [2.5, 1.8, 4] : [4, 2.5, 6], 
+          fov: isMobile ? 65 : 55,
+          near: 0.1,
+          far: 1000
         }}
         style={{ background: 'transparent' }}
         gl={{ 
@@ -524,30 +550,33 @@ export const ComputerSetup3D = () => {
           alpha: true
         }}
         performance={{ min: 0.5 }}
-        onCreated={({ gl }) => {
+        onCreated={({ gl, scene }) => {
           gl.setPixelRatio(Math.min(window.devicePixelRatio, isMobile ? 1.5 : 2));
+          gl.shadowMap.enabled = !isMobile;
+          gl.shadowMap.type = isMobile ? THREE.BasicShadowMap : THREE.PCFSoftShadowMap;
+          scene.fog = new THREE.Fog(0x000000, 10, 50);
         }}
       >
         <Suspense fallback={<ModelLoader />}>
           {/* Optimized Lighting */}
-          <ambientLight intensity={isMobile ? 0.6 : 0.4} />
+          <ambientLight intensity={isMobile ? 0.7 : 0.5} />
           <directionalLight
-            position={[10, 10, 5]}
-            intensity={isMobile ? 0.8 : 1}
+            position={[8, 8, 5]}
+            intensity={isMobile ? 0.9 : 1.2}
             castShadow={!isMobile}
-            shadow-mapSize-width={isMobile ? 512 : 2048}
-            shadow-mapSize-height={isMobile ? 512 : 2048}
-            shadow-camera-far={50}
-            shadow-camera-left={-10}
-            shadow-camera-right={10}
-            shadow-camera-top={10}
-            shadow-camera-bottom={-10}
+            shadow-mapSize-width={isMobile ? 512 : 1024}
+            shadow-mapSize-height={isMobile ? 512 : 1024}
+            shadow-camera-far={30}
+            shadow-camera-left={-8}
+            shadow-camera-right={8}
+            shadow-camera-top={8}
+            shadow-camera-bottom={-8}
           />
           
           {!isMobile && (
             <>
-              <pointLight position={[-5, 5, -5]} intensity={0.4} color="#4A90E2" />
-              <pointLight position={[5, 5, 5]} intensity={0.3} color="#ff3366" />
+              <pointLight position={[-4, 4, -4]} intensity={0.3} color="#4A90E2" />
+              <pointLight position={[4, 4, 4]} intensity={0.25} color="#ff3366" />
             </>
           )}
           
@@ -556,10 +585,10 @@ export const ComputerSetup3D = () => {
           
           {!isMobile && (
             <ContactShadows 
-              position={[0, -1.5, 0]} 
-              opacity={0.4} 
-              scale={15} 
-              blur={2.5} 
+              position={[0, -1.4, 0]} 
+              opacity={0.3} 
+              scale={12} 
+              blur={2} 
             />
           )}
           
@@ -568,13 +597,13 @@ export const ComputerSetup3D = () => {
           <OrbitControls
             enableZoom={true}
             enablePan={false}
-            autoRotate={!isMobile}
-            autoRotateSpeed={isMobile ? 0.3 : 0.8}
-            maxPolarAngle={Math.PI / 2}
-            minPolarAngle={Math.PI / 6}
-            maxDistance={isMobile ? 10 : 15}
-            minDistance={isMobile ? 2 : 3}
-            dampingFactor={0.05}
+            autoRotate={true}
+            autoRotateSpeed={isMobile ? 0.4 : 0.6}
+            maxPolarAngle={Math.PI / 2.2}
+            minPolarAngle={Math.PI / 8}
+            maxDistance={isMobile ? 8 : 12}
+            minDistance={isMobile ? 2.5 : 3.5}
+            dampingFactor={0.08}
             enableDamping={true}
             touches={{
               ONE: THREE.TOUCH.ROTATE,
@@ -586,40 +615,40 @@ export const ComputerSetup3D = () => {
       
       {!isLoaded && (
         <div className="absolute inset-0 bg-slate-900/90 flex items-center justify-center backdrop-blur-sm">
-          <div className="text-center space-y-6">
+          <div className="text-center space-y-4">
             <div className="relative">
-              <div className="w-16 h-16 border-4 border-blue-400/30 border-t-blue-400 rounded-full animate-spin mx-auto"></div>
-              <div className="w-12 h-12 border-4 border-purple-400/30 border-t-purple-400 rounded-full animate-spin absolute top-2 left-1/2 transform -translate-x-1/2"></div>
+              <div className="w-12 h-12 md:w-16 md:h-16 border-4 border-blue-400/30 border-t-blue-400 rounded-full animate-spin mx-auto"></div>
+              <div className="w-8 h-8 md:w-12 md:h-12 border-4 border-purple-400/30 border-t-purple-400 rounded-full animate-spin absolute top-2 left-1/2 transform -translate-x-1/2"></div>
             </div>
             <div className="space-y-2">
-              <p className="text-blue-400 font-mono text-lg">Loading 3D Workspace...</p>
-              <p className="text-gray-400 text-sm">Building realistic programmer setup</p>
+              <p className="text-blue-400 font-mono text-sm md:text-lg">Loading 3D Workspace...</p>
+              <p className="text-gray-400 text-xs md:text-sm">Building realistic setup</p>
             </div>
           </div>
         </div>
       )}
       
       <motion.div 
-        className="absolute bottom-4 left-4 text-xs text-gray-300 space-y-1 bg-black/30 backdrop-blur-sm rounded-lg p-3"
+        className="absolute bottom-2 md:bottom-4 left-2 md:left-4 text-xs text-gray-300 space-y-1 bg-black/40 backdrop-blur-sm rounded-lg p-2 md:p-3"
         initial={{ opacity: 0, x: -20 }}
         animate={{ opacity: isLoaded ? 1 : 0, x: 0 }}
-        transition={{ delay: 2 }}
+        transition={{ delay: 1.5 }}
       >
         <div className="flex items-center gap-2">
           <span className="text-blue-400">🖱️</span>
-          <span>{isMobile ? 'Touch to rotate' : 'Drag to rotate view'}</span>
+          <span className="text-xs">{isMobile ? 'Touch to rotate' : 'Drag to rotate view'}</span>
         </div>
         <div className="flex items-center gap-2">
           <span className="text-purple-400">🔍</span>
-          <span>{isMobile ? 'Pinch to zoom' : 'Scroll to zoom'}</span>
+          <span className="text-xs">{isMobile ? 'Pinch to zoom' : 'Scroll to zoom'}</span>
         </div>
         <div className="flex items-center gap-2">
           <span className="text-green-400">💻</span>
-          <span>Click PC to power on</span>
+          <span className="text-xs">Click PC to power on</span>
         </div>
       </motion.div>
       
-      <div className="absolute inset-0 bg-gradient-to-t from-slate-900/60 via-transparent to-transparent pointer-events-none" />
+      <div className="absolute inset-0 bg-gradient-to-t from-slate-900/40 via-transparent to-transparent pointer-events-none" />
     </motion.div>
   );
 };
