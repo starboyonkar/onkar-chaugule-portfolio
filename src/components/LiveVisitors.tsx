@@ -1,3 +1,4 @@
+
 import { useEffect, useRef, useState } from 'react';
 import Globe from 'globe.gl';
 import { Eye, Users, Globe as GlobeIcon } from 'lucide-react';
@@ -30,44 +31,63 @@ export const LiveVisitors = () => {
   });
   const [recentVisitor, setRecentVisitor] = useState<VisitorData | null>(null);
   const [isHovered, setIsHovered] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
 
-  // Initialize enhanced globe with custom styling
+  // Check if device is mobile
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
+  // Initialize enhanced globe with mobile optimizations
   useEffect(() => {
     if (!globeRef.current) return;
 
-    // Create globe instance with enhanced styling
+    // Create globe instance with mobile-optimized settings
     const globe = new Globe(globeRef.current)
       .width(globeRef.current.offsetWidth)
-      .height(450)
+      .height(isMobile ? 350 : 450)
       .backgroundColor('rgba(0,0,0,0)')
-      .enablePointerInteraction(true);
+      .enablePointerInteraction(true)
+      .rendererConfig({
+        antialias: !isMobile,
+        powerPreference: isMobile ? "low-power" : "high-performance"
+      });
 
-    // Enhanced globe material and textures
+    // Enhanced globe material and textures with mobile optimization
     globe
       .globeImageUrl('//unpkg.com/three-globe/example/img/earth-blue-marble.jpg')
-      .bumpImageUrl('//unpkg.com/three-globe/example/img/earth-topology.png')
-      .backgroundImageUrl('//unpkg.com/three-globe/example/img/night-sky.png')
       .showGlobe(true)
       .showAtmosphere(true)
       .atmosphereColor('#4A90E2')
       .atmosphereAltitude(0.25);
 
+    // Only add bump mapping on desktop for performance
+    if (!isMobile) {
+      globe.bumpImageUrl('//unpkg.com/three-globe/example/img/earth-topology.png');
+    }
+
     // Custom globe material with enhanced properties
     const globeMaterial = globe.globeMaterial() as THREE.MeshPhongMaterial;
     if (globeMaterial) {
-      globeMaterial.bumpScale = 10;
+      globeMaterial.bumpScale = isMobile ? 5 : 10;
       globeMaterial.shininess = 0.1;
     }
 
-    // Enhanced auto-rotate with hover pause
+    // Enhanced auto-rotate with hover pause and mobile optimization
     const controls = globe.controls();
     if (controls) {
       controls.autoRotate = true;
-      controls.autoRotateSpeed = 0.5;
+      controls.autoRotateSpeed = isMobile ? 0.3 : 0.5;
       controls.enableZoom = true;
       controls.enablePan = false;
-      controls.minDistance = 200;
-      controls.maxDistance = 600;
+      controls.minDistance = isMobile ? 150 : 200;
+      controls.maxDistance = isMobile ? 400 : 600;
       controls.enableDamping = true;
       controls.dampingFactor = 0.05;
     }
@@ -87,8 +107,11 @@ export const LiveVisitors = () => {
     };
 
     const globeElement = globeRef.current;
-    globeElement.addEventListener('mouseenter', handleMouseEnter);
-    globeElement.addEventListener('mouseleave', handleMouseLeave);
+    
+    if (!isMobile) {
+      globeElement.addEventListener('mouseenter', handleMouseEnter);
+      globeElement.addEventListener('mouseleave', handleMouseLeave);
+    }
 
     // Touch handlers for mobile
     const handleTouchStart = () => {
@@ -105,12 +128,14 @@ export const LiveVisitors = () => {
     globeElement.addEventListener('touchend', handleTouchEnd);
 
     return () => {
-      globeElement.removeEventListener('mouseenter', handleMouseEnter);
-      globeElement.removeEventListener('mouseleave', handleMouseLeave);
+      if (!isMobile) {
+        globeElement.removeEventListener('mouseenter', handleMouseEnter);
+        globeElement.removeEventListener('mouseleave', handleMouseLeave);
+      }
       globeElement.removeEventListener('touchstart', handleTouchStart);
       globeElement.removeEventListener('touchend', handleTouchEnd);
     };
-  }, [isHovered]);
+  }, [isHovered, isMobile]);
 
   // Setup real-time visitor tracking with enhanced animations
   useEffect(() => {
@@ -180,7 +205,7 @@ export const LiveVisitors = () => {
     const points = newVisitors.map(visitor => ({
       lat: visitor.lat,
       lng: visitor.lng,
-      size: Math.random() * 0.8 + 0.5,
+      size: isMobile ? Math.random() * 0.6 + 0.4 : Math.random() * 0.8 + 0.5,
       color: '#00BFFF',
       city: visitor.city,
       country: visitor.country
@@ -188,37 +213,40 @@ export const LiveVisitors = () => {
 
     globeInstance.current
       .pointsData(points)
-      .pointAltitude(0.2)
+      .pointAltitude(isMobile ? 0.15 : 0.2)
       .pointColor('color')
       .pointRadius('size')
-      .pointResolution(32)
+      .pointResolution(isMobile ? 16 : 32)
       .pointLabel(d => `
         <div style="
           background: rgba(0, 0, 0, 0.8); 
           color: #00BFFF; 
-          padding: 8px 12px; 
+          padding: ${isMobile ? '6px 8px' : '8px 12px'}; 
           border-radius: 8px; 
           border: 1px solid #00BFFF;
           font-family: 'Orbitron', monospace;
+          font-size: ${isMobile ? '12px' : '14px'};
           box-shadow: 0 0 20px rgba(0, 191, 255, 0.5);
         ">
           📍 ${d.city}, ${d.country}
         </div>
       `);
 
-    // Enhanced rings with neon glow effect
-    globeInstance.current
-      .ringsData(newVisitors.map(visitor => ({
-        lat: visitor.lat,
-        lng: visitor.lng
-      })))
-      .ringColor(() => '#00BFFF')
-      .ringMaxRadius(4)
-      .ringPropagationSpeed(1.5)
-      .ringRepeatPeriod(2000)
-      .ringAltitude(0.05);
+    // Enhanced rings with mobile optimization
+    if (!isMobile || newVisitors.length <= 5) {
+      globeInstance.current
+        .ringsData(newVisitors.map(visitor => ({
+          lat: visitor.lat,
+          lng: visitor.lng
+        })))
+        .ringColor(() => '#00BFFF')
+        .ringMaxRadius(isMobile ? 3 : 4)
+        .ringPropagationSpeed(isMobile ? 1 : 1.5)
+        .ringRepeatPeriod(isMobile ? 3000 : 2000)
+        .ringAltitude(0.05);
+    }
 
-    // Show recent visitor notification with enhanced styling
+    // Show recent visitor notification
     if (newVisitors.length > 0) {
       const latest = newVisitors[newVisitors.length - 1];
       setRecentVisitor(latest);
@@ -236,13 +264,14 @@ export const LiveVisitors = () => {
     });
   };
 
-  // Handle window resize
+  // Handle window resize with mobile optimization
   useEffect(() => {
     const handleResize = () => {
       if (globeInstance.current && globeRef.current) {
+        const newIsMobile = window.innerWidth < 768;
         globeInstance.current
           .width(globeRef.current.offsetWidth)
-          .height(Math.min(450, window.innerHeight * 0.6));
+          .height(newIsMobile ? 350 : 450);
       }
     };
 
@@ -260,48 +289,48 @@ export const LiveVisitors = () => {
       <div className="max-w-6xl mx-auto relative z-10">
         {/* Section Header */}
         <div className="text-center mb-12 animate-fade-in">
-          <h2 className="text-4xl md:text-5xl font-bold mb-4 neon-text font-futuristic bg-gradient-to-r from-cyan-400 via-blue-400 to-purple-400 bg-clip-text text-transparent glassmorphic-bg p-4 rounded-xl backdrop-blur-md">
+          <h2 className={`${isMobile ? 'text-3xl md:text-4xl' : 'text-4xl md:text-5xl'} font-bold mb-4 neon-text font-futuristic bg-gradient-to-r from-cyan-400 via-blue-400 to-purple-400 bg-clip-text text-transparent glassmorphic-bg p-4 rounded-xl backdrop-blur-md`}>
             Live Visitors Around the World
           </h2>
-          <p className="text-xl text-gray-300 mb-8">
+          <p className={`${isMobile ? 'text-lg' : 'text-xl'} text-gray-300 mb-8`}>
             You're not alone—others are exploring too! 🌍
           </p>
           
-          {/* Enhanced Stats Cards */}
-          <div className="grid md:grid-cols-3 gap-6 mb-8">
+          {/* Enhanced Stats Cards with mobile optimization */}
+          <div className={`grid ${isMobile ? 'grid-cols-1 gap-4' : 'md:grid-cols-3 gap-6'} mb-8`}>
             <div className="bg-slate-900/50 backdrop-blur-md p-6 rounded-xl border border-blue-500/20 glassmorphic-bg hover:border-blue-400/40 hover:scale-105 transition-all duration-300 will-change-transform">
               <div className="flex items-center justify-center gap-3 mb-2">
-                <Eye className="text-blue-400" size={24} />
-                <span className="text-2xl font-bold text-white font-futuristic">{stats.totalToday}</span>
+                <Eye className="text-blue-400" size={isMobile ? 20 : 24} />
+                <span className={`${isMobile ? 'text-xl' : 'text-2xl'} font-bold text-white font-futuristic`}>{stats.totalToday}</span>
               </div>
               <p className="text-gray-400">Visitors Today</p>
             </div>
             
             <div className="bg-slate-900/50 backdrop-blur-md p-6 rounded-xl border border-cyan-500/20 glassmorphic-bg hover:border-cyan-400/40 hover:scale-105 transition-all duration-300 will-change-transform">
               <div className="flex items-center justify-center gap-3 mb-2">
-                <Users className="text-cyan-400" size={24} />
-                <span className="text-2xl font-bold text-white font-futuristic">{stats.liveNow}</span>
+                <Users className="text-cyan-400" size={isMobile ? 20 : 24} />
+                <span className={`${isMobile ? 'text-xl' : 'text-2xl'} font-bold text-white font-futuristic`}>{stats.liveNow}</span>
               </div>
               <p className="text-gray-400">Live Now</p>
             </div>
             
             <div className="bg-slate-900/50 backdrop-blur-md p-6 rounded-xl border border-purple-500/20 glassmorphic-bg hover:border-purple-400/40 hover:scale-105 transition-all duration-300 will-change-transform">
               <div className="flex items-center justify-center gap-3 mb-2">
-                <GlobeIcon className="text-purple-400" size={24} />
-                <span className="text-2xl font-bold text-white font-futuristic">{stats.countries}</span>
+                <GlobeIcon className="text-purple-400" size={isMobile ? 20 : 24} />
+                <span className={`${isMobile ? 'text-xl' : 'text-2xl'} font-bold text-white font-futuristic`}>{stats.countries}</span>
               </div>
               <p className="text-gray-400">Countries</p>
             </div>
           </div>
         </div>
 
-        {/* Enhanced Globe Container */}
+        {/* Enhanced Globe Container with mobile optimization */}
         <div className="relative">
           <div className="bg-slate-900/20 backdrop-blur-md rounded-2xl p-6 border border-blue-500/20 overflow-hidden shadow-2xl">
             {/* Globe with enhanced container styling and neon glow */}
             <div 
               ref={globeRef} 
-              className="w-full h-[450px] rounded-xl overflow-hidden relative cursor-pointer transform-gpu"
+              className={`w-full ${isMobile ? 'h-[350px]' : 'h-[450px]'} rounded-xl overflow-hidden relative cursor-pointer transform-gpu`}
               style={{ 
                 background: 'radial-gradient(circle at center, rgba(0, 191, 255, 0.05) 0%, rgba(0, 0, 0, 0.95) 100%)',
                 boxShadow: `
@@ -316,17 +345,17 @@ export const LiveVisitors = () => {
             <div className="absolute inset-6 rounded-xl pointer-events-none bg-gradient-to-t from-cyan-500/5 via-transparent to-blue-500/5"></div>
             
             {/* Rotation status indicator */}
-            <div className="absolute bottom-4 left-4 bg-slate-800/80 backdrop-blur-md text-cyan-400 px-3 py-1 rounded-lg text-sm border border-cyan-500/30">
+            <div className={`absolute bottom-4 left-4 bg-slate-800/80 backdrop-blur-md text-cyan-400 px-3 py-1 rounded-lg ${isMobile ? 'text-xs' : 'text-sm'} border border-cyan-500/30`}>
               {isHovered ? '⏸️ Paused' : '🌍 Auto-rotating'}
             </div>
           </div>
           
-          {/* Enhanced Recent Visitor Notification */}
+          {/* Enhanced Recent Visitor Notification with mobile optimization */}
           {recentVisitor && (
-            <div className="absolute top-4 right-4 bg-gradient-to-r from-cyan-600/90 to-blue-600/90 backdrop-blur-md text-white px-4 py-3 rounded-lg shadow-lg animate-fade-in border border-cyan-400/40">
+            <div className={`absolute top-4 right-4 bg-gradient-to-r from-cyan-600/90 to-blue-600/90 backdrop-blur-md text-white px-4 py-3 rounded-lg shadow-lg animate-fade-in border border-cyan-400/40 ${isMobile ? 'max-w-[250px]' : ''}`}>
               <div className="flex items-center gap-2">
                 <div className="w-2 h-2 bg-cyan-400 rounded-full animate-pulse"></div>
-                <p className="text-sm font-semibold">
+                <p className={`${isMobile ? 'text-xs' : 'text-sm'} font-semibold`}>
                   👋 New visitor from {recentVisitor.city}, {recentVisitor.country}
                 </p>
               </div>
@@ -334,13 +363,13 @@ export const LiveVisitors = () => {
           )}
         </div>
 
-        {/* Enhanced Instructions */}
+        {/* Enhanced Instructions with mobile optimization */}
         <div className="text-center mt-8 animate-fade-in" style={{ animationDelay: '0.8s' }}>
-          <p className="text-gray-400 text-sm mb-2">
-            🖱️ Click and drag to rotate • 🔍 Scroll to zoom • ✨ Watch for live visitor pings
+          <p className={`text-gray-400 ${isMobile ? 'text-xs' : 'text-sm'} mb-2`}>
+            {isMobile ? '👆 Touch and drag to rotate • 🤏 Pinch to zoom • ✨ Watch for live visitor pings' : '🖱️ Click and drag to rotate • 🔍 Scroll to zoom • ✨ Watch for live visitor pings'}
           </p>
-          <p className="text-cyan-400 text-xs">
-            Hover over the globe to pause auto-rotation • Tap points for location details
+          <p className={`text-cyan-400 ${isMobile ? 'text-xs' : 'text-xs'}`}>
+            {isMobile ? 'Touch the globe to pause auto-rotation • Tap points for location details' : 'Hover over the globe to pause auto-rotation • Tap points for location details'}
           </p>
         </div>
       </div>

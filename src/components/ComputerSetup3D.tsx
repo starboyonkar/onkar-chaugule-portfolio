@@ -18,7 +18,7 @@ const ModelLoader = () => {
 };
 
 // Computer Monitor Component
-const Monitor = ({ position, rotation = [0, 0, 0], scale = 1 }: { 
+const Monitor = ({ position, rotation = [0, 0, 0] as [number, number, number], scale = 1 }: { 
   position: [number, number, number]; 
   rotation?: [number, number, number]; 
   scale?: number 
@@ -97,7 +97,7 @@ const Monitor = ({ position, rotation = [0, 0, 0], scale = 1 }: {
 };
 
 // PC Tower Component
-const PCTower = ({ position, rotation = [0, 0, 0] }: { 
+const PCTower = ({ position, rotation = [0, 0, 0] as [number, number, number] }: { 
   position: [number, number, number]; 
   rotation?: [number, number, number] 
 }) => {
@@ -158,7 +158,7 @@ const PCTower = ({ position, rotation = [0, 0, 0] }: {
       </mesh>
 
       {/* CPU Fan */}
-      <mesh ref={fanRef} position={[0.35, 0.2, 0]} rotation={[0, 0, 0]}>
+      <mesh ref={fanRef} position={[0.35, 0.2, 0]} rotation={[0, 0, 0] as [number, number, number]}>
         <cylinderGeometry args={[0.15, 0.15, 0.03]} />
         <meshStandardMaterial 
           color="#333333"
@@ -179,8 +179,8 @@ const PCTower = ({ position, rotation = [0, 0, 0] }: {
   );
 };
 
-// Mechanical Keyboard Component
-const MechanicalKeyboard = ({ position, rotation = [0, 0, 0] }: { 
+// Simplified Keyboard for mobile performance
+const MechanicalKeyboard = ({ position, rotation = [0, 0, 0] as [number, number, number] }: { 
   position: [number, number, number]; 
   rotation?: [number, number, number] 
 }) => {
@@ -218,22 +218,22 @@ const MechanicalKeyboard = ({ position, rotation = [0, 0, 0] }: {
         />
       </mesh>
 
-      {/* Individual Keys */}
-      {Array.from({length: 48}).map((_, i) => {
-        const row = Math.floor(i / 12);
-        const col = i % 12;
+      {/* Simplified key grid for better performance */}
+      {Array.from({length: 24}).map((_, i) => {
+        const row = Math.floor(i / 6);
+        const col = i % 6;
         const isPressed = typingAnimation && Math.random() > 0.7;
         
         return (
           <mesh 
             key={i} 
             position={[
-              (col - 5.5) * 0.12, 
+              (col - 2.5) * 0.24, 
               0.075 + (isPressed ? -0.02 : 0), 
               (row - 1.5) * 0.12
             ]}
           >
-            <boxGeometry args={[0.08, 0.06, 0.08]} />
+            <boxGeometry args={[0.16, 0.06, 0.08]} />
             <meshStandardMaterial 
               color="#2a2a2a"
               emissive={isPressed ? "#ff3366" : "#0033ff"}
@@ -247,7 +247,7 @@ const MechanicalKeyboard = ({ position, rotation = [0, 0, 0] }: {
 };
 
 // Gaming Mouse Component
-const GamingMouse = ({ position, rotation = [0, 0, 0] }: { 
+const GamingMouse = ({ position, rotation = [0, 0, 0] as [number, number, number] }: { 
   position: [number, number, number]; 
   rotation?: [number, number, number] 
 }) => {
@@ -302,7 +302,7 @@ const GamingMouse = ({ position, rotation = [0, 0, 0] }: {
 };
 
 // Desk Component
-const Desk = ({ position = [0, 0, 0] }: { position?: [number, number, number] }) => {
+const Desk = ({ position = [0, 0, 0] as [number, number, number] }: { position?: [number, number, number] }) => {
   return (
     <group position={position}>
       {/* Desktop Surface */}
@@ -315,7 +315,7 @@ const Desk = ({ position = [0, 0, 0] }: { position?: [number, number, number] })
         />
       </mesh>
 
-      {/* Desk Legs */}
+      {/* Desk Legs - simplified for mobile */}
       {[
         [-1.8, -0.4, -1] as [number, number, number],
         [1.8, -0.4, -1] as [number, number, number],
@@ -338,12 +338,11 @@ const Desk = ({ position = [0, 0, 0] }: { position?: [number, number, number] })
 };
 
 // Main Computer Setup Component
-const ComputerSetup = () => {
+const ComputerSetup = ({ isMobile }: { isMobile: boolean }) => {
   const setupRef = useRef<THREE.Group>(null);
-  const [hovered, setHovered] = useState(false);
 
   useFrame((state) => {
-    if (setupRef.current) {
+    if (setupRef.current && !isMobile) {
       const time = state.clock.elapsedTime;
       setupRef.current.rotation.y = Math.sin(time * 0.1) * 0.05;
       setupRef.current.position.y = Math.sin(time * 0.3) * 0.02;
@@ -351,14 +350,10 @@ const ComputerSetup = () => {
   });
 
   return (
-    <group 
-      ref={setupRef}
-      onPointerOver={() => setHovered(true)}
-      onPointerOut={() => setHovered(false)}
-    >
+    <group ref={setupRef}>
       <Desk position={[0, -0.8, 0]} />
       <Monitor position={[0, 0.5, -0.8]} />
-      <Monitor position={[1.8, 0.2, -0.6]} rotation={[0, -0.3, 0]} scale={0.7} />
+      {!isMobile && <Monitor position={[1.8, 0.2, -0.6]} rotation={[0, -0.3, 0]} scale={0.7} />}
       <PCTower position={[-1.5, 0, 0.5]} />
       <MechanicalKeyboard position={[0, -0.7, 0.4]} />
       <GamingMouse position={[1.2, -0.7, 0.3]} />
@@ -369,62 +364,68 @@ const ComputerSetup = () => {
         <meshStandardMaterial color="#654321" roughness={0.6} />
       </mesh>
 
-      {/* Books Stack */}
-      {[0, 0.05, 0.1].map((height, i) => (
-        <mesh key={i} position={[1.6, -0.75 + height, 0.8]} castShadow>
-          <boxGeometry args={[0.6, 0.05, 0.15]} />
-          <meshStandardMaterial 
-            color={['#8B0000', '#006400', '#4B0082'][i]} 
-            roughness={0.8} 
-          />
-        </mesh>
-      ))}
+      {!isMobile && (
+        <>
+          {/* Books Stack */}
+          {[0, 0.05, 0.1].map((height, i) => (
+            <mesh key={i} position={[1.6, -0.75 + height, 0.8]} castShadow>
+              <boxGeometry args={[0.6, 0.05, 0.15]} />
+              <meshStandardMaterial 
+                color={['#8B0000', '#006400', '#4B0082'][i]} 
+                roughness={0.8} 
+              />
+            </mesh>
+          ))}
 
-      {/* Ambient Particles */}
-      {[...Array(15)].map((_, i) => (
-        <mesh
-          key={i}
-          position={[
-            (Math.random() - 0.5) * 8,
-            Math.random() * 4,
-            (Math.random() - 0.5) * 6
-          ]}
-        >
-          <sphereGeometry args={[0.02]} />
-          <meshStandardMaterial 
-            color="#4A90E2" 
-            emissive="#4A90E2" 
-            emissiveIntensity={hovered ? 1.2 : 0.6}
-            transparent
-            opacity={0.8}
-          />
-        </mesh>
-      ))}
+          {/* Ambient Particles - reduced for mobile */}
+          {[...Array(8)].map((_, i) => (
+            <mesh
+              key={i}
+              position={[
+                (Math.random() - 0.5) * 6,
+                Math.random() * 3,
+                (Math.random() - 0.5) * 4
+              ]}
+            >
+              <sphereGeometry args={[0.02]} />
+              <meshStandardMaterial 
+                color="#4A90E2" 
+                emissive="#4A90E2" 
+                emissiveIntensity={0.6}
+                transparent
+                opacity={0.8}
+              />
+            </mesh>
+          ))}
+        </>
+      )}
     </group>
   );
 };
 
-// Floating Code Particles
-const FloatingCode = () => {
+// Floating Code Particles - simplified for mobile
+const FloatingCode = ({ isMobile }: { isMobile: boolean }) => {
   const codeRef = useRef<THREE.Group>(null);
   
   useFrame((state) => {
-    if (codeRef.current) {
+    if (codeRef.current && !isMobile) {
       codeRef.current.rotation.y = state.clock.elapsedTime * 0.02;
     }
   });
 
+  const texts = isMobile ? ['React', 'TypeScript'] : ['React', 'Three.js', 'TypeScript', 'Vite', 'WebGL'];
+
   return (
     <group ref={codeRef}>
-      {['React', 'Three.js', 'TypeScript', 'Vite', 'WebGL'].map((text, i) => (
+      {texts.map((text, i) => (
         <Text
           key={i}
           position={[
-            Math.sin(i * 1.2) * 6,
-            Math.cos(i * 0.8) * 3 + 2,
-            Math.sin(i * 0.5) * 4
+            Math.sin(i * 1.2) * (isMobile ? 3 : 6),
+            Math.cos(i * 0.8) * (isMobile ? 2 : 3) + 2,
+            Math.sin(i * 0.5) * (isMobile ? 2 : 4)
           ]}
-          fontSize={0.3}
+          fontSize={isMobile ? 0.2 : 0.3}
           color="#4A90E2"
           anchorX="center"
           anchorY="middle"
@@ -436,60 +437,72 @@ const FloatingCode = () => {
   );
 };
 
+// Mobile fallback component
+const MobileFallback = () => (
+  <motion.div 
+    className="w-full h-96 flex items-center justify-center"
+    initial={{ opacity: 0, scale: 0.8 }}
+    animate={{ opacity: 1, scale: 1 }}
+    transition={{ duration: 1 }}
+  >
+    <div className="relative group">
+      <div className="relative">
+        {/* Monitor */}
+        <div className="w-64 h-36 bg-gradient-to-b from-gray-800 to-gray-900 rounded-xl flex items-center justify-center shadow-2xl border border-blue-500/30">
+          <div className="w-60 h-32 bg-gradient-to-br from-blue-900/40 to-purple-900/40 rounded-lg border-2 border-blue-400/40 animate-pulse">
+            <div className="w-full h-full bg-gradient-to-br from-blue-500/20 to-purple-500/20 rounded-lg flex items-center justify-center">
+              <div className="text-blue-400 text-lg font-mono">CODING...</div>
+            </div>
+          </div>
+        </div>
+        
+        <div className="w-12 h-8 bg-gray-700 rounded-b-lg mx-auto shadow-lg"></div>
+        <div className="w-20 h-3 bg-gray-600 rounded-full mx-auto mt-2"></div>
+        
+        <div className="absolute -left-16 top-8 w-12 h-20 bg-gradient-to-b from-gray-800 to-black rounded border border-blue-400/30">
+          <div className="w-2 h-16 bg-gradient-to-b from-blue-500 to-purple-500 rounded mx-auto mt-2 animate-pulse"></div>
+        </div>
+        
+        <div className="w-40 h-6 bg-gray-700 rounded mt-4 mx-auto border border-gray-600"></div>
+      </div>
+      
+      <div className="absolute -inset-4 bg-gradient-to-r from-blue-500/10 via-purple-500/10 to-blue-500/10 rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+    </div>
+  </motion.div>
+);
+
 // Main Component
 export const ComputerSetup3D = () => {
   const [isMobile, setIsMobile] = useState(false);
   const [isLoaded, setIsLoaded] = useState(false);
+  const [showFallback, setShowFallback] = useState(false);
 
   useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth < 768);
+    const checkDevice = () => {
+      const mobile = window.innerWidth < 768;
+      setIsMobile(mobile);
+      
+      // Show fallback for very small screens or low-end devices
+      const isLowEnd = mobile && (
+        /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ||
+        window.devicePixelRatio < 2
+      );
+      setShowFallback(isLowEnd && window.innerWidth < 480);
     };
     
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
+    checkDevice();
+    window.addEventListener('resize', checkDevice);
     
-    const timer = setTimeout(() => setIsLoaded(true), 1500);
+    const timer = setTimeout(() => setIsLoaded(true), 1000);
     
     return () => {
-      window.removeEventListener('resize', checkMobile);
+      window.removeEventListener('resize', checkDevice);
       clearTimeout(timer);
     };
   }, []);
 
-  if (isMobile) {
-    return (
-      <motion.div 
-        className="w-full h-64 flex items-center justify-center"
-        initial={{ opacity: 0, scale: 0.8 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 1 }}
-      >
-        <div className="relative group">
-          <div className="relative">
-            {/* Monitor */}
-            <div className="w-48 h-28 bg-gradient-to-b from-gray-800 to-gray-900 rounded-xl flex items-center justify-center shadow-2xl border border-blue-500/30">
-              <div className="w-44 h-24 bg-gradient-to-br from-blue-900/40 to-purple-900/40 rounded-lg border-2 border-blue-400/40 animate-pulse">
-                <div className="w-full h-full bg-gradient-to-br from-blue-500/20 to-purple-500/20 rounded-lg flex items-center justify-center">
-                  <div className="text-blue-400 text-sm font-mono">CODING...</div>
-                </div>
-              </div>
-            </div>
-            
-            <div className="w-8 h-6 bg-gray-700 rounded-b-lg mx-auto shadow-lg"></div>
-            <div className="w-16 h-2 bg-gray-600 rounded-full mx-auto mt-1"></div>
-            
-            <div className="absolute -left-12 top-6 w-8 h-16 bg-gradient-to-b from-gray-800 to-black rounded border border-blue-400/30">
-              <div className="w-1 h-12 bg-gradient-to-b from-blue-500 to-purple-500 rounded mx-auto mt-2 animate-pulse"></div>
-            </div>
-            
-            <div className="w-32 h-4 bg-gray-700 rounded mt-2 mx-auto border border-gray-600"></div>
-          </div>
-          
-          <div className="absolute -inset-4 bg-gradient-to-r from-blue-500/10 via-purple-500/10 to-blue-500/10 rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-        </div>
-      </motion.div>
-    );
+  if (showFallback) {
+    return <MobileFallback />;
   }
 
   return (
@@ -500,24 +513,29 @@ export const ComputerSetup3D = () => {
       transition={{ duration: 1.5, ease: "easeOut" }}
     >
       <Canvas
-        shadows
-        camera={{ position: [5, 3, 8], fov: 50 }}
+        shadows={!isMobile}
+        camera={{ 
+          position: isMobile ? [3, 2, 5] : [5, 3, 8], 
+          fov: isMobile ? 60 : 50 
+        }}
         style={{ background: 'transparent' }}
         gl={{ 
-          antialias: true, 
-          powerPreference: "high-performance",
-          alpha: true 
+          antialias: !isMobile, 
+          powerPreference: isMobile ? "low-power" : "high-performance",
+          alpha: true,
+          pixelRatio: Math.min(window.devicePixelRatio, isMobile ? 1.5 : 2)
         }}
+        performance={{ min: 0.5 }}
       >
         <Suspense fallback={<ModelLoader />}>
-          {/* Enhanced Lighting */}
-          <ambientLight intensity={0.4} />
+          {/* Optimized Lighting */}
+          <ambientLight intensity={isMobile ? 0.6 : 0.4} />
           <directionalLight
             position={[10, 10, 5]}
-            intensity={1}
-            castShadow
-            shadow-mapSize-width={2048}
-            shadow-mapSize-height={2048}
+            intensity={isMobile ? 0.8 : 1}
+            castShadow={!isMobile}
+            shadow-mapSize-width={isMobile ? 512 : 2048}
+            shadow-mapSize-height={isMobile ? 512 : 2048}
             shadow-camera-far={50}
             shadow-camera-left={-10}
             shadow-camera-right={10}
@@ -525,40 +543,42 @@ export const ComputerSetup3D = () => {
             shadow-camera-bottom={-10}
           />
           
-          <pointLight position={[-5, 5, -5]} intensity={0.6} color="#4A90E2" />
-          <pointLight position={[5, 5, 5]} intensity={0.4} color="#ff3366" />
-          <spotLight
-            position={[0, 10, 0]}
-            angle={0.3}
-            penumbra={1}
-            intensity={0.8}
-            color="#ffffff"
-            castShadow
-          />
+          {!isMobile && (
+            <>
+              <pointLight position={[-5, 5, -5]} intensity={0.4} color="#4A90E2" />
+              <pointLight position={[5, 5, 5]} intensity={0.3} color="#ff3366" />
+            </>
+          )}
           
-          <ComputerSetup />
-          <FloatingCode />
+          <ComputerSetup isMobile={isMobile} />
+          <FloatingCode isMobile={isMobile} />
           
-          <ContactShadows 
-            position={[0, -1.5, 0]} 
-            opacity={0.4} 
-            scale={15} 
-            blur={2.5} 
-          />
+          {!isMobile && (
+            <ContactShadows 
+              position={[0, -1.5, 0]} 
+              opacity={0.4} 
+              scale={15} 
+              blur={2.5} 
+            />
+          )}
           
           <Environment preset="studio" />
           
           <OrbitControls
             enableZoom={true}
-            enablePan={true}
-            autoRotate={true}
-            autoRotateSpeed={0.8}
+            enablePan={false}
+            autoRotate={!isMobile}
+            autoRotateSpeed={isMobile ? 0.3 : 0.8}
             maxPolarAngle={Math.PI / 2}
             minPolarAngle={Math.PI / 6}
-            maxDistance={15}
-            minDistance={3}
+            maxDistance={isMobile ? 10 : 15}
+            minDistance={isMobile ? 2 : 3}
             dampingFactor={0.05}
             enableDamping={true}
+            touches={{
+              ONE: THREE.TOUCH.ROTATE,
+              TWO: THREE.TOUCH.DOLLY_PAN
+            }}
           />
         </Suspense>
       </Canvas>
@@ -586,11 +606,11 @@ export const ComputerSetup3D = () => {
       >
         <div className="flex items-center gap-2">
           <span className="text-blue-400">🖱️</span>
-          <span>Drag to rotate view</span>
+          <span>{isMobile ? 'Touch to rotate' : 'Drag to rotate view'}</span>
         </div>
         <div className="flex items-center gap-2">
           <span className="text-purple-400">🔍</span>
-          <span>Scroll to zoom</span>
+          <span>{isMobile ? 'Pinch to zoom' : 'Scroll to zoom'}</span>
         </div>
         <div className="flex items-center gap-2">
           <span className="text-green-400">💻</span>
