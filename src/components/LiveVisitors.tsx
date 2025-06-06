@@ -1,4 +1,3 @@
-
 import { useEffect, useRef, useState } from 'react';
 import Globe from 'globe.gl';
 import { Eye, Users, Globe as GlobeIcon } from 'lucide-react';
@@ -57,7 +56,7 @@ export const LiveVisitors = () => {
     setIsLoading(true);
 
     // Create globe instance with mobile-optimized settings
-    const globe = new Globe(globeRef.current)
+    const globe = Globe(globeRef.current)
       .width(globeRef.current.offsetWidth)
       .height(isMobile ? 300 : 450)
       .backgroundColor('rgba(0,0,0,0)')
@@ -73,7 +72,6 @@ export const LiveVisitors = () => {
       // Configure for mobile performance
       renderer.shadowMap.enabled = !isMobile;
       renderer.shadowMap.type = isMobile ? THREE.BasicShadowMap : THREE.PCFSoftShadowMap;
-      renderer.powerPreference = isMobile ? "low-power" : "high-performance";
     }
 
     // Enhanced globe material and textures with mobile optimization
