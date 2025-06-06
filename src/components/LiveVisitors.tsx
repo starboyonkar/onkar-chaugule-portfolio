@@ -1,3 +1,4 @@
+
 import { useEffect, useRef, useState } from 'react';
 import Globe from 'globe.gl';
 import { Eye, Users, Globe as GlobeIcon } from 'lucide-react';
@@ -32,6 +33,26 @@ export const LiveVisitors = () => {
   const [isHovered, setIsHovered] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [webGLFailed, setWebGLFailed] = useState(false);
+
+  // Check WebGL support before attempting to render
+  useEffect(() => {
+    const checkWebGLSupport = () => {
+      try {
+        const canvas = document.createElement('canvas');
+        const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+        return !!gl;
+      } catch (e) {
+        return false;
+      }
+    };
+
+    // Set webGL support flag
+    if (!checkWebGLSupport()) {
+      console.warn('WebGL not supported, falling back to 2D visualization');
+      setWebGLFailed(true);
+    }
+  }, []);
 
   // Enhanced mobile detection
   useEffect(() => {
@@ -51,98 +72,105 @@ export const LiveVisitors = () => {
 
   // Initialize enhanced globe with comprehensive mobile optimizations
   useEffect(() => {
-    if (!globeRef.current) return;
+    if (!globeRef.current || webGLFailed) return;
 
     setIsLoading(true);
 
-    // Create globe instance with mobile-optimized settings - using 'new' keyword
-    const globe = new Globe(globeRef.current)
-      .width(globeRef.current.offsetWidth)
-      .height(isMobile ? 300 : 450)
-      .backgroundColor('rgba(0,0,0,0)')
-      .enablePointerInteraction(true);
+    try {
+      // Create globe instance with mobile-optimized settings - using 'new' keyword
+      const globe = new Globe(globeRef.current)
+        .width(globeRef.current.offsetWidth)
+        .height(isMobile ? 300 : 450)
+        .backgroundColor('rgba(0,0,0,0)')
+        .enablePointerInteraction(true);
 
-    // Enhanced renderer configuration for mobile compatibility
-    const renderer = globe.renderer();
-    if (renderer) {
-      // Set appropriate pixel ratio for device
-      const pixelRatio = Math.min(window.devicePixelRatio, isMobile ? 1.5 : 2);
-      renderer.setPixelRatio(pixelRatio);
+      // Enhanced renderer configuration for mobile compatibility
+      const renderer = globe.renderer();
+      if (renderer) {
+        // Set appropriate pixel ratio for device
+        const pixelRatio = Math.min(window.devicePixelRatio, isMobile ? 1.5 : 2);
+        renderer.setPixelRatio(pixelRatio);
+        
+        // Configure for mobile performance
+        renderer.shadowMap.enabled = !isMobile;
+        renderer.shadowMap.type = isMobile ? THREE.BasicShadowMap : THREE.PCFSoftShadowMap;
+      }
+
+      // Enhanced globe material and textures with mobile optimization
+      globe
+        .globeImageUrl('//unpkg.com/three-globe/example/img/earth-blue-marble.jpg')
+        .showGlobe(true)
+        .showAtmosphere(!isMobile) // Disable atmosphere on mobile for performance
+        .atmosphereColor('#4A90E2')
+        .atmosphereAltitude(0.15);
+
+      // Conditional features based on device capability
+      if (!isMobile) {
+        globe.bumpImageUrl('//unpkg.com/three-globe/example/img/earth-topology.png');
+      }
+
+      // Custom globe material with enhanced properties
+      const globeMaterial = globe.globeMaterial() as THREE.MeshPhongMaterial;
+      if (globeMaterial) {
+        globeMaterial.bumpScale = isMobile ? 3 : 8;
+        globeMaterial.shininess = isMobile ? 0.05 : 0.1;
+      }
+
+      // Enhanced controls with mobile optimization
+      const controls = globe.controls();
+      if (controls) {
+        controls.autoRotate = true;
+        controls.autoRotateSpeed = isMobile ? 0.2 : 0.4;
+        controls.enableZoom = true;
+        controls.enablePan = false;
+        controls.minDistance = isMobile ? 120 : 180;
+        controls.maxDistance = isMobile ? 350 : 500;
+        controls.enableDamping = true;
+        controls.dampingFactor = isMobile ? 0.1 : 0.05;
+        controls.maxPolarAngle = Math.PI * 0.9;
+        controls.minPolarAngle = Math.PI * 0.1;
+      }
+
+      // Store globe instance
+      globeInstance.current = globe;
+
+      // Enhanced interaction handlers
+      const handleInteractionStart = () => {
+        setIsHovered(true);
+        if (controls) controls.autoRotate = false;
+      };
+
+      const handleInteractionEnd = () => {
+        setIsHovered(false);
+        setTimeout(() => {
+          if (controls && !isHovered) controls.autoRotate = true;
+        }, 1000);
+      };
+
+      const globeElement = globeRef.current;
       
-      // Configure for mobile performance
-      renderer.shadowMap.enabled = !isMobile;
-      renderer.shadowMap.type = isMobile ? THREE.BasicShadowMap : THREE.PCFSoftShadowMap;
+      // Universal event listeners for all devices
+      globeElement.addEventListener('mouseenter', handleInteractionStart);
+      globeElement.addEventListener('mouseleave', handleInteractionEnd);
+      globeElement.addEventListener('touchstart', handleInteractionStart);
+      globeElement.addEventListener('touchend', handleInteractionEnd);
+
+      // Loading complete
+      setTimeout(() => setIsLoading(false), 1500);
+
+      return () => {
+        globeElement.removeEventListener('mouseenter', handleInteractionStart);
+        globeElement.removeEventListener('mouseleave', handleInteractionEnd);
+        globeElement.removeEventListener('touchstart', handleInteractionStart);
+        globeElement.removeEventListener('touchend', handleInteractionEnd);
+      };
+    } catch (error) {
+      console.error('Failed to initialize globe:', error);
+      setWebGLFailed(true);
+      setIsLoading(false);
+      return;
     }
-
-    // Enhanced globe material and textures with mobile optimization
-    globe
-      .globeImageUrl('//unpkg.com/three-globe/example/img/earth-blue-marble.jpg')
-      .showGlobe(true)
-      .showAtmosphere(!isMobile) // Disable atmosphere on mobile for performance
-      .atmosphereColor('#4A90E2')
-      .atmosphereAltitude(0.15);
-
-    // Conditional features based on device capability
-    if (!isMobile) {
-      globe.bumpImageUrl('//unpkg.com/three-globe/example/img/earth-topology.png');
-    }
-
-    // Custom globe material with enhanced properties
-    const globeMaterial = globe.globeMaterial() as THREE.MeshPhongMaterial;
-    if (globeMaterial) {
-      globeMaterial.bumpScale = isMobile ? 3 : 8;
-      globeMaterial.shininess = isMobile ? 0.05 : 0.1;
-    }
-
-    // Enhanced controls with mobile optimization
-    const controls = globe.controls();
-    if (controls) {
-      controls.autoRotate = true;
-      controls.autoRotateSpeed = isMobile ? 0.2 : 0.4;
-      controls.enableZoom = true;
-      controls.enablePan = false;
-      controls.minDistance = isMobile ? 120 : 180;
-      controls.maxDistance = isMobile ? 350 : 500;
-      controls.enableDamping = true;
-      controls.dampingFactor = isMobile ? 0.1 : 0.05;
-      controls.maxPolarAngle = Math.PI * 0.9;
-      controls.minPolarAngle = Math.PI * 0.1;
-    }
-
-    // Store globe instance
-    globeInstance.current = globe;
-
-    // Enhanced interaction handlers
-    const handleInteractionStart = () => {
-      setIsHovered(true);
-      if (controls) controls.autoRotate = false;
-    };
-
-    const handleInteractionEnd = () => {
-      setIsHovered(false);
-      setTimeout(() => {
-        if (controls && !isHovered) controls.autoRotate = true;
-      }, 1000);
-    };
-
-    const globeElement = globeRef.current;
-    
-    // Universal event listeners for all devices
-    globeElement.addEventListener('mouseenter', handleInteractionStart);
-    globeElement.addEventListener('mouseleave', handleInteractionEnd);
-    globeElement.addEventListener('touchstart', handleInteractionStart);
-    globeElement.addEventListener('touchend', handleInteractionEnd);
-
-    // Loading complete
-    setTimeout(() => setIsLoading(false), 1500);
-
-    return () => {
-      globeElement.removeEventListener('mouseenter', handleInteractionStart);
-      globeElement.removeEventListener('mouseleave', handleInteractionEnd);
-      globeElement.removeEventListener('touchstart', handleInteractionStart);
-      globeElement.removeEventListener('touchend', handleInteractionEnd);
-    };
-  }, [isHovered, isMobile]);
+  }, [isHovered, isMobile, webGLFailed]);
 
   // Setup real-time visitor tracking with enhanced animations
   useEffect(() => {
@@ -209,7 +237,7 @@ export const LiveVisitors = () => {
 
   // Update globe with enhanced visitor points and animations
   const updateGlobePoints = (newVisitors: VisitorData[]) => {
-    if (!globeInstance.current) return;
+    if (!globeInstance.current || webGLFailed) return;
 
     const points = newVisitors.map(visitor => ({
       lat: visitor.lat,
@@ -278,7 +306,7 @@ export const LiveVisitors = () => {
   // Handle window resize with mobile optimization
   useEffect(() => {
     const handleResize = () => {
-      if (globeInstance.current && globeRef.current) {
+      if (globeInstance.current && globeRef.current && !webGLFailed) {
         const newIsMobile = window.innerWidth < 768;
         globeInstance.current
           .width(globeRef.current.offsetWidth)
@@ -296,7 +324,35 @@ export const LiveVisitors = () => {
 
     window.addEventListener('resize', debouncedResize);
     return () => window.removeEventListener('resize', debouncedResize);
-  }, []);
+  }, [webGLFailed]);
+
+  // 2D Fallback for when WebGL is not supported
+  const renderFallbackMap = () => {
+    return (
+      <div className="bg-slate-900/20 backdrop-blur-md rounded-2xl p-3 md:p-6 border border-blue-500/20 overflow-hidden shadow-2xl">
+        <div className="w-full h-[300px] md:h-[450px] rounded-xl overflow-hidden relative flex items-center justify-center bg-gradient-to-b from-blue-900/30 to-slate-900/50">
+          <div className="absolute inset-0 flex flex-wrap gap-2 p-3 md:p-4 overflow-hidden">
+            {visitors.map(visitor => (
+              <div 
+                key={visitor.id}
+                className="animate-pulse bg-blue-500/20 backdrop-blur-md rounded-xl border border-blue-400/30 p-2 shadow-lg flex items-center"
+              >
+                <div className="w-2 h-2 rounded-full bg-cyan-400 mr-2"></div>
+                <span className="text-cyan-100 text-xs md:text-sm">{visitor.city}, {visitor.country}</span>
+              </div>
+            ))}
+          </div>
+          
+          <div className="relative z-10 text-center bg-slate-800/80 backdrop-blur-md p-4 rounded-xl border border-cyan-500/20 max-w-[90%] shadow-2xl">
+            <GlobeIcon className="mx-auto text-cyan-400 mb-2" size={isMobile ? 32 : 48} />
+            <h3 className="text-cyan-100 font-bold mb-2">Interactive Globe Unavailable</h3>
+            <p className="text-gray-300 text-sm">Your device does not support WebGL rendering.</p>
+            <p className="text-gray-400 text-xs mt-2">Try using a different device or a WebGL-enabled browser.</p>
+          </div>
+        </div>
+      </div>
+    );
+  };
 
   return (
     <section className="py-12 md:py-20 px-4 bg-slate-900/30 backdrop-blur-sm relative overflow-hidden">
@@ -345,38 +401,42 @@ export const LiveVisitors = () => {
 
         {/* Enhanced Globe Container with mobile optimization */}
         <div className="relative">
-          <div className="bg-slate-900/20 backdrop-blur-md rounded-2xl p-3 md:p-6 border border-blue-500/20 overflow-hidden shadow-2xl">
-            {/* Loading overlay */}
-            {isLoading && (
-              <div className="absolute inset-0 bg-slate-900/80 backdrop-blur-sm flex items-center justify-center z-10 rounded-2xl">
-                <div className="text-center space-y-4">
-                  <div className="w-12 h-12 md:w-16 md:h-16 border-4 border-blue-400/30 border-t-blue-400 rounded-full animate-spin mx-auto"></div>
-                  <p className="text-blue-400 font-mono text-sm md:text-lg">Loading Globe...</p>
+          {webGLFailed ? (
+            renderFallbackMap()
+          ) : (
+            <div className="bg-slate-900/20 backdrop-blur-md rounded-2xl p-3 md:p-6 border border-blue-500/20 overflow-hidden shadow-2xl">
+              {/* Loading overlay */}
+              {isLoading && (
+                <div className="absolute inset-0 bg-slate-900/80 backdrop-blur-sm flex items-center justify-center z-10 rounded-2xl">
+                  <div className="text-center space-y-4">
+                    <div className="w-12 h-12 md:w-16 md:h-16 border-4 border-blue-400/30 border-t-blue-400 rounded-full animate-spin mx-auto"></div>
+                    <p className="text-blue-400 font-mono text-sm md:text-lg">Loading Globe...</p>
+                  </div>
                 </div>
-              </div>
-            )}
+              )}
 
-            {/* Globe with enhanced container styling */}
-            <div 
-              ref={globeRef} 
-              className={`w-full ${isMobile ? 'h-[300px]' : 'h-[450px]'} rounded-xl overflow-hidden relative cursor-pointer transform-gpu`}
-              style={{ 
-                background: 'radial-gradient(circle at center, rgba(0, 191, 255, 0.08) 0%, rgba(0, 0, 0, 0.95) 100%)',
-                boxShadow: `
-                  inset 0 0 ${isMobile ? '30px' : '50px'} rgba(0, 191, 255, 0.15),
-                  0 0 ${isMobile ? '50px' : '100px'} rgba(0, 191, 255, 0.08)
-                `
-              }}
-            />
-            
-            {/* Enhanced glow overlay */}
-            <div className="absolute inset-3 md:inset-6 rounded-xl pointer-events-none bg-gradient-to-t from-cyan-500/5 via-transparent to-blue-500/5"></div>
-            
-            {/* Status indicator */}
-            <div className="absolute bottom-2 md:bottom-4 left-2 md:left-4 bg-slate-800/90 backdrop-blur-md text-cyan-400 px-2 md:px-3 py-1 rounded-lg text-xs border border-cyan-500/30">
-              {isHovered ? '⏸️ Paused' : '🌍 Auto-rotating'}
+              {/* Globe with enhanced container styling */}
+              <div 
+                ref={globeRef} 
+                className={`w-full ${isMobile ? 'h-[300px]' : 'h-[450px]'} rounded-xl overflow-hidden relative cursor-pointer transform-gpu`}
+                style={{ 
+                  background: 'radial-gradient(circle at center, rgba(0, 191, 255, 0.08) 0%, rgba(0, 0, 0, 0.95) 100%)',
+                  boxShadow: `
+                    inset 0 0 ${isMobile ? '30px' : '50px'} rgba(0, 191, 255, 0.15),
+                    0 0 ${isMobile ? '50px' : '100px'} rgba(0, 191, 255, 0.08)
+                  `
+                }}
+              />
+              
+              {/* Enhanced glow overlay */}
+              <div className="absolute inset-3 md:inset-6 rounded-xl pointer-events-none bg-gradient-to-t from-cyan-500/5 via-transparent to-blue-500/5"></div>
+              
+              {/* Status indicator */}
+              <div className="absolute bottom-2 md:bottom-4 left-2 md:left-4 bg-slate-800/90 backdrop-blur-md text-cyan-400 px-2 md:px-3 py-1 rounded-lg text-xs border border-cyan-500/30">
+                {isHovered ? '⏸️ Paused' : '🌍 Auto-rotating'}
+              </div>
             </div>
-          </div>
+          )}
           
           {/* Enhanced Recent Visitor Notification */}
           {recentVisitor && (
@@ -393,12 +453,20 @@ export const LiveVisitors = () => {
 
         {/* Enhanced Instructions */}
         <div className="text-center mt-6 md:mt-8 animate-fade-in" style={{ animationDelay: '0.8s' }}>
-          <p className="text-gray-400 text-xs md:text-sm mb-2 px-4">
-            {isMobile ? '👆 Touch and drag to rotate • 🤏 Pinch to zoom • ✨ Watch for live visitor pings' : '🖱️ Click and drag to rotate • 🔍 Scroll to zoom • ✨ Watch for live visitor pings'}
-          </p>
-          <p className="text-cyan-400 text-xs px-4">
-            {isMobile ? 'Touch the globe to pause auto-rotation • Tap points for location details' : 'Hover over the globe to pause auto-rotation • Click points for location details'}
-          </p>
+          {!webGLFailed ? (
+            <>
+              <p className="text-gray-400 text-xs md:text-sm mb-2 px-4">
+                {isMobile ? '👆 Touch and drag to rotate • 🤏 Pinch to zoom • ✨ Watch for live visitor pings' : '🖱️ Click and drag to rotate • 🔍 Scroll to zoom • ✨ Watch for live visitor pings'}
+              </p>
+              <p className="text-cyan-400 text-xs px-4">
+                {isMobile ? 'Touch the globe to pause auto-rotation • Tap points for location details' : 'Hover over the globe to pause auto-rotation • Click points for location details'}
+              </p>
+            </>
+          ) : (
+            <p className="text-gray-400 text-xs md:text-sm mb-2 px-4">
+              ✨ Live visitor data is still displayed above, even without 3D rendering
+            </p>
+          )}
         </div>
       </div>
     </section>

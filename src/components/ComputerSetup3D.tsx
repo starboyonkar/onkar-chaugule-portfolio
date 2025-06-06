@@ -477,13 +477,60 @@ const MobileFallback = () => (
   </motion.div>
 );
 
+// WebGL Support Check Hook
+const useWebGLSupport = () => {
+  const [supported, setSupported] = useState(true);
+
+  useEffect(() => {
+    try {
+      const canvas = document.createElement('canvas');
+      // Try WebGL2 first, then fallback to WebGL
+      const gl = canvas.getContext('webgl2') || 
+                canvas.getContext('webgl') || 
+                canvas.getContext('experimental-webgl');
+      
+      setSupported(!!gl);
+      
+      // Cleanup
+      if (gl && 'getExtension' in gl) {
+        (gl as WebGLRenderingContext).getExtension('WEBGL_lose_context')?.loseContext();
+      }
+    } catch (e) {
+      console.error('WebGL support check error:', e);
+      setSupported(false);
+    }
+  }, []);
+
+  return supported;
+};
+
+// ErrorBoundary Component for Three.js Errors
+const ThreeErrorBoundary = ({ children, fallback }: { children: React.ReactNode, fallback: React.ReactNode }) => {
+  const [hasError, setHasError] = useState(false);
+
+  useEffect(() => {
+    const handleError = () => setHasError(true);
+    window.addEventListener('error', handleError);
+    
+    return () => {
+      window.removeEventListener('error', handleError);
+    };
+  }, []);
+
+  if (hasError) {
+    return <>{fallback}</>;
+  }
+
+  return <>{children}</>;
+};
+
 // Main Component
 export const ComputerSetup3D = () => {
   const [isMobile, setIsMobile] = useState(false);
   const [isLoaded, setIsLoaded] = useState(false);
   const [showFallback, setShowFallback] = useState(false);
-  const [error, setError] = useState(false);
-
+  const webGLSupported = useWebGLSupport();
+  
   useEffect(() => {
     const checkDevice = () => {
       const width = window.innerWidth;
@@ -517,138 +564,134 @@ export const ComputerSetup3D = () => {
     };
   }, []);
 
-  // Error boundary for 3D rendering
-  useEffect(() => {
-    const handleError = () => setError(true);
-    window.addEventListener('error', handleError);
-    return () => window.removeEventListener('error', handleError);
-  }, []);
-
-  if (showFallback || error) {
+  // If WebGL is not supported or device is low-end, use fallback
+  if (!webGLSupported || showFallback) {
     return <MobileFallback />;
   }
 
   return (
-    <motion.div 
-      className="w-full h-80 md:h-96 relative overflow-hidden rounded-2xl bg-gradient-to-br from-slate-900/50 to-slate-800/50"
-      initial={{ opacity: 0, y: 30 }}
-      animate={{ opacity: isLoaded ? 1 : 0.5, y: 0 }}
-      transition={{ duration: 1.2, ease: "easeOut" }}
-    >
-      <Canvas
-        shadows={!isMobile}
-        camera={{ 
-          position: isMobile ? [2.5, 1.8, 4] : [4, 2.5, 6], 
-          fov: isMobile ? 65 : 55,
-          near: 0.1,
-          far: 1000
-        }}
-        style={{ background: 'transparent' }}
-        gl={{ 
-          antialias: !isMobile, 
-          powerPreference: isMobile ? "low-power" : "high-performance",
-          alpha: true
-        }}
-        performance={{ min: 0.5 }}
-        onCreated={({ gl, scene }) => {
-          gl.setPixelRatio(Math.min(window.devicePixelRatio, isMobile ? 1.5 : 2));
-          gl.shadowMap.enabled = !isMobile;
-          gl.shadowMap.type = isMobile ? THREE.BasicShadowMap : THREE.PCFSoftShadowMap;
-          scene.fog = new THREE.Fog(0x000000, 10, 50);
-        }}
+    <ThreeErrorBoundary fallback={<MobileFallback />}>
+      <motion.div 
+        className="w-full h-80 md:h-96 relative overflow-hidden rounded-2xl bg-gradient-to-br from-slate-900/50 to-slate-800/50"
+        initial={{ opacity: 0, y: 30 }}
+        animate={{ opacity: isLoaded ? 1 : 0.5, y: 0 }}
+        transition={{ duration: 1.2, ease: "easeOut" }}
       >
-        <Suspense fallback={<ModelLoader />}>
-          {/* Optimized Lighting */}
-          <ambientLight intensity={isMobile ? 0.7 : 0.5} />
-          <directionalLight
-            position={[8, 8, 5]}
-            intensity={isMobile ? 0.9 : 1.2}
-            castShadow={!isMobile}
-            shadow-mapSize-width={isMobile ? 512 : 1024}
-            shadow-mapSize-height={isMobile ? 512 : 1024}
-            shadow-camera-far={30}
-            shadow-camera-left={-8}
-            shadow-camera-right={8}
-            shadow-camera-top={8}
-            shadow-camera-bottom={-8}
-          />
-          
-          {!isMobile && (
-            <>
-              <pointLight position={[-4, 4, -4]} intensity={0.3} color="#4A90E2" />
-              <pointLight position={[4, 4, 4]} intensity={0.25} color="#ff3366" />
-            </>
-          )}
-          
-          <ComputerSetup isMobile={isMobile} />
-          <FloatingCode isMobile={isMobile} />
-          
-          {!isMobile && (
-            <ContactShadows 
-              position={[0, -1.4, 0]} 
-              opacity={0.3} 
-              scale={12} 
-              blur={2} 
+        <Canvas
+          shadows={!isMobile}
+          camera={{ 
+            position: isMobile ? [2.5, 1.8, 4] : [4, 2.5, 6], 
+            fov: isMobile ? 65 : 55,
+            near: 0.1,
+            far: 1000
+          }}
+          style={{ background: 'transparent' }}
+          gl={{ 
+            antialias: !isMobile, 
+            alpha: true,
+            preserveDrawingBuffer: true,
+            failIfMajorPerformanceCaveat: false
+          }}
+          onCreated={({ gl, scene }) => {
+            gl.setPixelRatio(Math.min(window.devicePixelRatio, isMobile ? 1.5 : 2));
+            gl.shadowMap.enabled = !isMobile;
+            gl.shadowMap.type = isMobile ? THREE.BasicShadowMap : THREE.PCFSoftShadowMap;
+            scene.fog = new THREE.Fog(0x000000, 10, 50);
+          }}
+        >
+          <Suspense fallback={<ModelLoader />}>
+            {/* Optimized Lighting */}
+            <ambientLight intensity={isMobile ? 0.7 : 0.5} />
+            <directionalLight
+              position={[8, 8, 5]}
+              intensity={isMobile ? 0.9 : 1.2}
+              castShadow={!isMobile}
+              shadow-mapSize-width={isMobile ? 512 : 1024}
+              shadow-mapSize-height={isMobile ? 512 : 1024}
+              shadow-camera-far={30}
+              shadow-camera-left={-8}
+              shadow-camera-right={8}
+              shadow-camera-top={8}
+              shadow-camera-bottom={-8}
             />
-          )}
-          
-          <Environment preset="studio" />
-          
-          <OrbitControls
-            enableZoom={true}
-            enablePan={false}
-            autoRotate={true}
-            autoRotateSpeed={isMobile ? 0.4 : 0.6}
-            maxPolarAngle={Math.PI / 2.2}
-            minPolarAngle={Math.PI / 8}
-            maxDistance={isMobile ? 8 : 12}
-            minDistance={isMobile ? 2.5 : 3.5}
-            dampingFactor={0.08}
-            enableDamping={true}
-            touches={{
-              ONE: THREE.TOUCH.ROTATE,
-              TWO: THREE.TOUCH.DOLLY_PAN
-            }}
-          />
-        </Suspense>
-      </Canvas>
-      
-      {!isLoaded && (
-        <div className="absolute inset-0 bg-slate-900/90 flex items-center justify-center backdrop-blur-sm">
-          <div className="text-center space-y-4">
-            <div className="relative">
-              <div className="w-12 h-12 md:w-16 md:h-16 border-4 border-blue-400/30 border-t-blue-400 rounded-full animate-spin mx-auto"></div>
-              <div className="w-8 h-8 md:w-12 md:h-12 border-4 border-purple-400/30 border-t-purple-400 rounded-full animate-spin absolute top-2 left-1/2 transform -translate-x-1/2"></div>
-            </div>
-            <div className="space-y-2">
-              <p className="text-blue-400 font-mono text-sm md:text-lg">Loading 3D Workspace...</p>
-              <p className="text-gray-400 text-xs md:text-sm">Building realistic setup</p>
+            
+            {!isMobile && (
+              <>
+                <pointLight position={[-4, 4, -4]} intensity={0.3} color="#4A90E2" />
+                <pointLight position={[4, 4, 4]} intensity={0.25} color="#ff3366" />
+              </>
+            )}
+            
+            <ComputerSetup isMobile={isMobile} />
+            <FloatingCode isMobile={isMobile} />
+            
+            {!isMobile && (
+              <ContactShadows 
+                position={[0, -1.4, 0]} 
+                opacity={0.3} 
+                scale={12} 
+                blur={2} 
+              />
+            )}
+            
+            <Environment preset="studio" />
+            
+            <OrbitControls
+              enableZoom={true}
+              enablePan={false}
+              autoRotate={true}
+              autoRotateSpeed={isMobile ? 0.4 : 0.6}
+              maxPolarAngle={Math.PI / 2.2}
+              minPolarAngle={Math.PI / 8}
+              maxDistance={isMobile ? 8 : 12}
+              minDistance={isMobile ? 2.5 : 3.5}
+              dampingFactor={0.08}
+              enableDamping={true}
+              touches={{
+                ONE: THREE.TOUCH.ROTATE,
+                TWO: THREE.TOUCH.DOLLY_PAN
+              }}
+            />
+          </Suspense>
+        </Canvas>
+        
+        {!isLoaded && (
+          <div className="absolute inset-0 bg-slate-900/90 flex items-center justify-center backdrop-blur-sm">
+            <div className="text-center space-y-4">
+              <div className="relative">
+                <div className="w-12 h-12 md:w-16 md:h-16 border-4 border-blue-400/30 border-t-blue-400 rounded-full animate-spin mx-auto"></div>
+                <div className="w-8 h-8 md:w-12 md:h-12 border-4 border-purple-400/30 border-t-purple-400 rounded-full animate-spin absolute top-2 left-1/2 transform -translate-x-1/2"></div>
+              </div>
+              <div className="space-y-2">
+                <p className="text-blue-400 font-mono text-sm md:text-lg">Loading 3D Workspace...</p>
+                <p className="text-gray-400 text-xs md:text-sm">Building realistic setup</p>
+              </div>
             </div>
           </div>
-        </div>
-      )}
-      
-      <motion.div 
-        className="absolute bottom-2 md:bottom-4 left-2 md:left-4 text-xs text-gray-300 space-y-1 bg-black/40 backdrop-blur-sm rounded-lg p-2 md:p-3"
-        initial={{ opacity: 0, x: -20 }}
-        animate={{ opacity: isLoaded ? 1 : 0, x: 0 }}
-        transition={{ delay: 1.5 }}
-      >
-        <div className="flex items-center gap-2">
-          <span className="text-blue-400">🖱️</span>
-          <span className="text-xs">{isMobile ? 'Touch to rotate' : 'Drag to rotate view'}</span>
-        </div>
-        <div className="flex items-center gap-2">
-          <span className="text-purple-400">🔍</span>
-          <span className="text-xs">{isMobile ? 'Pinch to zoom' : 'Scroll to zoom'}</span>
-        </div>
-        <div className="flex items-center gap-2">
-          <span className="text-green-400">💻</span>
-          <span className="text-xs">Click PC to power on</span>
-        </div>
+        )}
+        
+        <motion.div 
+          className="absolute bottom-2 md:bottom-4 left-2 md:left-4 text-xs text-gray-300 space-y-1 bg-black/40 backdrop-blur-sm rounded-lg p-2 md:p-3"
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: isLoaded ? 1 : 0, x: 0 }}
+          transition={{ delay: 1.5 }}
+        >
+          <div className="flex items-center gap-2">
+            <span className="text-blue-400">🖱️</span>
+            <span className="text-xs">{isMobile ? 'Touch to rotate' : 'Drag to rotate view'}</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="text-purple-400">🔍</span>
+            <span className="text-xs">{isMobile ? 'Pinch to zoom' : 'Scroll to zoom'}</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="text-green-400">💻</span>
+            <span className="text-xs">Click PC to power on</span>
+          </div>
+        </motion.div>
+        
+        <div className="absolute inset-0 bg-gradient-to-t from-slate-900/40 via-transparent to-transparent pointer-events-none" />
       </motion.div>
-      
-      <div className="absolute inset-0 bg-gradient-to-t from-slate-900/40 via-transparent to-transparent pointer-events-none" />
-    </motion.div>
+    </ThreeErrorBoundary>
   );
 };
