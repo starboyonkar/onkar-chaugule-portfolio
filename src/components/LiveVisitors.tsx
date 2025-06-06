@@ -55,8 +55,8 @@ export const LiveVisitors = () => {
 
     setIsLoading(true);
 
-    // Create globe instance with mobile-optimized settings
-    const globe = Globe(globeRef.current)
+    // Create globe instance with mobile-optimized settings - using 'new' keyword
+    const globe = new Globe(globeRef.current)
       .width(globeRef.current.offsetWidth)
       .height(isMobile ? 300 : 450)
       .backgroundColor('rgba(0,0,0,0)')
